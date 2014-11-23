@@ -1,8 +1,8 @@
 bccb9187a8ade6224a1a0e987ef9f4ad *COPYING
-db1f376715e8e0dcc746dcd6c35aa027 *DESCRIPTION
-605abc5baf9b42645fa181400177c161 *NAMESPACE
-3067d1d4ffbbc38efdbcb53d74c3a63d *R/summarytools.R
-876bbc5fb23375c69b2e7b50b5d688d3 *man/dfSummary.Rd
-aa9d509fc03d937bfc249a7073a748d4 *man/frequencies.Rd
-670758445db8c2fbf575fddc4452110a *man/properties.Rd
-d09c3535bb1c3f2ce5e16e7e3fbaa5b9 *man/unistats.Rd
+e993fabe35321a084f56c3b7a52463c4 *DESCRIPTION
+df1e67b7ec9d260c78b3447ea7b62efb *NAMESPACE
+d955854cfbb439499815603582fbb73d *NEWS
+18c93f7715673f5eed4782b83e35d9f0 *R/summarytools.R
+addcee3a64b08dba5f89279751079910 *man/desc.Rd
+58938a6ddadf770726a56e11f5842b4d *man/dfSummary.Rd
+5bd3b9b689ef751ccd8eb523b4584aec *man/freq.Rd
