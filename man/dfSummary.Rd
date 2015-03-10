@@ -3,28 +3,30 @@
 \title{Dataframe Summary}
 \description{Summary of a dataframe consisting of: variable names and labels, factor levels, frequencies or numerical summary statistics, and valid/missing observations information.}
 \usage{
-dfSummary(x, echo=TRUE, style="multiline", justify="left",
+dfSummary(x, style="multiline", justify="left",
           max.distinct.values=10, trim.strings=FALSE,
           max.string.width=15, round.digits=2,
-          file=NA, display.labels=FALSE,
-          n.total="after", ...)
+          split.cells=40, display.labels=FALSE,
+          file=NA, append=FALSE,
+          escape.pipe=FALSE, ...)
 }
 \arguments{
   \item{x}{A dataframe.}
-  \item{echo}{If TRUE (default), pander tables will be displayed and resulting dataframe will be returned silently.}
-  \item{style}{The style to be used in pander table. Defaults to "multiline". Alternately, use "grid"; other styles ("simple" and "rmarkdown") are not supported.}
-  \item{justify}{Pander argument. Defaults to "left".}
+  \item{style}{The style to be used in pander table. Defaults to \dQuote{multiline}. Alternatively, use \dQuote{grid}; other styles (\dQuote{simple} and \dQuote{rmarkdown} are not supported.}
+  \item{justify}{\pkg{pander} argument. Defaults to \dQuote{left}.}
   \item{max.distinct.values}{The maximum number of items to be displayed in the frequency cell. If variable has more distinct values, no frequency will be shown (only a message stating the number of distinct values).}
-  \item{trim.strings}{For character variables, remove any white space at the beginning or end of the string. This will impact the frequencies so interpret the frequency tables accordingly. Defaults to FALSE.}
-  \item{max.string.width}{Limits the number of characters to display in the frequency tables. Defaults to 15.}
-  \item{round.digits}{Number of digits for rounding (used in numerical stats and in freq tables).}
-  \item{file}{The text file to be written to disk. Defaults to NA.}
-  \item{display.labels}{If TRUE,a column containing Hmisc-type labels will be displayed. Defaults to FALSE.}
-  \item{n.total}{Where should the total number of rows be displayed. One of three options: "after" the table (default), "before" the table, or "heading" to make the heading name contain that number (c.g. "n.valid.on.250")}
-  \item{\dots}{Additional arguments passed to pander().}
+  \item{trim.strings}{For character variables, remove any white space at the beginning or end of the string. This will impact the frequencies so interpret the frequencies cell accordingly. Defaults to \code{FALSE}.}
+  \item{max.string.width}{Limits the number of characters to display in the frequency tables. Defaults to \code{15}.}
+  \item{round.digits}{Number of digits for rounding (used in numerical stats and in frequency tables).}
+  \item{split.cells}{\pkg{pander} argument. Number of characters allowed on a line before splitting the cell. Defaults to 40.}
+  \item{display.labels}{If \code{TRUE}, variable (as defined with \pkg{rapportools} or \pkg{Hmisc}'s \code{label} function) labels will be displayed. Defaults to FALSE.}
+  \item{file}{The text file to be written to disk. Defaults to \code{NA}.}
+  \item{append}{When \dQuote{file} argument is supplied, this indicates whether to append output to existing file (\code{TRUE}) or to overwrite any existing file (\code{FALSE}, default). If \code{TRUE} and no file exists, a new file will be created.}
+    \item{escape.pipe}{Only useful when \code{style='grid'} and \code{file} argument is not \code{NA}, in which case it will escape the pipe character (|) to allow Pandoc to correctly convert multiline cells.}
+  \item{\dots}{Additional arguments passed to \pkg{pander}.}
 }
-%\details{}
-\value{A dataframe containing as many rows as there are columns in x.}
+
+\value{A dataframe containing as many rows as there are columns in \code{x}.}
 \author{Dominic Comtois <dominic.comtois@gmail.com>}
 \references{\url{https://github.com/dcomtois/summarytools}}
 \seealso{\code{\link{summary.data.frame}}}
