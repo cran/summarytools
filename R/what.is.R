@@ -3,6 +3,7 @@ what.is <- function(x, show.all=FALSE, ignore.size.warn=FALSE) {
   if(!is.function(x) && object.size(x) > 20000 && ignore.size.warn == FALSE) {
     stop("object.size(x) is greater than 10K; computing time might be long. Set argument ignore.size.warn to TRUE to force execution anyway")
   }
+
   # set the warn option to -1 to temporarily ignore warnings
   op <- options("warn")
   options(warn = -1)
@@ -72,24 +73,26 @@ what.is <- function(x, show.all=FALSE, ignore.size.warn=FALSE) {
   if(is.function(x)) {
 
   	function.type <- pryr::ftype(x)
-  	if("generic" %in% function.type)
-  		generic.function.methods <- methods(deparse(substitute(x)))
+  	# if("generic" %in% function.type)
+    #   generic.function.methods <- methods(deparse(substitute(x)))
 
-  } else {
-
-  	obj.class.methods <- lapply(class(x), function(cl) methods(class=cl))
-  	names(obj.class.methods) <- class(x)
   }
+
+  # 	else {
+  #
+  #   	obj.class.methods <- lapply(class(x), function(cl) methods(class=cl))
+  #   	names(obj.class.methods) <- class(x)
+  #   }
 
   output <- list()
   output$properties <- properties
   output$attributes.lengths <- attributes.lengths
   output$extensive.is <- extensive.is
   output$function.type <- function.type
-  output$generic.function.methods <- generic.function.methods
+  #output$generic.function.methods <- generic.function.methods
   #output$is.object <- obj.is.object
   #output$object.type <- obj.otype
-  output$obj.class.methods <- obj.class.methods
+  #output$obj.class.methods <- obj.class.methods
   return(output)
 
 }

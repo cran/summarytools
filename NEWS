@@ -1,6 +1,14 @@
+Version 0.6
+-----------
+Added Introduction vignette. Fixed markdown output that would not render strings such as <NA>. Improved multiline tables linefeeds. Introduced cleartmp() function to delete temporary html files used with print method "viewer" or "browser". Modifications to sample datasets. Bootstrap stylesheets now only include table-specific elements. Changed the way method="browser" sends file path to browser for better cross-platform compatibility. Improved results when using by(). Since version 0.5 was only made available through devtools::install_github(), please see changes for that version if updating from CRAN.
+
+Version 0.5
+-----------
+Function descr() now also supports weights. Output from what.is() has been simplified. Other changes are transparent to the user (but make the internals more consistent across functions).
+
 Version 0.4
 -----------
-Added cat() functions to fully support knitr's document generation. Also added sample datasets so that users can experiment using summarytools functions with them.
+Added cat() functions to fully support knitr's document generation. Also added sample datasets so that users can experiment using summarytools functions with them. freq() now supports weights.
 
 Version 0.3
 -----------

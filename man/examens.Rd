@@ -2,25 +2,22 @@
 \alias{examens}
 \docType{data}
 \title{
-examens sample data (French)
+examens -- Sample Data (French)
 }
 \description{
 This is merely a sample dataframe to allow users to experiment with summarytools. Am English  equivalent called 'exams' is also available.
 }
 \usage{data("examens")}
 \format{
-  A data frame with 25 observations on the following 6 variables.
+  A dataframe with 25 observations with the following 6 variables.
   \describe{
-    \item{\code{francais}}{a numeric vector}
-    \item{\code{anglais}}{a numeric vector}
-    \item{\code{maths}}{a numeric vector}
-    \item{\code{geo}}{a numeric vector}
-    \item{\code{histoire}}{a numeric vector}
-    \item{\code{economie}}{a numeric vector}
+    \item{\code{sexe}}{a factor with levels "F" and "M"}
+    \item{\code{francais}}{a numerical vector}
+    \item{\code{maths}}{a numerical vector}
+    \item{\code{geographie}}{a numerical vector}
+    \item{\code{histoire}}{a numerical vector}
+    \item{\code{economie}}{a numerical vector}
+    \item{\code{anglais}}{a numerical vector}
   }
-}
-\examples{
-data(examens)
-descr(examens)
 }
 \keyword{datasets}
