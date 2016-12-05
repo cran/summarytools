@@ -12,7 +12,7 @@
 
 <meta name="author" content="Dominic Comtois" />
 
-<meta name="date" content="2016-11-21" />
+<meta name="date" content="2016-12-04" />
 
 <title>Introduction to summarytools</title>
 
@@ -70,7 +70,7 @@ code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Inf
 
 <h1 class="title toc-ignore">Introduction to summarytools</h1>
 <h4 class="author"><em>Dominic Comtois</em></h4>
-<h4 class="date"><em>2016-11-21</em></h4>
+<h4 class="date"><em>2016-12-04</em></h4>
 
 
 
@@ -138,8 +138,11 @@ dfSummary(tobacco, plain.ascii=FALSE)<br />
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">&gt;<span class="st"> </span><span class="kw">data</span>(exams)
 &gt;<span class="st"> </span><span class="kw">descr</span>(exams, <span class="dt">style=</span><span class="st">'rmarkdown'</span>)</code></pre></div>
 <pre><code>Non-numerical variable(s) ignored: gender</code></pre>
-<p>Descriptive Statistics</p>
-<p>Dataframe: exams</p>
+</div>
+<div id="descriptive-statistics" class="section level3">
+<h3>Descriptive Statistics</h3>
+<div id="dataframe-exams" class="section level4">
+<h4>Dataframe: exams</h4>
 <table>
 <thead>
 <tr class="header">
@@ -254,7 +257,9 @@ dfSummary(tobacco, plain.ascii=FALSE)<br />
 </tr>
 </tbody>
 </table>
-<p>Observations</p>
+</div>
+<div id="observations" class="section level4">
+<h4>Observations</h4>
 <table>
 <thead>
 <tr class="header">
@@ -300,27 +305,31 @@ dfSummary(tobacco, plain.ascii=FALSE)<br />
 <p>To rather see variables in rows and stats in columns, we use <code>transpose=TRUE</code>:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">&gt;<span class="st"> </span><span class="kw">descr</span>(exams, <span class="dt">style =</span> <span class="st">'rmarkdown'</span>, <span class="dt">transpose =</span> <span class="ot">TRUE</span>)</code></pre></div>
 </div>
+</div>
 <div id="dataframe-summaries-with-dfsummary" class="section level3">
 <h3>Dataframe Summaries With <code>dfSummary()</code></h3>
 <p>This is probably the most time-saving function I have ever written… For this one, we can use styles “multiline” (default) or “grid”. We <strong>must</strong> however specify <code>plain.ascii=FALSE</code> when using markdown, otherwise the rendered results will be problematic.</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">&gt;<span class="st"> </span><span class="kw">data</span>(tobacco)
 &gt;<span class="st"> </span><span class="kw">dfSummary</span>(tobacco, <span class="dt">plain.ascii =</span> <span class="ot">FALSE</span>)</code></pre></div>
-<p>Dataframe summary</p>
-<p>tobacco</p>
-<table>
+</div>
+<div id="dataframe-summary" class="section level3">
+<h3>Dataframe Summary</h3>
+<div id="tobacco" class="section level4">
+<h4>tobacco</h4>
+<table style="width:100%;">
 <colgroup>
 <col width="11%"></col>
-<col width="15%"></col>
-<col width="43%"></col>
-<col width="19%"></col>
+<col width="14%"></col>
+<col width="42%"></col>
+<col width="21%"></col>
 <col width="9%"></col>
 </colgroup>
 <thead>
 <tr class="header">
 <th align="left">Variable</th>
 <th align="left">Properties</th>
-<th align="left">Stats or Factor Levels</th>
-<th align="left">Frequencies</th>
+<th align="left">Stats / Values</th>
+<th align="left">Freqs, % Valid</th>
 <th align="left">N Valid</th>
 </tr>
 </thead>
@@ -340,7 +349,7 @@ dfSummary(tobacco, plain.ascii=FALSE)<br />
 <td align="left">mean (sd) = 45.2 (16.27)<br />
 min &lt; med &lt; max = 18 &lt; 45 &lt; 75<br />
 IQR (CV) = 29 (0.36)</td>
-<td align="left">59 distinct val</td>
+<td align="left">59 distinct values</td>
 <td align="left">281/300 (93.7%)</td>
 </tr>
 <tr class="odd">
@@ -362,7 +371,7 @@ IQR (CV) = 29 (0.36)</td>
 <td align="left">mean (sd) = 25.24 (4.38)<br />
 min &lt; med &lt; max = 15.13 &lt; 25.29 &lt; 38.39<br />
 IQR (CV) = 5.8 (0.17)</td>
-<td align="left">282 distinct val</td>
+<td align="left">282 distinct values</td>
 <td align="left">281/300 (93.7%)</td>
 </tr>
 <tr class="odd">
@@ -387,22 +396,26 @@ IQR (CV) = 5.8 (0.17)</td>
 </table>
 <p>Using “grid” adds space between cells…</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">&gt;<span class="st"> </span><span class="kw">dfSummary</span>(tobacco, <span class="dt">style =</span> <span class="st">'grid'</span>, <span class="dt">plain.ascii =</span> <span class="ot">FALSE</span>)</code></pre></div>
-<p>Dataframe summary</p>
-<p>tobacco</p>
+</div>
+</div>
+<div id="dataframe-summary-1" class="section level3">
+<h3>Dataframe Summary</h3>
+<div id="tobacco-1" class="section level4">
+<h4>tobacco</h4>
 <table>
 <colgroup>
 <col width="12%"></col>
 <col width="15%"></col>
 <col width="40%"></col>
-<col width="19%"></col>
+<col width="20%"></col>
 <col width="11%"></col>
 </colgroup>
 <thead>
 <tr class="header">
 <th>Variable</th>
 <th>Properties</th>
-<th>Stats or Factor Levels</th>
-<th>Frequencies</th>
+<th>Stats / Values</th>
+<th>Freqs, % Valid</th>
 <th>N Valid</th>
 </tr>
 </thead>
@@ -425,7 +438,7 @@ IQR (CV) = 5.8 (0.17)</td>
 <td><p>mean (sd) = 45.2 (16.27)<br />
 min &lt; med &lt; max = 18 &lt; 45 &lt; 75<br />
 IQR (CV) = 29 (0.36)</p></td>
-<td><p>59 distinct val</p></td>
+<td><p>59 distinct values</p></td>
 <td><p>281/300 (93.7%)</p></td>
 </tr>
 <tr class="odd">
@@ -452,7 +465,7 @@ IQR (CV) = 29 (0.36)</p></td>
 <td><p>mean (sd) = 25.24 (4.38)<br />
 min &lt; med &lt; max = 15.13 &lt; 25.29 &lt; 38.39<br />
 IQR (CV) = 5.8 (0.17)</p></td>
-<td><p>282 distinct val</p></td>
+<td><p>282 distinct values</p></td>
 <td><p>281/300 (93.7%)</p></td>
 </tr>
 <tr class="odd">
@@ -481,6 +494,7 @@ IQR (CV) = 5.8 (0.17)</p></td>
 </tr>
 </tbody>
 </table>
+</div>
 </div>
 </div>
 <div id="redirecting-output" class="section level2">
@@ -534,7 +548,7 @@ $extensive.is
 <div id="learn-more-and-stay-up-to-date" class="section level2">
 <h2>Learn more and stay up-to-date</h2>
 <p>Check the <a href="https://github.com/dcomtois/summarytools">project’s page</a> for more examples; from there you can also submit feature requests or signal problems you might encounter.</p>
-<p>To install the package in its development version, use <code>devtools::install_github(dcomtois/summarytools)</code>.</p>
+<p>To install the package in its development version, use <code>devtools::install_github('dcomtois/summarytools')</code>.</p>
 <div id="final-note" class="section level3">
 <h3>Final note</h3>
 <p>The source of this document is an .Rmd file; <em>knitr</em>’s chunk option <code>results</code> has been set to <code>'asis'</code>, to make sure formatting is not coming from <em>knitr</em> itself.</p>
