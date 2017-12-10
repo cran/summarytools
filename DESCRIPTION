@@ -1,30 +1,26 @@
 Package: summarytools
 Type: Package
-Title: Dataframe Summaries, Frequency Tables and Descriptive Stats with
-        Various Output Formats
-Version: 0.6.5
-Date: 2016-12-04
+Title: Tools to Quickly and Neatly Summarize Data
+Version: 0.8.0
+Date: 2017-12-08
 Author: Dominic Comtois
 Maintainer: Dominic Comtois <dominic.comtois@gmail.com>
-Description: Built around three key functions: 1) freq() generates
-    frequency tables reporting counts and proportions (including cumulative) for factors
-    and other discrete data; 2) descr() gives all common central tendency statistics and 
-    measures of dispersion for numerical data; 3) dfSummary() gives as much information
-    as possible on a dataframe's columns in a legible table. freq() and
-    descr() support weights, and all three functions support 'Hmisc' or 'pander' labels.  
-    A variety of output formats are available (plain text, 'rmarkdown' and HTML).
-    An additional misc function, what.is(), displays all common properties of an object
-    (its class, type, mode, attributes, etc.) and extends the base is() function, 
-    checking the object against most is.() functions.
-Depends: htmltools
-Imports: Hmisc, methods, pryr, pander, xtable, rapportools, rstudioapi,
-        utils, matrixStats
+Description: Data frame summaries, cross-tabulations,
+  weight-enabled frequency tables and common univariate
+  statistics in concise tables available in a variety of
+  formats (plain ASCII, Rmarkdown and HTML). A good point-
+  of-entry for exploring data, both for experienced and
+  inexperienced R users.
+Imports: htmltools, matrixStats, methods, pander, pryr, rapportools,
+        RCurl, utils
+Suggests: rstudioapi, knitr, rmarkdown
+LazyData: true
 License: GPL-2
 URL: https://github.com/dcomtois/summarytools
 BugReports: https://github.com/dcomtois/summarytools/issues
-Suggests: knitr, rmarkdown
-VignetteBuilder: knitr
+Encoding: UTF-8
+RoxygenNote: 6.0.1
 NeedsCompilation: no
-Packaged: 2016-12-05 00:24:41 UTC; dominic
+Packaged: 2017-12-08 23:14:44 UTC; dominic
 Repository: CRAN
-Date/Publication: 2016-12-05 08:27:47
+Date/Publication: 2017-12-10 12:34:30 UTC
