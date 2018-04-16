@@ -1,19 +1,25 @@
 #' Print Method for Objects of Class \code{summarytools}.
 #'
 #' Display \code{summarytools} objects in the console, in Web Browser or in
-#'  \emph{RStudio}'s Viewer, or create formatted output files.
+#'  \emph{RStudio}'s Viewer, or write content to file.
 #'
 #' @aliases print view
 #'
 #' @usage
 #'  \method{print}{summarytools}(x, method = "pander", file = "",
-#'    append = FALSE, report.title = NA, escape.pipe = FALSE,
-#'    html.table.class = NA, custom.css = NA, silent = FALSE,
-#'    footnote = "default", \dots)
+#'    append = FALSE, report.title = NA, table.classes = NA,
+#'    bootstrap.css = st_options('bootstrap.css'), 
+#'    custom.css = st_options('custom.css'), silent = FALSE, 
+#'    footnote = st_options('footnote'), 
+#'    escape.pipe = st_options('escape.pipe'), \dots)
 #'
 #' view(x, method = "viewer", file = "", append = FALSE,
-#'   report.title = NA, escape.pipe = FALSE, html.table.class = NA,
-#'   custom.css = NA, silent = FALSE, footnote = "default", \dots)
+#'   report.title = NA, table.classes = NA, 
+#'   bootstrap.css = st_options('bootstrap.css'), 
+#'   custom.css = st_options('custom.css'), silent = FALSE, 
+#'   footnote = st_options('footnote'), 
+#'   escape.pipe = st_options('escape.pipe'), \dots)
+#'    
 #'
 #' @param x A summarytools object that was generated with \code{\link{freq}},
 #'   \code{\link{descr}}, \code{\link{ctable}} or \code{\link{dfSummary}}.
@@ -28,22 +34,28 @@
 #' @param report.title For \emph{html} reports, this goes into the
 #'   \code{<title>} tag. Defaults to \code{NA}, in which case \code{<title>}
 #'   will be generic.
-#' @param escape.pipe Logical. Set to \code{TRUE} when using
-#'   \code{style='grid'} and \code{file} argument is supplied if the intent
-#'   is to generate a text file that can be converted to other formats using
-#'   \emph{Pandoc}.
-#' @param html.table.class All \emph{Bootstrap CSS} classes can be used. It also allows
+#' @param table.classes Character.  Additionnal classes to assign to output tables. 
+#'   All \emph{Bootstrap CSS} classes can be used. It also allows
 #'   user-defined classes (see custom.css parameter). See \emph{details} section.
 #'   \code{NA} by default.
+#' @param bootstrap.css Logical. Set to \code{FALSE} to omit Bootstap css. \code{TRUE} 
+#'   by default. To change this default value globally, see \code{\link{st_options}}.
 #' @param custom.css Path to a user-defined \emph{.css} file. Classes
-#'   defined in this file can be used in the \code{html.table.classes}
-#'   parameter. \code{NA} by default.
+#'   defined in this file can be used in the \code{table.classes}
+#'   parameter. \code{NA} by default. To change this default value globally, see 
+#'   \code{\link{st_options}}. 
 #' @param silent Hide console messages (such as ignored variables or \code{NaN}
 #'   to \code{NA} transformations).
 #' @param footnote footnote in \emph{html} output. When set to \dQuote{default},
 #'   this is the package name and version, R version, and current date). Has no effect
 #'   when \code{method} is \dQuote{pander}. Set to \dQuote{default}, provide your own text,
-#'   or set to \code{NA} to omit.
+#'   or set to \code{NA} to omit. To change this default value globally, see 
+#'   \code{\link{st_options}}.
+#' @param escape.pipe Logical. Set to \code{TRUE} when using
+#'   \code{style='grid'} and \code{file} argument is supplied if the intent
+#'   is to generate a text file that can be converted to other formats using
+#'   \emph{Pandoc}. To change this default value globally, see 
+#'   \code{\link{st_options}}.
 #' @param \dots Additional arguments can be used to override parameters stored
 #'   as attributes in the object being printed. See \emph{Details} section.
 #'
@@ -57,43 +69,34 @@
 #'   \code{\link[pander]{pander}}. See \emph{References} section
 #'   for a list of all available \emph{pander} options.
 #'
-#' \emph{Html} tables use \emph{Bootstrap Cascading Style Sheets}.
-#'   To add custom \emph{CSS}, edit the \emph{custom.css} file located in package's
-#'   \emph{includes/stylesheets} directory.
-#'
 #' To print objects of class \dQuote{by}, use \code{\link{view}}. This
 #'   function also makes it more practical to generate \emph{html} files (see
 #'   examples).
 #'
-#' Default values for \code{html.table.attributes} are as follows:
-#'   \describe{
-#'     \item{freq}{\code{'class="table table-striped table-bordered freq-table"'}}
-#'     \item{ctable}{\code{'class="table table-striped table-bordered cross-table"'}}
-#'     \item{descr}{\code{'class="table table-striped table-bordered desc-table"'}}
-#'     \item{dfSummary}{\code{'class="table table-striped table-bordered"'}}}
-#' When specifying this parameter, you must also state those attributes if you want them to be applied.
-#'
 #' The following additional arguments can be used to override
-#'   formatting and other attributes stored in the object to be printed:
+#'   formatting and other attributes stored in the object to be printed. Refer to the function's
+#'   documentation for details on these arguments.
 #'    \itemize{
-#'      \item \code{date}
 #'      \item \code{style}
-#'      \item \code{round.digits} (exception: dfSummary objects)
+#'      \item \code{round.digits} (except for \code{\link{dfSummary}} objects)
 #'      \item \code{justify}
 #'      \item \code{plain.ascii}
 #'      \item \code{missing}
-#'      \item \code{omit.headings}
-#'      \item \code{split.table}
-#'      \item \code{Dataframe}
-#'      \item \code{Dataframe.label}
-#'      \item \code{Variable}
-#'      \item \code{Variable.label}
-#'      \item \code{Variable.labels} (\code{\link{descr}} objects only)
-#'      \item \code{use.labels} (\code{\link{descr}} objects only)
 #'      \item \code{Data.type}
 #'      \item \code{Subset}
 #'      \item \code{Group}
 #'      \item \code{Weights}
+#'      \item \code{date}      
+#'      \item \code{omit.headings}
+#'      \item \code{split.tables}
+#'      \item \code{Dataframe}
+#'      \item \code{Dataframe.label}
+#'      \item \code{Variable}
+#'      \item \code{Variable.label}
+#'      \item \code{display.labels}
+#'      \item \code{display.type}
+#'      \item \code{totals} (\code{\link{freq}} and \code{\link{ctable}} objects)
+#'      \item \code{report.nas} (\code{\link{freq}} objects only)
 #'      \item \code{Row.variable} (\code{\link{ctable}} objects only)
 #'      \item \code{Col.variable} (\code{\link{ctable}} objects only)
 #'      \item \code{Row.variable.subset} (\code{\link{ctable}} objects only)
@@ -116,24 +119,26 @@
 #' @examples
 #'   \dontrun{
 #'   data(tobacco)
-#'   view(dfSummary(tobacco))
+#'   view(dfSummary(tobacco), footnote = NA)
 #'   }
 #'   data(exams)
-#'   print(freq(exams$gender))
-#'   print(descr(exams), "pander", style = "grid")
+#'   print(freq(exams$gender), style = 'rmarkdown')
+#'   print(descr(exams), omit.headings = TRUE)
 #'
 #' @keywords print methods
 #'
 #'@export
 print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
-                               report.title = NA, escape.pipe = FALSE,
-                               html.table.class = NA, custom.css = NA,
-                               silent = FALSE, footnote = "default", ...) {
-
+                               report.title = NA, table.classes = NA, 
+                               bootstrap.css = st_options('bootstrap.css'),
+                               custom.css = st_options('custom.css'), silent = FALSE, 
+                               footnote = st_options('footnote'), 
+                               escape.pipe = st_options('escape.pipe'), ...) {
 
   args_list <- match.call()
-
-  # Recup arguments from view() if present
+  
+  # Recup arguments from view() if present ------------------------------------
+  
   if ("open.doc" %in% names(args_list)) {
     open.doc <- args_list[["open.doc"]]
   } else {
@@ -153,7 +158,8 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
   }
 
 
-  # Parameter validation ---------------------------------------
+  # Parameter validation -----------------------------------------------------
+  
   method <- switch(tolower(substring(method, 1, 1)),
                    p = "pander",
                    b = "browser",
@@ -204,8 +210,8 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
     stop("'custom.css' argument must point to an existing file.")
   }
 
-  if ((!is.na(html.table.class) || !is.na(custom.css)) && method == "pander") {
-    stop("'html.table.class' and 'custom.css' options do not apply to method 'pander'")
+  if ((!is.na(table.classes) || !is.na(custom.css)) && method == "pander") {
+    stop("'table.classes' and 'custom.css' options do not apply to method 'pander'")
   }
 
   if (!silent %in% c(TRUE, FALSE)) {
@@ -213,24 +219,47 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
   }
 
   if (is.na(footnote)) {
-    footnote = ""
+    footnote <- ""
   }
 
   # Override of x's attributes ---------------------------------------------
   if ("date" %in% names(args_list)) {
     attr(x, "date") <- args_list$date
   }
-
-  # Formatting attributes
-  for (format_element in c("style", "round.digits", "justify",
-                           "plain.ascii", "missing", "omit.headings", "split.table",
-                           "display.type", "display.labels")) {
+  
+  # Override of formatting elements, first by looking at args_list (match.call()),
+  # then by looking at the match.call() from x to set global parameters that were
+  # not explicit in the latter.
+  overrided_args <- character()
+  for (format_element in c("style", "plain.ascii", "round.digits", "justify", 
+                           "missing", "omit.headings", "split.tables",
+                           "display.type", "display.labels", "totals", 
+                           "report.nas")) {
     if (format_element %in% names(args_list)) {
       attr(x, "formatting")[format_element] <- args_list[format_element]
+      overrided_args <- append(overrided_args, format_element)
+    }
+  }
+  
+  # Global options that apply to all types of summarytools objects
+  for (format_element in c("style", "plain.ascii", "round.digits", 
+                           "omit.headings", "display.labels")) {
+    if (!format_element %in% c(overrided_args, names(attr(x, "fn_call")))) {
+      attr(x, "formatting")[format_element] <- st_options(format_element)
+    }
+  }
+  
+  # Global options specific to one type of summarytools object
+  prefix <- paste0(attr(x, "st_type"), ".")
+  for (format_element in sub(prefix, "", 
+                             grep(prefix, names(st_options()), value = TRUE, fixed = TRUE),
+                             fixed = TRUE)) {
+    if (!format_element %in% c(overrided_args, names(attr(x, "fn_call")))) {
+      attr(x, "formatting")[format_element] <- st_options(paste0(prefix, format_element))
     }
   }
 
-  # Data info attributes
+  # Override of data info attributes
   for (data_info_element in c("Dataframe", "Dataframe.label",
                               "Variable", "Variable.label", 
                               "Variable.labels","Data.type",
@@ -246,7 +275,7 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
   # When style == 'rmarkdown', set plain.ascii to FALSE unless explicitly specified
   if (method == "pander" && attr(x, "formatting")$style == "rmarkdown" &&
       isTRUE(attr(x, "formatting")$plain.ascii) &&
-      (!"plain.ascii" %in% (names(match.call())))) {
+      (!"plain.ascii" %in% (names(args_list)))) {
     attr(x, "formatting")$plain.ascii <- FALSE
   }
 
@@ -273,20 +302,20 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
       for (e in elements) {
         if (e[[1]] %in% names(data_info)) {
           if (grepl(pattern = "label", e[[1]])) {
-            if (isTRUE(format_info[["display.labels"]])) {
+            if (isTRUE(format_info$display.labels)) {
               output[[length(output) + 1]] <<-
-                paste0("\n", add_hash(paste(e[[2]], data_info[[e[[1]]]], sep = ": "), h), "  ")
+                paste0("  \n", add_hash(paste(e[[2]], data_info[[e[[1]]]], sep = ": "), h), "  ")
               element_added <- TRUE
             }
           } else if (grepl(pattern = "type", e[[1]])) {
-            if (isTRUE(format_info[["display.type"]])) {
+            if (isTRUE(format_info$display.type)) {
               output[[length(output) + 1]] <<-
-                paste0("\n", add_hash(paste(e[[2]], data_info[[e[[1]]]], sep = ": "), h), "  ")
+                paste0("  \n", add_hash(paste(e[[2]], data_info[[e[[1]]]], sep = ": "), h), "  ")
               element_added <- TRUE
             }
           } else {
             output[[length(output) + 1]] <<-
-              paste0("\n", add_hash(paste(e[[2]], data_info[[e[[1]]]], sep = ": "), h), "  ")
+              paste0("  \n", add_hash(paste(e[[2]], data_info[[e[[1]]]], sep = ": "), h), "  ")
             element_added <- TRUE
           }
         }
@@ -296,7 +325,7 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
       for (e in elements) {
         if (e[[1]] %in% names(data_info)) {
           if (grepl(pattern = "label", e[[1]])) {
-            if (isTRUE(format_info[["display.labels"]])) {
+            if (isTRUE(format_info$display.labels)) {
               div_str_item <- paste(paste0("<strong>",e[[2]],"</strong>"), data_info[[e[[1]]]], sep = ": ")
             } else {
               div_str_item <- NA
@@ -316,6 +345,7 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
           }
         }
       }
+      
       if (nchar(trimws(div_str)) > 0) {
         if (h == 0) {
           div_list[[length(div_list) + 1]] <<- HTML(div_str)
@@ -331,7 +361,7 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
   # Function to vertically align frequencies and proportions in ctables
   align_numbers <- function(counts, props) {
 
-    round.digits <- format_info[["round.digits"]]
+    round.digits <- format_info$round.digits
     res <- sapply(1:ncol(counts), function(colnum) {
 
       if ("Weights" %in% names(data_info)) {
@@ -384,10 +414,10 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
 
   stpath <- find.package("summarytools")
 
-  # Build footer note
+  # Build footnote
   if (method %in% c("browser", "viewer", "render") && footnote == "default") {
       footnote <- paste0("<p>Generated by <a href='https://github.com/dcomtois/summarytools'>",
-                       "summarytools</a> package version ",
+                       "summarytools</a> ",
                        packageVersion(pkg = "summarytools"),
                        " (<a href='https://www.r-project.org/'>R</a> version ", getRversion(), ")",
                        "<br/>", Sys.Date(),"</p>")
@@ -410,38 +440,68 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
     }
 
 
-    if ("Variable" %in% names(data_info)) {
-      sect_title[[2]] <- paste0(data_info$Variable, "  ")
+    if (all(c("Variable", "Dataframe") %in% names(data_info))) {
+      sect_title[[2]] <- paste(data_info$Dataframe, data_info$Variable, sep = "$")
+    } else if ("Variable" %in% names(data_info)) {
+      sect_title[[2]] <- data_info$Variable
     } else {
-      sect_title[[2]] <- ""
+      sect_title[[2]] <-""
     }
 
+    if (!format_info$report.nas) {
+      x[nrow(x), 1] <- x[nrow(x), 1] - x[nrow(x) -1, 1]
+      x <- x[-(nrow(x)-1),1:3]
+      colnames(x) <- c("Freq", "%", "% Cum.")
+    }
+    
+    if (!format_info$totals) {
+      x <- x[-nrow(x),]
+    }
+    
     if(method=="pander") {
+      
+      # freq objects, method = pander -----------------------------------------------------
 
       output <- list()
 
       if (group.only ||
-          ("by.first" %in% names(data_info) && !as.logical(data_info$by.first))) {
+          ("by.first" %in% names(data_info) && 
+           (!as.logical(data_info$by.first) || format_info$omit.headings))) {
         he_added <- add_head_element(list(c("Group", "Group")), h = 0)
+        
+      } else if (var.only) {
+        
+        if (!format_info$omit.headings) {
+
+          if (sect_title[[2]] != "") {
+            if (format_info$plain.ascii) {
+              output[[length(output) + 1]] <- paste0("\nVariable: ", sect_title[[2]], "  ")
+            } else {
+              output[[length(output) + 1]] <- paste0("\n**Variable:** ", sect_title[[2]], "  ")
+            }
+          }
+          
+          he_added <- add_head_element(list(c("Variable.label", "Label"),
+                                            c("Data.type", "Type")),
+                                       h = 0)
+        }
+        
       } else {
 
         if (!format_info$omit.headings) {
           if (sect_title[[1]] != "") {
-            output[[1]] <- add_hash(sect_title[[1]], 2)
+            output[[1]] <- add_hash(sect_title[[1]], 3)
           }
   
           if (sect_title[[2]] != "") {
-            #output[[length(output) + 1]] <- paste0("\n",add_hash(sect_title[[2]], 4))
             if (format_info$plain.ascii) {
               output[[length(output) + 1]] <- paste0("\n", sect_title[[2]], "  ")
             } else {
-              output[[length(output) + 1]] <- paste0("\n**", sect_title[[2]], "**  ")
+              output[[length(output) + 1]] <- paste0("\n**Variable:** ", sect_title[[2]], "  ")
             }
           }
   
-          he_added <- add_head_element(list(c("Variable.label", "Variable Label"),
-                                            c("Dataframe", "Data frame"),
-                                            c("Dataframe.label", "Data Frame Label"),
+          he_added <- add_head_element(list(c("Variable.label", "Label"),
                                             c("Data.type", "Type"),
                                             c("Weights", "Weights"),
                                             c("Subset", "Subset"),
@@ -460,13 +520,14 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
       freq_table <- format(x = round(x, format_info$round.digits),
                            trim = FALSE,
                            nsmall = format_info$round.digits,
-                           #digits = format_info$round.digits,
                            justify = justify)
 
-      # Put NA in irrelevant cells so that pander recognizes them as such
-      freq_table[nrow(freq_table)-1, 2] <- NA
-      freq_table[nrow(freq_table)-1, 3] <- NA
-
+      if (format_info$report.nas) {
+        # Put NA in relevant cells so that pander recognizes them as such
+        freq_table[nrow(freq_table) - as.numeric(format_info$totals), 2] <- NA
+        freq_table[nrow(freq_table) - as.numeric(format_info$totals), 3] <- NA
+      }
+      
       # Remove .00 digits in Freq column when weights are not used
       if (!"Weights" %in% names(data_info))
         freq_table[ ,1] <- sub("\\.0+", "", freq_table[,1])
@@ -482,7 +543,7 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
                                  plain.ascii = format_info$plain.ascii,
                                  justify = justify,
                                  missing = format_info$missing,
-                                 split.table = Inf),
+                                 split.tables = Inf),
                             attr(x, "user_fmt"))
 
       output[[length(output) + 1]]  <-
@@ -498,26 +559,16 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
 
     } else {
 
-      # freq objects - method viewer / browser / render ---------------------------------------------
+      # freq objects - method viewer / browser / render -----------------------------------
 
       table_head <- list()
-
-      table_head[[1]] <- list(tags$th("", colspan = 2),
-                              tags$th("Valid", colspan = 2),
-                              tags$th("Total", colspan = 2))
-      table_head[[2]] <- list(tags$th(ifelse(is.factor(x), "Factor Levels", "Values")),
-                              tags$th("Freq"),
-                              tags$th("%"),
-                              tags$th(HTML("% Cumul")),
-                              tags$th("%"),
-                              tags$th(HTML("% Cumul")))
-
+      
       justify <- switch(tolower(substring(format_info$justify, 1, 1)),
                         l = "left",
                         c = "center",
                         d = "center",
                         r = "right")
-
+        
       table_rows <- list()
 
       for (ro in seq_len(nrow(x))) {
@@ -546,15 +597,44 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
         }
       }
 
-      freq_table_html <-
-        tags$table(
-          tags$thead(tags$tr(table_head[[1]]),
-                     tags$tr(table_head[[2]])),
-          tags$tbody(table_rows),
-          class = ifelse(!is.na(html.table.class),
-                         html.table.class,
-                         "table table-striped table-bordered freq-table")
-        )
+      if (format_info$report.nas) {
+        table_head[[1]] <- list(tags$th("", colspan = 2),
+                                tags$th("Valid", colspan = 2),
+                                tags$th("Total", colspan = 2))
+        table_head[[2]] <- list(tags$th(data_info$Variable),
+                                tags$th("Freq"),
+                                tags$th("%"),
+                                tags$th(HTML("% Cumul")),
+                                tags$th("%"),
+                                tags$th(HTML("% Cumul")))
+
+        freq_table_html <-
+          tags$table(
+            tags$thead(tags$tr(table_head[[1]]),
+                       tags$tr(table_head[[2]])),
+            tags$tbody(table_rows),
+            class = paste("table table-striped table-bordered",
+                          "st-table st-table-striped st-table-bordered st-freq-table",
+                          ifelse(is.na(table.classes), "", table.classes)))
+        
+      } else {
+
+        # no reporting of missing values (NA)
+        table_head <- list(tags$th(data_info$Variable),
+                           tags$th("Freq"),
+                           tags$th("%"),
+                           tags$th(HTML("% Cumul")))
+        
+        freq_table_html <-
+          tags$table(
+            tags$thead(tags$tr(table_head)),
+            tags$tbody(table_rows),
+            class = paste("table table-striped table-bordered",
+                          "st-table st-table-striped st-table-bordered st-freq-table-nomiss",
+                          ifelse(is.na(table.classes), "", table.classes))
+          )
+      }
+
 
       # Cleanup extra spacing and linefeeds in html to correct layout issues
       freq_table_html <- as.character(freq_table_html)
@@ -569,8 +649,30 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
       # Prepare the main "div" for the html report
       div_list <- list()
 
-      if (group.only) {
+      if (group.only ||
+          ("by.first" %in% names(data_info) && 
+           (!as.logical(data_info$by.first) || format_info$omit.headings))) {
+        
         he_added <- add_head_element(list(c("Group", "Group")), h = 0)
+      
+      } else if (var.only) {
+
+        if (!format_info$omit.headings) {
+          if (sect_title[[2]] != "") {
+            if (method != "render") {
+              div_list[[length(div_list) + 1]] <- h4(sect_title[[2]])
+              he_added <- add_head_element(list(c("Variable.label", "Variable Label"),
+                                                c("Data.type", "Type")), h = 0)
+            } else {
+              he_added <- add_head_element(list(c("Variable", "Variable"),
+                                                c("Variable.label", "Variable Label"),
+                                                c("Data.type", "Type")), h = 0)
+            }
+          }
+        }
+
+        div_list[[length(div_list) + 1]] <- HTML(text = "<br/>")
+        
       } else {
 
         if (!format_info$omit.headings) {
@@ -580,17 +682,25 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
           }
   
           if (sect_title[[2]] != "") {
-            div_list[[length(div_list) + 1]] <- h4(sect_title[[2]])
+            if (method != "render") {
+              div_list[[length(div_list) + 1]] <- h4(sect_title[[2]])
+              he_added <- add_head_element(list(c("Variable.label", "Label"),
+                                                c("Data.type", "Type"),
+                                                c("Weights", "Weights"),
+                                                c("Subset", "Subset"),
+                                                c("Group", "Group")),
+                                           h = 0)
+            } else {
+              he_added <- add_head_element(list(c("Variable", "Variable"),
+                                                c("Variable.label", "Label"),
+                                                c("Data.type", "Type"),
+                                                c("Weights", "Weights"),
+                                                c("Subset", "Subset"),
+                                                c("Group", "Group")),
+                                           h = 0)
+            }
           }
   
-          he_added <- add_head_element(list(c("Variable.label", "Variable Label"),
-                                            c("Dataframe", "Data Frame"),
-                                            c("Dataframe.label", "Data Frame Label"),
-                                            c("Data.type", "Type"),
-                                            c("Weights", "Weights"),
-                                            c("Subset", "Subset"),
-                                            c("Group", "Group")),
-                                       h = 0)
           div_list[[length(div_list) + 1]] <- HTML(text = "<br/>")
         }
       }
@@ -604,20 +714,32 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
 
   } else if(attr(x, "st_type") == "ctable") {
 
-    # ctable objects -----------------------------------------------------------------------------------------
+    # ctable objects -------------------------------------------------------------------------
+    
     sect_title <- list()
     sect_title[[1]] <- "Cross-Tabulation"
 
+    if (!format_info$totals) {
+      x$cross_table <- x$cross_table[which(rownames(x$cross_table) != 'Total'), 
+                                     which(colnames(x$cross_table) != 'Total')]
+      if (attr(x, "proportions") != "None") {
+        x$proportions <- x$proportions[which(rownames(x$proportions) != 'Total'), 
+                                     which(colnames(x$proportions) != 'Total')]
+      }
+    }
+
     if(attr(x, "proportions") %in% c("Row", "Column", "Total")) {
-      sect_title[[1]] <- paste0(sect_title[[1]], " / ", attr(x, "proportions"), " proportions")
+      sect_title[[1]] <- paste0(sect_title[[1]], " / ", attr(x, "proportions"), " Proportions")
       cross_table <- align_numbers(x$cross_table, x$proportions)
     } else {
       cross_table <- x$cross_table
     }
 
-    sect_title[[2]] <- paste0(data_info$Row.variable, " * ", data_info$Col.variable, "  ")
+    sect_title[[2]] <- data_info$Row.x.Col
 
     if(method == "pander") {
+      
+      # ctable objects, method = pander --------------------------------------------------------
       output <- list()
 
       if (group.only  ||
@@ -628,15 +750,16 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
         
         if (!format_info$omit.headings) {
           
-          output[[1]] <- add_hash(sect_title[[1]], 2)
+          output[[1]] <- add_hash(sect_title[[1]], 3)
 
-          if (format_info$plain.ascii) {
-            output[[2]] <- paste0("\n", sect_title[[2]])
-          } else {
-            output[[2]] <- paste0("\n", "**", sect_title[[2]], "**")
-          }
+          # if (format_info$plain.ascii) {
+          #   output[[2]] <- paste0("\n", sect_title[[2]])
+          # } else {
+          #   output[[2]] <- paste0("\n", "**", sect_title[[2]], "**")
+          # }
   
-          he_added <- add_head_element(list(c("Dataframe", "Data Frame"),
+          he_added <- add_head_element(list(c("Row.x.Col", "Variables"),
+                                            c("Dataframe", "Data Frame"),
                                             c("Dataframe.label", "Data Frame Label"),
                                             c("Subset", "Subset"),
                                             c("Row.variable.subset", "Row Var Subset"),
@@ -646,9 +769,12 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
         }
       }
 
-      pander_args <- append(list(style = format_info[["style"]],
-                                 plain.ascii = format_info[["plain.ascii"]],
-                                 justify = format_info[["justify"]]),
+      output[[length(output) + 1]] <- "\n  "
+      
+      pander_args <- append(list(style = format_info$style,
+                                 plain.ascii = format_info$plain.ascii,
+                                 justify = format_info$justify,
+                                 split.tables = format_info$split.tables),
                             attr(x, "user_fmt"))
 
       # do not use argument keep.trailing.zeros = TRUE b/c of issue with pander + ftable
@@ -666,14 +792,15 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
     } else {
 
       # ctable objects - method viewer / browser / render  ------------------------------
+
       dnn <- names(dimnames(cross_table))
 
       table_head <- list()
       table_head[[1]] <- list(tags$th(""),
                               tags$th(dnn[2],
-                                      colspan = ncol(cross_table) -
-                                        as.numeric("Total" %in% colnames(cross_table))))
-      if ("Total" %in% colnames(cross_table)) {
+                                      colspan = ncol(cross_table) - as.numeric(format_info$totals)))
+      
+      if (format_info$totals) {
         table_head[[1]][[3]] <- tags$th("")
       }
 
@@ -683,6 +810,8 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
         if (nchar(cn) > 12) {
           cn <- smart_split(cn, 12)
         }
+        cn <- sub("<", "&lt;", cn, fixed = TRUE)
+        cn <- sub(">", "&gt;", cn, fixed = TRUE)
         table_head[[2]][[length(table_head[[2]]) + 1]] <- tags$th(HTML(cn), align = "center")
       }
 
@@ -701,10 +830,10 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
             table_row[[length(table_row) + 1]] <- tags$td(tags$span(cell))
           } else {
             # Proportions exist
-            cell <- gsub(" ", "&nbsp;" , cross_table[ro,co])
-            cell <-  sub("(", "&nbsp;(&nbsp;", cell, fixed = TRUE)
-            cell <-  sub(")", "&nbsp;)", cell, fixed = TRUE)
-            cell <-  sub("%", "&#37;"  , cell, fixed = TRUE)
+            cell <- sub("\\( *", "("     , cross_table[ro,co])
+            cell <- sub(" *\\)", ")"     , cell)
+            cell <- gsub(" "   , "&nbsp;", cell)
+            cell <- sub("%"    , "&#37;" , cell, fixed = TRUE)
 
             table_row[[length(table_row) + 1]] <- tags$td(tags$span(HTML(cell)))
           }
@@ -725,28 +854,40 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
             tags$tbody(
               table_rows
             ),
-            class = ifelse(!is.na(html.table.class),
-                           html.table.class,
-                           "table table-bordered cross-table")
+            class = paste("table table-bordered st-table st-table-bordered st-cross-table",
+                          ifelse(is.na(table.classes), "", table.classes))
           )
 
-      #cross_table_html <- as.character(cross_table_html)
       div_list <- list()
+      
       if (group.only) {
         he_added <- add_head_element(list(c("Group", "Group")), h = 0)
+        
       } else {
+        
         if (!format_info$omit.headings) {
           div_list[[1]] <- h3(sect_title[[1]])
-          div_list[[2]] <- h4(sect_title[[2]])
-  
-          he_added <- add_head_element(list(c("Dataframe", "Data Frame"),
-                                            c("Subset", "Subset"),
-                                            c("Group", "Group")),
-                                       h = 0)
+          
+          if (method == 'render') {
+            he_added <- add_head_element(list(c("Row.x.Col", "Variables"),
+                                              c("Dataframe", "Data Frame"),
+                                              c("Subset", "Subset"),
+                                              c("Group", "Group")),
+                                         h = 0)
+            
+          } else {
+            div_list[[2]] <- h4(sect_title[[2]])
+            he_added <- add_head_element(list(c("Dataframe", "Data Frame"),
+                                              c("Subset", "Subset"),
+                                              c("Group", "Group")),
+                                         h = 0)
+            
+          }
         }
       }
       
       div_list[[length(div_list) + 1]] <- cross_table_html
+      
       if (footnote != "") {
         div_list[[length(div_list) + 1]] <- HTML(text = footnote)
       }
@@ -754,7 +895,7 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
 
   } else if(attr(x, "st_type") == "descr") {
 
-    # descr objects -------------------------------------------------------------------------------------------
+    # descr objects ------------------------------------------------------------------------
 
     if(!silent && !group.only && 
        (!"by.first" %in% names(data_info) || as.logical(data_info["by.last"]) == TRUE) &&
@@ -770,10 +911,16 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
       sect_title[[1]] <- "Descriptive Statistics  "
     }
 
-    if ("Variable" %in% names(data_info)) {
+    if (all(c("Variable", "Dataframe") %in% names(data_info))) {
+      sect_title[[2]] <- paste(data_info$Dataframe, data_info$Variable, sep = "$")
+    } else if ("Variable" %in% names(data_info)) {
       sect_title[[2]] <- data_info$Variable
-    }  else {
-      sect_title[[2]] <- ""
+    } else {
+      sect_title[[2]] <-""
+    }
+    
+    if ("byvar" %in% names(data_info)) {
+      sect_title[[2]] <- paste(sect_title[[2]], "by", data_info$byvar)
     }
 
     justify <- switch(tolower(substring(format_info$justify, 1, 1)),
@@ -782,11 +929,14 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
                       r = "right")
 
     if(method=="pander") {
+      
+      # descr object, pander method -----------------------------------------------------
 
       output <- list()
 
       if (group.only ||
-          ("by.first" %in% names(data_info) && !as.logical(data_info$by.first))) {
+          ("by.first" %in% names(data_info) && 
+           (!as.logical(data_info$by.first) || format_info$omit.headings))) {
         he_added <- add_head_element(list(c("Group", "Group"),
                                           c("N.Obs", "N")),
                                      h = 0)
@@ -799,28 +949,42 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
             if (format_info$plain.ascii) {
               output[[length(output) + 1]] <- paste0("\n", sect_title[[2]], "  ")
             } else {
-              output[[length(output) + 1]] <- paste0("\n**", sect_title[[2]], "**  ")
+              output[[length(output) + 1]] <- paste0("\n**Variable:** ", sect_title[[2]], "  ")
             }
           }
   
-          he_added <- add_head_element(list(c("Variable.label", "Variable Label"),
-                                            c("Dataframe", "Data Frame"),
-                                            c("Dataframe.label", "Data Frame Label"),
-                                            c("Weights", "Weights"),
-                                            c("Subset", "Subset"),
-                                            c("Group", "Group"),
-                                            c("N.Obs", "N")),
-                                       h = 0)
+          if ("Variable" %in% names(data_info)) {
+            he_added <- add_head_element(list(c("Variable.label", "Label"),
+                                              c("Weights", "Weights"),
+                                              c("Subset", "Subset"),
+                                              c("Group", "Group"),
+                                              c("N.Obs", "N")),
+                                         h = 0)
+            
+          } else {
+            he_added <- add_head_element(list(c("Dataframe", "Data Frame"),
+                                              c("Dataframe.label", "Label"),
+                                              c("Weights", "Weights"),
+                                              c("Subset", "Subset"),
+                                              c("Group", "Group"),
+                                              c("N.Obs", "N")),
+                                         h = 0)
+          }
         }
       }
       
+      # if ('byvar' %in% names(data_info) && !data_info$transpose) {
+      #   colnames(x)[1] <- paste(data_info$byvar, "=", colnames(x)[1])
+      # }
+      
       # Format numbers (avoids inconsistencies with pander rounding digits)
-      x <- format(round(x, format_info[["round.digits"]]),
-                  nsmall = format_info[["round.digits"]])
+      x <- format(round(x, format_info$round.digits),
+                  nsmall = format_info$round.digits)
 
-      pander_args <- append(list(style = format_info[["style"]],
-                                 plain.ascii = format_info[["plain.ascii"]],
-                                 justify = justify),
+      pander_args <- append(list(style        = format_info$style,
+                                 plain.ascii  = format_info$plain.ascii,
+                                 split.tables = format_info$split.tables,
+                                 justify      = justify),
                             attr("x", "user_fmt"))
 
       output[[length(output) + 1]] <-
@@ -838,13 +1002,34 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
     } else {
 
       # descr objects - method viewer / browser / render --------------------------
-      table_head <- list(tags$th(""))
+      
+      if ("byvar" %in% names(data_info) && !data_info$transpose) {
+        table_head <- list()
+        table_head[[1]] <- list(tags$th(""),
+                                tags$th(data_info$byvar,
+                                        colspan = ncol(x)))
 
-      for(cn in colnames(x)) {
-        if (nchar(cn) > 12) {
-          cn <- smart_split(cn, 12)
+        table_head[[2]] <-  list(tags$th()) #d(tags$strong(data_info$Variable), align = "center"))
+
+        for(cn in colnames(x)) {
+          if (nchar(cn) > 12) {
+            cn <- smart_split(cn, 12)
+          }
+          cn <- sub("<", "&lt;", cn, fixed = TRUE)
+          cn <- sub(">", "&gt;", cn, fixed = TRUE)
+          table_head[[2]][[length(table_head[[2]]) + 1]] <- tags$th(HTML(cn), align = "center")
+        } 
+        
+      } else {
+
+        table_head <- list(tags$th(""))
+        
+        for(cn in colnames(x)) {
+          if (nchar(cn) > 12) {
+            cn <- smart_split(cn, 12)
+          }
+          table_head[[length(table_head) + 1]] <- tags$th(HTML(cn), align = "center")
         }
-        table_head[[length(table_head) + 1]] <- tags$th(HTML(cn), align = "center")
       }
 
       table_rows <- list()
@@ -870,15 +1055,33 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
         }
       }
 
-      descr_table_html <-
+      if ("byvar" %in% names(data_info) && !data_info$transpose) {
+        descr_table_html <-
+          tags$table(
+            tags$thead(
+              tags$tr(table_head[[1]]),
+              tags$tr(table_head[[2]])
+            ),
+            tags$tbody(
+              table_rows
+            ),
+            class = paste("table table-bordered table-striped",
+                          "st-table st-table-bordered st-table-striped st-freq-table st-descr-table",
+                          ifelse(is.na(table.classes), "", table.classes))
+          )
+        
+      } else {
+        
+        descr_table_html <-
           tags$table(
             tags$thead(tags$tr(table_head)),
             tags$tbody(table_rows),
-            class = ifelse(!is.na(html.table.class),
-                           html.table.class,
-                           "table table-striped table-bordered desc-table")
+            class = paste("table table-bordered table-striped",
+                          "st-table st-table-bordered st-table-striped st-descr-table",
+                          ifelse(is.na(table.classes), "", table.classes))
           )
-
+      }
+      
       # Cleanup some extra spacing and linefeeds in html to avoid weirdness in layout
       descr_table_html <- as.character(descr_table_html)
       descr_table_html <- gsub(pattern = "\\s*(\\-?\\d*)\\s*(<span|</td>)",
@@ -913,14 +1116,23 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
             div_list[[2]] <- h4(sect_title[[2]])
           }
   
-          he_added <- add_head_element(list(c("Variable.label", "Variable Label"),
-                                            c("Dataframe", "Data Frame"),
-                                            c("Dataframe.label", "Data Frame Label"),
-                                            c("Weights", "Weights"),
-                                            c("Subset", "Subset"),
-                                            c("Group", "Group"),
-                                            c("N.Obs", "N")),
-                                       h = 0)
+          if ("Variable" %in% names(data_info)) {
+            he_added <- add_head_element(list(c("Variable.label", "Label"),
+                                              c("Weights", "Weights"),
+                                              c("Subset", "Subset"),
+                                              c("Group", "Group"),
+                                              c("N.Obs", "N")),
+                                         h = 0)
+          } else {
+            he_added <- add_head_element(list(c("Dataframe", "Data Frame"),
+                                              c("Dataframe.label", "Label"),
+                                              c("Weights", "Weights"),
+                                              c("Subset", "Subset"),
+                                              c("Group", "Group"),
+                                              c("N.Obs", "N")),
+                                         h = 0)
+            
+          }
         }
       }
       
@@ -952,28 +1164,44 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
         x <- x[,-which(names(x) == "Graph")]
       }
       
+      # Check that style is not 'simple'
+      if (format_info$style == 'simple') {
+        format_info$style <- 'multiline'
+      }
+      
       output <- list()
 
-      # Escape symbols for words between <>'s to allow <NA> or factor
-      # levels such as <ABC> to be rendered correctly
-      if(!format_info[["plain.ascii"]]) {
+      if(!format_info$plain.ascii) {
+        # Escape symbols for words between <>'s to allow <NA> or factor
+        # levels such as <ABC> to be rendered correctly
         if("Label" %in% names(x)) {
           x[["Label"]] <- gsub(pattern = "\\<(\\w*)\\>", replacement = "\\\\<\\1\\\\>",
                                x = x[["Label"]], perl=TRUE)
         }
+        
         x[["Stats / Values"]] <- gsub(pattern = "\\<(\\w*)\\>", replacement = "\\\\<\\1\\\\>",
-                                      x = x[["Stats / Values"]], perl=TRUE)
-        x[["Stats / Values"]] <- gsub(pattern = "\n", replacement = " \\\\ \n",
                                       x = x[["Stats / Values"]], perl=TRUE)
         x[["Freqs (% of Valid)"]] <- gsub(pattern = "\\<(\\w*)\\>", replacement = "\\\\<\\1\\\\>",
                                           x = x[["Freqs (% of Valid)"]], perl=TRUE)
-        x[["Freqs (% of Valid)"]] <- gsub(pattern = "\n", replacement = " \\\\ \n",
+        
+
+        # Remove leading characters used for alignment in plain.ascii 
+        x[["Freqs (% of Valid)"]] <- gsub(pattern = "^\\\\ *", replacement = "",
                                           x = x[["Freqs (% of Valid)"]], perl=TRUE)
+        
+        x[["Freqs (% of Valid)"]] <- gsub(pattern = "\\n\\\\ *", replacement = "\n",
+                                      x = x[["Freqs (% of Valid)"]], perl=TRUE)
+        
+        # Remove txt histograms b/c not supported in rmarkdown (for now)
+        if ("Text Graph" %in% names(x)) {
+          x[["Text Graph"]][which(grepl('[:.]', x[["Text Graph"]]))] <- ""
+        }
+        
       }
 
       if (!format_info$omit.headings) {
         if (sect_title[[1]] != "") {
-          output[[1]] <- add_hash(sect_title[[1]], 2)
+          output[[1]] <- add_hash(sect_title[[1]], 3)
         }
         
         if (sect_title[[2]] != "") {
@@ -990,11 +1218,11 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
                                      h = 0)
       }
 
-      pander_args <- append(list(style = format_info[["style"]],
-                                 plain.ascii = format_info[["plain.ascii"]],
-                                 justify = format_info[["justify"]],
-                                 split.cells = format_info[["split.cells"]],
-                                 split.table = format_info[["split.table"]],
+      pander_args <- append(list(style        = format_info$style,
+                                 plain.ascii  = format_info$plain.ascii,
+                                 justify      = format_info$justify,
+                                 split.cells  = format_info$split.cells,
+                                 split.tables = format_info$split.tables,
                                  keep.line.breaks = TRUE),
                             attr(x, "user_fmt"))
 
@@ -1005,7 +1233,7 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
           ),
           collapse = "\n")
 
-      if (isTRUE(escape.pipe) && format_info[["style"]] == "grid") {
+      if (isTRUE(escape.pipe) && format_info$style == "grid") {
         output[[length(output)]] <- gsub("\\|","\\\\|", output[[length(output)]])
       }
 
@@ -1034,17 +1262,22 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
         table_row <- list()
         for (co in seq_len(ncol(x))) {
           cell <- x[ro,co]
+          cell <- gsub('\\\\\n', '\n', cell)
           if (colnames(x)[co] %in% c("No", "Valid", "Missing")) {
-            #cell <- HTML(gsub("  \n","<br/>", htmlEscape(cell)))
             table_row[[length(table_row) + 1]] <- tags$td(cell, align = "center")
-          } else if (colnames(x)[co] %in% c("Variable", "Label", "Properties",
-                                            "Stats / Values", "Freqs (% of Valid)")) {
-            #cell <- HTML(gsub("  \n","<br/>", htmlEscape(cell)))
+          } else if (colnames(x)[co] %in% c("Variable", "Label", "Properties", "Stats / Values")) {
+            cell <- gsub('(\\d+)\\\\\\.', '\\1.', cell)
+            table_row[[length(table_row) + 1]] <- tags$td(cell, align = "left")
+          } else if (colnames(x)[co] == "Freqs (% of Valid)") {
+            cell <- gsub("\\\\", " ", cell)
+            cell <- gsub(" *(\\d|\\:)", "\\1", cell)
+            cell <- gsub("\\:", " : ", cell)
             table_row[[length(table_row) + 1]] <- tags$td(cell, align = "left")
           } else if (colnames(x)[co] == "Graph") {
             table_row[[length(table_row) + 1]] <- tags$td(HTML(cell), align = "center", border = "0")
           }
         }
+        
         table_rows[[length(table_rows) + 1]] <- tags$tr(table_row)
       }
 
@@ -1053,9 +1286,9 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
         tags$table(
           tags$thead(tags$tr(table_head)),
           tags$tbody(table_rows),
-          class = ifelse(!is.na(html.table.class),
-                         html.table.class,
-                         "table table-striped table-bordered multiline")
+          class = paste("table table-striped table-bordered",
+                        "st-table st-table-striped st-table-bordered st-multiline",
+                        ifelse(is.na(table.classes), "", table.classes))
         )
 
       dfs_table_html <- gsub(pattern = '(<th.*?>)\\s+(<strong>.*?</strong>)\\s+(</th>)',
@@ -1087,9 +1320,9 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
     }
   }
 
-  # Print or write to file - pander -------------------------------------------------------------------------
+  # Print or write to file - pander --------------------------------------------------------------
+  
   if (method == "pander") {
-    #cat("\n")
     cat(do.call(paste, output), file = file, append = append)
     if (file != "" && !isTRUE(silent)) {
       if (isTRUE(append))
@@ -1102,26 +1335,36 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
   } else {
 
     # Print or write to file - html --------------------------
+    
     if (isTRUE(append)) {
       f <- file(file, open = "r", encoding = "utf-8")
       html_content_in <- paste(readLines(f, warn = FALSE, encoding = "utf-8"), collapse="\n")
       close(f)
       top_part <- sub("(^.+)(</body>.+)", "\\1", html_content_in)
       bottom_part <- sub("(^.+)(</body>.+)", "\\2", html_content_in)
-      insert_part <- iconv(paste(capture.output(tags$div(class="container", div_list)), collapse="\n"), to = "utf-8")
+      insert_part <- iconv(paste(capture.output(tags$div(class="container st-container", div_list)), collapse="\n"), to = "utf-8")
       html_content <- paste(capture.output(cat(top_part, insert_part, bottom_part)), collapse="\n")
 
     } else {
 
-      html_content <-
-        tags$div(class="container",
-                 tags$head(tags$title(ifelse(is.na(report.title), sect_title, report.title)),
-                           #HTML(paste0('<link rel="icon" type="img/ico" href="', stpath, '/includes/favicon.ico">')),
-                           includeCSS(path = paste(stpath, "includes/stylesheets/bootstrap.min.css", sep="/")),
-                           includeCSS(path = paste(stpath, "includes/stylesheets/custom.css", sep="/")),
-                           if (!is.na(custom.css)) includeCSS(path = custom.css)),
-                 div_list
-        )
+      if (method %in% c("browser", "viewer")) {
+        html_content <-
+          tags$div(class="container st-container",
+                   #tags$br(),
+                   tags$head(tags$title(ifelse(is.na(report.title), sect_title, report.title)),
+                             if (isTRUE(bootstrap.css)) includeCSS(path = paste(stpath, "includes/stylesheets/bootstrap.min.css", sep="/")),
+                             includeCSS(path = paste(stpath, "includes/stylesheets/summarytools.css", sep="/")),
+                             if (!is.na(custom.css)) includeCSS(path = custom.css)),
+                   div_list)
+        
+      } else {
+        html_content <-
+          tags$div(class="container st-container",
+                   tags$head(includeCSS(path = paste(stpath, "includes/stylesheets/summarytools.css", sep="/")),
+                             if (!is.na(custom.css)) includeCSS(path = custom.css)),
+                   div_list)
+        
+      }
     }
 
     if (method == "render") {

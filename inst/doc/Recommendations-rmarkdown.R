@@ -1,40 +1,34 @@
-## ----setup, include=FALSE------------------------------------------------
-library(summarytools)
+## ---- include=FALSE------------------------------------------------------
 library(knitr)
-opts_chunk$set(comment=NA, prompt=FALSE, cache=FALSE, echo=TRUE)
+opts_chunk$set(comment=NA, prompt=FALSE, cache=FALSE, echo=TRUE, results='asis')
+library(summarytools)
 
-## ----freq_default, results='asis'----------------------------------------
-freq(tobacco$gender)
+## ------------------------------------------------------------------------
+#st_options('omit.headings', TRUE)
+st_options('bootstrap.css', FALSE)
+st_options('footnote', NA)
 
-## ----freq_default2, results='asis'---------------------------------------
-freq(tobacco$gender, plain.ascii = FALSE)
-
-## ----freq_rm, results='asis'---------------------------------------------
+## ------------------------------------------------------------------------
 freq(tobacco$gender, style = 'rmarkdown')
-freq(tobacco$gender, style = 'rmarkdown', omit.headings = TRUE)
 
-## ----descr_default, results='asis'---------------------------------------
-descr(tobacco)
+## ------------------------------------------------------------------------
+print(freq(tobacco$gender), method = 'render')
 
-## ----descr_default2, results='asis'--------------------------------------
-descr(tobacco, plain.ascii = FALSE)
-descr(tobacco$BMI, plain.ascii = FALSE)
+## ------------------------------------------------------------------------
+ctable(tobacco$gender, tobacco$smoker, style = 'rmarkdown')
 
-## ----descr_rm, results='asis'--------------------------------------------
-descr(tobacco, style = 'rmarkdown')
-descr(tobacco$BMI, style = 'rmarkdown')
-descr(tobacco$BMI, style = 'rmarkdown', omit.headings = TRUE)
-
-## ----descr_html, results='asis'------------------------------------------
-print(descr(tobacco), method = 'render')
-print(descr(tobacco$BMI), method = 'render')
-print(descr(tobacco, omit.headings = TRUE), method = 'render')
-
-## ----ctable_html, results='asis'-----------------------------------------
+## ----ctable_html---------------------------------------------------------
 print(ctable(tobacco$gender, tobacco$smoker), method = 'render')
-print(ctable(tobacco$gender, tobacco$smoker, omit.headings = TRUE), method = 'render')
+
+## ------------------------------------------------------------------------
+descr(tobacco, style = 'rmarkdown')
+
+## ------------------------------------------------------------------------
+print(descr(tobacco), method = 'render', table.classes = 'st-small')
 
 ## ----dfs_grid, results='asis'--------------------------------------------
-dfSummary(tobacco, style = 'grid', plain.ascii = FALSE, graph.col = FALSE)
-dfSummary(tobacco, style = 'grid', plain.ascii = FALSE, graph.col = FALSE, omit.headings = TRUE)
+dfSummary(tobacco, style = 'grid', plain.ascii = FALSE)
+
+## ------------------------------------------------------------------------
+print(dfSummary(tobacco, graph.magnif = 0.75), method = 'render')
 

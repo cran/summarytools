@@ -1,3 +1,18 @@
+Version 0.8.3
+-------------
+Introduced global options with st_options(). In all functions, argument 'split.table'
+becomes 'split.tables' as per changes in the 'pander' package. Argument 'omit.headings'
+added to all main functions. New logical options for freq(): 'totals' and 'display.nas'.
+In descr(), Q1 and Q3 were added; also, the order in the 'stats' argument is now retained
+in the output table. In dfSummary(): number alignment improvement, fixed frequencies not
+appearing when value 0 was present, fixed arguments 'valid.col' and 'na.col' being
+unresponsive, and fixed warnings when generating graphics columns. Also in dfSummary(),
+the 'graph.magnif' argument now allows shrinking or enlarging graphs. For the print() and
+view() functions, argument 'html.table.class' has changed to 'table.classes' and its usage
+is simplified (please refer to docs for details). CSS class 'st-small' can be used to
+make html tables smaller by slightly reducing font size and cell padding.
+
+
 Version 0.8.2
 -------------
 Fixed performance issue with numerical data having a large range. Fixed missing linefeeds
@@ -8,7 +23,7 @@ for lapply() when used with freq().
 Version 0.8.1
 -------------
 Added vignettes. Improved handling of negative column indexing by the parsing function. Fixed 
-issue with all-NA factors in dfSummary. Changed column for displaying "All NA's" for numerical
+issue with all-NA factors in dfSummary(). Changed column for displaying "All NA's" for numerical
 vectors in dfSummary. Fixed issue with graphs in dfSummary. Removed accentuated characters 
 from docs.
 

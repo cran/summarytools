@@ -5,26 +5,33 @@
 #'
 #' @param x Factor or vector
 #' @param round.digits Number of significant digits to display. Defaults
-#'   to \code{2}.
+#'   to \code{2} and can be set globally; see \code{\link{st_options}}.
 #' @param order Ordering of rows in frequency table; \dQuote{names} (default for
 #'   non-factors), \dQuote{levels} (default for factors), or \dQuote{freq}
 #'   (from most frequent to less frequent).
 #' @param style Style to be used by \code{\link[pander]{pander}} when rendering
-#'   output table; One of \dQuote{simple} (default), \dQuote{grid} or
-#'   \dQuote{rmarkdown}.
-#' @param plain.ascii Logical \code{\link[pander]{pander}} argument. When
+#'   output table; One of \dQuote{simple} (default), \dQuote{grid}, or \dQuote{rmarkdown} 
+#'   This option can be set globally; see \code{\link{st_options}}.
+#' @param plain.ascii Logical. \code{\link[pander]{pander}} argument; when
 #'   \code{TRUE}, no markup characters will be used (useful when printing
-#'   to console). Defaults to \code{TRUE} when \code{style} is \dQuote{simple},
-#'   and \code{FALSE} otherwise.
+#'   to console). Defaults to \code{TRUE} unless \code{style = 'rmarkdown'},
+#'   in which case it will be set to \code{FALSE} automatically. To change the default 
+#'   value globally, see \code{\link{st_options}}.
 #' @param justify String indicating alignment of columns. By default
 #'   (\dQuote{default}), \dQuote{right} is used for text tables and
 #'   \dQuote{center} is used for \emph{html} tables. You can force it to one
 #'   of \dQuote{left}, \dQuote{center}, or \dQuote{right}.
-#' @param omit.headings Logical. Set to \code{TRUE} to omit headings.
+#' @param totals Logical. Set to \code{FALSE} to hide totals from results. To change this
+#'   value globally, see \code{\link{st_options}}.
+#' @param report.nas Logical. Set to \code{FALSE} to turn off reporting of missing values.
+#'   To change this default value globally, see \code{\link{st_options}}.
 #' @param missing Characters to display in NA cells. Defaults to \dQuote{}.
 #' @param display.type Logical. Should variable type be displayed? Default is \code{TRUE}.
 #' @param display.labels Logical. Should variable / data frame labels be displayed?
-#'   Default is \code{TRUE}.
+#'   Default is \code{TRUE}. To change this default value globally, see 
+#'   \code{\link{st_options}}.
+#' @param omit.headings Logical. Set to \code{TRUE} to omit heading section. Can be set
+#'   globally via \code{\link{st_options}}.
 #' @param weights Vector of weights; must be of the same length as \code{x}.
 #' @param rescale.weights Logical parameter. When set to \code{TRUE}, the total
 #'   count will be the same as the unweighted \code{x}. \code{FALSE} by default.
@@ -34,28 +41,33 @@
 #'   by the \emph{print} method.
 #'
 #' @details The default \code{plain.ascii = TRUE} option is there to make results
-#'   appear cleaner in the console. To avoid rmarkdown rendering problems, the
+#'   appear cleaner in the console. To avoid rmarkdown rendering problems, this
 #'   option is automatically set to \code{FALSE} whenever
 #'   \code{style = "rmarkdown"} (unless \code{plain.ascii = TRUE} is made
-#'   explicit).
+#'   explicit in the function call).
 #'
 #' @examples
 #' data(tobacco)
 #' freq(tobacco$gender)
+#' freq(tobacco$gender, totals = FALSE)
+#' freq(tobacco$gender, display.nas = FALSE)
 #' freq(tobacco$gender, style="rmarkdown")
-#' with(tobacco, by(smoker, gender, freq))
-#'
+#' with(tobacco, view(by(diseased, smoker, freq), method = "pander"))
+#' 
 #' @seealso \code{\link[base]{table}}
 #'
 #' @keywords univar classes category
 #' @author Dominic Comtois, \email{dominic.comtois@@gmail.com}
 #' @export
-freq <- function(x, round.digits = 2, order = "names", style = "simple",
-                 plain.ascii = TRUE, justify = "default", omit.headings = FALSE,
-                 missing = "", display.type = TRUE, display.labels = TRUE,
-                 weights = NA, rescale.weights = FALSE, ...) {
+freq <- function(x, round.digits = st_options('round.digits'), order = "names", 
+                 style = st_options('style'), plain.ascii = st_options('plain.ascii'), 
+                 justify = "default", totals = st_options('freq.totals'), 
+                 report.nas = st_options('freq.report.nas'), missing = "", 
+                 display.type = TRUE, display.labels = st_options('display.labels'), 
+                 omit.headings = st_options('omit.headings'), weights = NA, 
+                 rescale.weights = FALSE, ...) {
 
-  # Parameter validation ---------------------------------------
+  # Parameter validation ------------------------------------------------------
 
   # if x is a data.frame with 1 column, extract this column as x
   if (!is.null(ncol(x)) && ncol(x)==1) {
@@ -98,7 +110,15 @@ freq <- function(x, round.digits = 2, order = "names", style = "simple",
   if (!justify %in% c("left", "center", "centre", "right", "default")) {
     stop("'justify' argument must be one of 'default', 'left', 'center', or 'right'")
   }
-
+  
+  if (!totals %in% c(TRUE, FALSE)) {
+    stop("'totals' argument must either be TRUE or FALSE")
+  }
+  
+  if (!report.nas %in% c(TRUE, FALSE)) {
+    stop("'report.nas' argument must either be TRUE or FALSE")
+  }
+  
   if (!omit.headings %in% c(TRUE, FALSE)) {
     stop("'omit.headings' argument must either be TRUE or FALSE")
   }
@@ -113,7 +133,7 @@ freq <- function(x, round.digits = 2, order = "names", style = "simple",
                    "print(x, file='a.txt') or view(x, file='a.html') instead"))
   }
 
-  # Replace NaN's by NA's (This simplifies matters a lot!)
+  # Replace NaN's by NA's (This simplifies matters a lot)
   if (NaN %in% x)  {
     message(paste(sum(is.nan(x)), "NaN value(s) converted to NA\n"))
     x[is.nan(x)] <- NA
@@ -136,7 +156,8 @@ freq <- function(x, round.digits = 2, order = "names", style = "simple",
       freq_table <- c(freq_table[-na_pos], freq_table[na_pos])
     }
 
-    # Change the name of the NA item (last) to avoid potential problems when echoing to console
+    # Change the name of the NA item (last) to avoid potential
+    # problems when echoing to console
     names(freq_table)[length(freq_table)] <- "<NA>"
 
     # calculate proportions (valid, i.e excluding NA's)
@@ -150,7 +171,7 @@ freq <- function(x, round.digits = 2, order = "names", style = "simple",
     P_tot <- prop.table(freq_table) * 100
   }
 
-  # Weights are used
+  # Weights are used ----------------------------------------------------------
   else {
 
     # Check that weights vector is of the right length
@@ -182,22 +203,26 @@ freq <- function(x, round.digits = 2, order = "names", style = "simple",
     P_tot <- prop.table(freq_table) * 100
   }
 
-  # Calculate cumulative proportions
+  # Calculate cumulative proportions ------------------------------------------
+  
   P_valid_cum <- cumsum(P_valid)
   P_valid_cum["<NA>"] <- NA
   P_tot_cum <- cumsum(P_tot)
 
-  # Combine the info to build the final frequency table
+  # Combine the info to build the final frequency table -----------------------
+  
   output <- cbind(freq_table, P_valid, P_valid_cum, P_tot, P_tot_cum)
   output <- rbind(output, c(colSums(output, na.rm = TRUE)[1:2], rep(100,3)))
   colnames(output) <- c("Freq", "% Valid", "% Valid Cum.", "% Total", "% Total Cum.")
   rownames(output) <- c(names(freq_table), "Total")
-
-  # Update the output class and attributes
+  
+  # Update the output class and attributes ------------------------------------
+  
   class(output) <- c("summarytools", class(output))
-  attr(output, "st_type") <- "freq"
-  attr(output, "fn_call") <- as.character(match.call())
-  attr(output, "date") <- Sys.Date()
+  
+  attr(output, "st_type")    <- "freq"
+  attr(output, "fn_call")    <- match.call()
+  attr(output, "date")       <- Sys.Date()
 
   data_info <-
     list(Dataframe       = ifelse("df_name"   %in% names(parse_info), parse_info$df_name  , NA),
@@ -224,10 +249,12 @@ freq <- function(x, round.digits = 2, order = "names", style = "simple",
                                      round.digits   = round.digits,
                                      plain.ascii    = plain.ascii,
                                      justify        = justify,
+                                     totals         = totals,
+                                     report.nas     = report.nas,
                                      missing        = missing,
-                                     omit.headings  = omit.headings,
                                      display.type   = display.type,
-                                     display.labels = display.labels)
+                                     display.labels = display.labels,
+                                     omit.headings  = omit.headings)
 
   attr(output, "user_fmt") <- list(... = ...)
 

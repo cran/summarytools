@@ -1,52 +1,91 @@
 ## ----setup, include=FALSE------------------------------------------------
-library(summarytools)
 library(knitr)
-opts_chunk$set(comment=NA, prompt=FALSE, cache=FALSE)
+opts_chunk$set(comment=NA, prompt=FALSE, cache=FALSE, results='asis')
+library(summarytools)
+st_options('footnote', NA)
 
-## ----barebones-----------------------------------------------------------
-freq(iris$Species)
+## ------------------------------------------------------------------------
+library(summarytools)
+freq(iris$Species, style = "rmarkdown")
 
-## ---- results='asis', echo=FALSE-----------------------------------------
-library(summarytools)  
-freq(tobacco$smoker, style='rmarkdown')
+## ------------------------------------------------------------------------
+freq(iris$Species, report.nas = FALSE, style = "rmarkdown", omit.headings = TRUE)
 
-## ----descr_md, results='asis'--------------------------------------------
-data(exams)
-descr(exams[ ,3:5], style='rmarkdown')
+## ------------------------------------------------------------------------
+with(tobacco, print(ctable(smoker, diseased), method = 'render'))
 
-## ----descr_md2, eval=FALSE-----------------------------------------------
-#  descr(exams, style = 'rmarkdown', transpose = TRUE)
+## ------------------------------------------------------------------------
+with(tobacco, 
+     print(ctable(smoker, diseased, prop = 'n', totals = FALSE), 
+           omit.headings = TRUE, method = "render"))
 
-## ----ctable2-------------------------------------------------------------
-with(tobacco, ctable(smoker, diseased, prop = 'n', totals = FALSE))
+## ------------------------------------------------------------------------
+descr(iris, style = "rmarkdown")
 
-## ----ctable1-------------------------------------------------------------
-with(tobacco, ctable(smoker, diseased, prop = 'r'))
+## ------------------------------------------------------------------------
+descr(iris, stats = c("mean", "sd", "min", "med", "max"), transpose = TRUE, 
+      omit.headings = TRUE, style = "rmarkdown")
 
-## ----render_html, results='asis'-----------------------------------------
-crosstable <- with(tobacco, ctable(smoker, diseased))
-print(crosstable, method='render', footnote = NA)
+## ---- eval=FALSE---------------------------------------------------------
+#  view(dfSummary(iris))
 
-## ----dfSummary1, results='asis'------------------------------------------
-dfSummary(tobacco, style='grid', plain.ascii = FALSE, graph.col = FALSE)
+## ------------------------------------------------------------------------
+dfSummary(tobacco, plain.ascii = FALSE, style = "grid")
 
-## ----redir, eval=FALSE---------------------------------------------------
-#  my_summary <- dfSummary(tobacco)
-#  print(my_summary, file = "tobacco.txt", style = "grid")  # Creates tobacco.txt
-#  my_stats <- descr(tobacco)
-#  print(my_stats, file="tobacco.txt", append = TRUE) # Appends results to tobacco.txt
+## ------------------------------------------------------------------------
+# First save the results
+iris_stats_by_species <- by(data = iris, 
+                            INDICES = iris$Species, 
+                            FUN = descr, stats = c("mean", "sd", "min", "med", "max"), 
+                            transpose = TRUE)
 
-## ----view_html, eval=FALSE-----------------------------------------------
-#  print(dfSummary(tobacco), method = 'browser')  # Displays results in default Web Browser
-#  print(dfSummary(tobacco), method = 'viewer')   # Displays results in RStudio's Viewer
-#  view(dfSummary(tobacco))                       # Same as line above -- view() is a wrapper function
+# Then use view(), like so:
+view(iris_stats_by_species, method = "pander", style = "rmarkdown")
 
-## ----create_html, eval=FALSE---------------------------------------------
-#  print(dfSummary(tobacco), file = '~/Documents/tobacco_summary.html')
+## ---- eval=FALSE---------------------------------------------------------
+#  view(iris_stats_by_species)
 
-## ----by_stats1, results='asis'-------------------------------------------
-stats <- by(data = exams$geography, INDICES = exams$gender, FUN = descr, style = 'rmarkdown')
-view(stats, method = 'pander')
+## ------------------------------------------------------------------------
+data(tobacco) # tobacco is an example dataframe included in the package
+BMI_by_age <- with(tobacco, 
+                   by(BMI, age.gr, descr, 
+                      stats = c("mean", "sd", "min", "med", "max")))
+view(BMI_by_age, "pander", style = "rmarkdown")
+
+## ------------------------------------------------------------------------
+BMI_by_age <- with(tobacco, 
+                   by(BMI, age.gr, descr,  transpose = TRUE,
+                      stats = c("mean", "sd", "min", "med", "max")))
+view(BMI_by_age, "pander", style = "rmarkdown", omit.headings = TRUE)
+
+## ---- eval=FALSE---------------------------------------------------------
+#  tobacco_subset <- tobacco[ ,c("gender", "age.gr", "smoker")]
+#  freq_tables <- lapply(tobacco_subset, freq)
+#  view(freq_tables, footnote = NA, file = 'freq-tables.html')
+
+## ---- eval=FALSE, tidy=FALSE---------------------------------------------
+#      knitr::opts_chunk$set(echo = TRUE, results = 'asis')
+
+## ---- eval=FALSE---------------------------------------------------------
+#  view(iris_stats_by_species, file = "~/iris_stats_by_species.html")
+
+## ---- eval=FALSE---------------------------------------------------------
+#  st_options()                      # display all global options' values
+#  st_options('round.digits')        # display only one option
+#  st_options('omit.headings', TRUE) # change an option's value
+#  st_options('footnote', NA)        # Turn off the footnote on all outputs.
+#                                    # This option was used prior to generating
+#                                    # the present document.
+
+## ------------------------------------------------------------------------
+age_stats <- freq(tobacco$age.gr)  # age_stats contains a regular output for freq 
+                                   # including headings, NA counts, and Totals
+print(age_stats, style = "rmarkdown", report.nas = FALSE, 
+                 totals = FALSE, omit.headings = TRUE)
+
+## ---- eval=FALSE---------------------------------------------------------
+#  view(dfSummary(tobacco), custom.css = 'path/to/custom.css',
+#       table.classes = 'table-condensed')
 
 ## ----what_is, warning=FALSE----------------------------------------------
 what.is(iris)

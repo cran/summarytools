@@ -4,43 +4,55 @@
 \alias{freq}
 \title{Frequency Tables for Factors and Other Discrete Data}
 \usage{
-freq(x, round.digits = 2, order = "names", style = "simple",
-  plain.ascii = TRUE, justify = "default", omit.headings = FALSE,
-  missing = "", display.type = TRUE, display.labels = TRUE,
-  weights = NA, rescale.weights = FALSE, ...)
+freq(x, round.digits = st_options("round.digits"), order = "names",
+  style = st_options("style"), plain.ascii = st_options("plain.ascii"),
+  justify = "default", totals = st_options("freq.totals"),
+  report.nas = st_options("freq.report.nas"), missing = "",
+  display.type = TRUE, display.labels = st_options("display.labels"),
+  omit.headings = st_options("omit.headings"), weights = NA,
+  rescale.weights = FALSE, ...)
 }
 \arguments{
 \item{x}{Factor or vector}
 
 \item{round.digits}{Number of significant digits to display. Defaults
-to \code{2}.}
+to \code{2} and can be set globally; see \code{\link{st_options}}.}
 
 \item{order}{Ordering of rows in frequency table; \dQuote{names} (default for
 non-factors), \dQuote{levels} (default for factors), or \dQuote{freq}
 (from most frequent to less frequent).}
 
 \item{style}{Style to be used by \code{\link[pander]{pander}} when rendering
-output table; One of \dQuote{simple} (default), \dQuote{grid} or
-\dQuote{rmarkdown}.}
+output table; One of \dQuote{simple} (default), \dQuote{grid}, or \dQuote{rmarkdown} 
+This option can be set globally; see \code{\link{st_options}}.}
 
-\item{plain.ascii}{Logical \code{\link[pander]{pander}} argument. When
+\item{plain.ascii}{Logical. \code{\link[pander]{pander}} argument; when
 \code{TRUE}, no markup characters will be used (useful when printing
-to console). Defaults to \code{TRUE} when \code{style} is \dQuote{simple},
-and \code{FALSE} otherwise.}
+to console). Defaults to \code{TRUE} unless \code{style = 'rmarkdown'},
+in which case it will be set to \code{FALSE} automatically. To change the default 
+value globally, see \code{\link{st_options}}.}
 
 \item{justify}{String indicating alignment of columns. By default
 (\dQuote{default}), \dQuote{right} is used for text tables and
 \dQuote{center} is used for \emph{html} tables. You can force it to one
 of \dQuote{left}, \dQuote{center}, or \dQuote{right}.}
 
-\item{omit.headings}{Logical. Set to \code{TRUE} to omit headings.}
+\item{totals}{Logical. Set to \code{FALSE} to hide totals from results. To change this
+value globally, see \code{\link{st_options}}.}
+
+\item{report.nas}{Logical. Set to \code{FALSE} to turn off reporting of missing values.
+To change this default value globally, see \code{\link{st_options}}.}
 
 \item{missing}{Characters to display in NA cells. Defaults to \dQuote{}.}
 
 \item{display.type}{Logical. Should variable type be displayed? Default is \code{TRUE}.}
 
 \item{display.labels}{Logical. Should variable / data frame labels be displayed?
-Default is \code{TRUE}.}
+Default is \code{TRUE}. To change this default value globally, see 
+\code{\link{st_options}}.}
+
+\item{omit.headings}{Logical. Set to \code{TRUE} to omit heading section. Can be set
+globally via \code{\link{st_options}}.}
 
 \item{weights}{Vector of weights; must be of the same length as \code{x}.}
 
@@ -59,16 +71,18 @@ proportions.
 }
 \details{
 The default \code{plain.ascii = TRUE} option is there to make results
-  appear cleaner in the console. To avoid rmarkdown rendering problems, the
+  appear cleaner in the console. To avoid rmarkdown rendering problems, this
   option is automatically set to \code{FALSE} whenever
   \code{style = "rmarkdown"} (unless \code{plain.ascii = TRUE} is made
-  explicit).
+  explicit in the function call).
 }
 \examples{
 data(tobacco)
 freq(tobacco$gender)
+freq(tobacco$gender, totals = FALSE)
+freq(tobacco$gender, display.nas = FALSE)
 freq(tobacco$gender, style="rmarkdown")
-with(tobacco, by(smoker, gender, freq))
+with(tobacco, view(by(diseased, smoker, freq), method = "pander"))
 
 }
 \seealso{
