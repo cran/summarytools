@@ -162,7 +162,7 @@ dfSummary <- function(x, round.digits = st_options('round.digits'),
           height = 100 * graph.magnif, units = "px", bg = "transparent")
       par("mar" = c(0.03,0.01,0.07,0.01))
       data <- data[!is.na(data)]
-      breaks_x <- pretty(range(data), n = min(nclass.FD(data), 250), min.n = 1)
+      breaks_x <- pretty(range(data), n = min(nclass.Sturges(data), 250), min.n = 1)
       hist_values <- suppressWarnings(hist(data, breaks = breaks_x, plot = FALSE))
       cl <- try(suppressWarnings(hist(data, freq = FALSE, breaks = breaks_x, axes = FALSE,
                                       xlab=NULL, ylab=NULL, main=NULL, col = "grey95", border = "grey65")),
@@ -201,7 +201,7 @@ dfSummary <- function(x, round.digits = st_options('round.digits'),
 
   txthist <- function(data) {
     data <- data[!is.na(data)]
-    breaks_x <- pretty(range(data), n = nclass.FD(data), min.n = 1)
+    breaks_x <- pretty(range(data), n = nclass.Sturges(data), min.n = 1)
     if (length(breaks_x) <= 10) {
       counts <- hist(data, breaks = breaks_x, plot = FALSE)$counts
     } else {
@@ -359,7 +359,7 @@ dfSummary <- function(x, round.digits = st_options('round.digits'),
         counts <- table(column_data, useNA = "no")
 
         # Report all frequencies when allowed by max.distinct.values
-        if (length(counts) <= max.distinct.values) {
+        if (length(counts) <= max.distinct.values + 1) {
           output[i,4] <- paste0(1:length(counts),"\\. ", names(counts), collapse="\\\n")
           props <- round(prop.table(counts), round.digits + 2)
           counts_props <- align_numbers(counts, props)
@@ -482,7 +482,7 @@ dfSummary <- function(x, round.digits = st_options('round.digits'),
           output[i,7] <- txtbarplot(prop.table(counts))
           
         } else {
-          output[i,4] <- paste(
+          output[i,4] <- paste0(
             "min : ", tmin <- min(column_data, na.rm = TRUE), "\\\n",
             "med : ", median(column_data, na.rm = TRUE), "\\\n",
             "max : ", tmax <- max(column_data, na.rm = TRUE), "\\\n",

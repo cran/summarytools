@@ -12,7 +12,7 @@
 
 <meta name="author" content="Dominic Comtois" />
 
-<meta name="date" content="2018-04-15" />
+<meta name="date" content="2018-06-07" />
 
 <title>Introduction to summarytools</title>
 
@@ -281,7 +281,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 <h1 class="title toc-ignore">Introduction to summarytools</h1>
 <h4 class="author"><em>Dominic Comtois</em></h4>
-<h4 class="date"><em>2018-04-15</em></h4>
+<h4 class="date"><em>2018-06-07</em></h4>
 
 
 
@@ -289,7 +289,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <ul>
 <li><code>freq()</code> : <strong>frequency tables</strong> with proportions, cumulative proportions and missing data information.</li>
 <li><code>ctable()</code> : <strong>cross-tabulations</strong> between two factors or any discrete data, with total, rows or columns proportions, as well as marginal totals.</li>
-<li><code>descr()</code> : <strong>descriptive (univariate) statistics</strong> for numerical vectors.</li>
+<li><code>descr()</code> : <strong>descriptive (univariate) statistics</strong> for numerical data.</li>
 <li><code>dfSummary()</code> : Extensive <strong>data frame summaries</strong> that facilitate data cleaning and firsthand evaluation.</li>
 </ul>
 <p>An emphasis has been put on both <em>what</em> and <em>how</em> results are presented, so that the package can serve both as a data exploration <em>and</em> reporting tool, which can be used either on its own for minimal reports, or along with larger sets of tools such as RStudio’s for <a href="http://rmarkdown.rstudio.com/">rmarkdown</a>, and <a href="https://yihui.name/knitr/">knitr</a>.</p>
@@ -1375,9 +1375,25 @@ IIIIIII</td>
 <h2>Getting Most Properties of an Object With <code>what.is()</code></h2>
 <p>When developing, we often use a number of functions to obtain an object’s properties. <code>what.is()</code> proposes to lump together the results of most of these functions (<code>class()</code>, <code>typeof()</code>, <code>attributes()</code> and others).</p>
 <div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb24-1" data-line-number="1"><span class="kw">what.is</span>(iris)</a></code></pre></div>
-<p>$properties property value 1 class data.frame 2 typeof list 3 mode list 4 storage.mode list 5 dim 150 x 5 6 length 5 7 is.object TRUE 8 object.type S3 9 object.size 7088 Bytes</p>
-<p>$attributes.lengths names row.names class 5 150 1</p>
-<p>$extensive.is [1] “is.data.frame” “is.list” “is.object” “is.recursive” [5] “is.unsorted”</p>
+<pre><code>$properties
+      property      value
+1        class data.frame
+2       typeof       list
+3         mode       list
+4 storage.mode       list
+5          dim    150 x 5
+6       length          5
+7    is.object       TRUE
+8  object.type         S3
+9  object.size 7088 Bytes
+
+$attributes.lengths
+    names row.names     class 
+        5       150         1 
+
+$extensive.is
+[1] &quot;is.data.frame&quot; &quot;is.list&quot;       &quot;is.object&quot;     &quot;is.recursive&quot; 
+[5] &quot;is.unsorted&quot;  </code></pre>
 </div>
 <div id="limitations" class="section level2">
 <h2>Limitations</h2>
@@ -1390,11 +1406,11 @@ IIIIIII</td>
 <h2>Stay Up-to-date</h2>
 <p>Check out the <a href="https://github.com/dcomtois/summarytools">project’s page</a> - from there you can see the latest updates and also submit feature requests.</p>
 <p>To install the version of summarytools that is on CRAN, but that might have benefited from quick fixes:</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb25-1" data-line-number="1"><span class="kw">install.packages</span>(<span class="st">'devtools'</span>)</a>
-<a class="sourceLine" id="cb25-2" data-line-number="2"><span class="kw">library</span>(devtools)</a>
-<a class="sourceLine" id="cb25-3" data-line-number="3"><span class="kw">install_github</span>(<span class="st">'dcomtois/summarytools'</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1"><span class="kw">install.packages</span>(<span class="st">'devtools'</span>)</a>
+<a class="sourceLine" id="cb26-2" data-line-number="2"><span class="kw">library</span>(devtools)</a>
+<a class="sourceLine" id="cb26-3" data-line-number="3"><span class="kw">install_github</span>(<span class="st">'dcomtois/summarytools'</span>)</a></code></pre></div>
 <p>To install the package in its development version, use</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb26-1" data-line-number="1"><span class="kw">install_github</span>(<span class="st">'dcomtois/summarytools'</span>, <span class="dt">ref=</span><span class="st">'dev-current'</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb27-1" data-line-number="1"><span class="kw">install_github</span>(<span class="st">'dcomtois/summarytools'</span>, <span class="dt">ref=</span><span class="st">'dev-current'</span>)</a></code></pre></div>
 </div>
 <div id="final-notes" class="section level1">
 <h1>Final notes</h1>

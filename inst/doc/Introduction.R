@@ -87,6 +87,6 @@ print(age_stats, style = "rmarkdown", report.nas = FALSE,
 #  view(dfSummary(tobacco), custom.css = 'path/to/custom.css',
 #       table.classes = 'table-condensed')
 
-## ----what_is, warning=FALSE----------------------------------------------
+## ----what_is, warning=FALSE, results='markup'----------------------------
 what.is(iris)
 
