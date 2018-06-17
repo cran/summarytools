@@ -12,7 +12,7 @@
 
 <meta name="author" content="Dominic Comtois" />
 
-<meta name="date" content="2018-06-07" />
+<meta name="date" content="2018-06-17" />
 
 <title>Recommendations for Using summarytools With Rmarkdown</title>
 
@@ -20,257 +20,47 @@
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
-a.sourceLine { display: inline-block; line-height: 1.25; }
-a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; position: absolute; }
-.sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-code.sourceCode { white-space: pre-wrap; }
-a.sourceLine { text-indent: -1em; padding-left: 1em; }
-}
-pre.numberSource a.sourceLine
-  { position: relative; }
-pre.numberSource a.sourceLine:empty
-  { position: absolute; }
-pre.numberSource a.sourceLine::before
-  { content: attr(data-line-number);
-    position: absolute; left: -5em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-    color: #aaaaaa;
-  }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
-div.sourceCode
-  {  }
-@media screen {
-a.sourceLine::before { text-decoration: underline; }
-}
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
 </style>
 
 
 
-<style type="text/css">body {
-background-color: #fff;
-margin: 1em auto;
-max-width: 700px;
-overflow: visible;
-padding-left: 2em;
-padding-right: 2em;
-font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-font-size: 14px;
-line-height: 1.35;
-}
-#header {
-text-align: center;
-}
-#TOC {
-clear: both;
-margin: 0 0 10px 10px;
-padding: 4px;
-width: 400px;
-border: 1px solid #CCCCCC;
-border-radius: 5px;
-background-color: #f6f6f6;
-font-size: 13px;
-line-height: 1.3;
-}
-#TOC .toctitle {
-font-weight: bold;
-font-size: 15px;
-margin-left: 5px;
-}
-#TOC ul {
-padding-left: 40px;
-margin-left: -1.5em;
-margin-top: 5px;
-margin-bottom: 5px;
-}
-#TOC ul ul {
-margin-left: -2em;
-}
-#TOC li {
-line-height: 16px;
-}
-table {
-margin: 1em auto;
-border-width: 1px;
-border-color: #DDDDDD;
-border-style: outset;
-border-collapse: collapse;
-}
-table th {
-border-width: 2px;
-padding: 5px;
-border-style: inset;
-}
-table td {
-border-width: 1px;
-border-style: inset;
-line-height: 18px;
-padding: 5px 5px;
-}
-table, table th, table td {
-border-left-style: none;
-border-right-style: none;
-}
-table thead, table tr.even {
-background-color: #f7f7f7;
-}
-p {
-margin: 0.5em 0;
-}
-blockquote {
-background-color: #f6f6f6;
-padding: 0.25em 0.75em;
-}
-hr {
-border-style: solid;
-border: none;
-border-top: 1px solid #777;
-margin: 28px 0;
-}
-dl {
-margin-left: 0;
-}
-dl dd {
-margin-bottom: 13px;
-margin-left: 13px;
-}
-dl dt {
-font-weight: bold;
-}
-ul {
-margin-top: 0;
-}
-ul li {
-list-style: circle outside;
-}
-ul ul {
-margin-bottom: 0;
-}
-pre, code {
-background-color: #f7f7f7;
-border-radius: 3px;
-color: #333;
-white-space: pre-wrap; 
-}
-pre {
-border-radius: 3px;
-margin: 5px 0px 10px 0px;
-padding: 10px;
-}
-pre:not([class]) {
-background-color: #f7f7f7;
-}
-code {
-font-family: Consolas, Monaco, 'Courier New', monospace;
-font-size: 85%;
-}
-p > code, li > code {
-padding: 2px 0px;
-}
-div.figure {
-text-align: center;
-}
-img {
-background-color: #FFFFFF;
-padding: 2px;
-border: 1px solid #DDDDDD;
-border-radius: 3px;
-border: 1px solid #CCCCCC;
-margin: 0 5px;
-}
-h1 {
-margin-top: 0;
-font-size: 35px;
-line-height: 40px;
-}
-h2 {
-border-bottom: 4px solid #f7f7f7;
-padding-top: 10px;
-padding-bottom: 2px;
-font-size: 145%;
-}
-h3 {
-border-bottom: 2px solid #f7f7f7;
-padding-top: 10px;
-font-size: 120%;
-}
-h4 {
-border-bottom: 1px solid #f7f7f7;
-margin-left: 8px;
-font-size: 105%;
-}
-h5, h6 {
-border-bottom: 1px solid #ccc;
-font-size: 105%;
-}
-a {
-color: #0033dd;
-text-decoration: none;
-}
-a:hover {
-color: #6666ff; }
-a:visited {
-color: #800080; }
-a:visited:hover {
-color: #BB00BB; }
-a[href^="http:"] {
-text-decoration: underline; }
-a[href^="https:"] {
-text-decoration: underline; }
-
-code > span.kw { color: #555; font-weight: bold; } 
-code > span.dt { color: #902000; } 
-code > span.dv { color: #40a070; } 
-code > span.bn { color: #d14; } 
-code > span.fl { color: #d14; } 
-code > span.ch { color: #d14; } 
-code > span.st { color: #d14; } 
-code > span.co { color: #888888; font-style: italic; } 
-code > span.ot { color: #007020; } 
-code > span.al { color: #ff0000; font-weight: bold; } 
-code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
-</style>
-<style type="text/css">table.st-table > thead > tr {background-color: #eeeeee;}table.st-table th {text-align: center;}table.st-table td span {display: block;}.st-container {width: 100%;padding-right: 15px;padding-left: 15px;margin-right: auto;margin-left: auto;margin-top: 15px;}.st-multiline {white-space: pre;}.st-table {width: auto;table-layout: auto;margin-top: 20px;margin-bottom: 20px;max-width: 100%;background-color: transparent;border-collapse: collapse;}.st-table > thead > tr > th,.st-table > tbody > tr > th,.st-table > tfoot > tr > th,.st-table > thead > tr > td,.st-table > tbody > tr > td,.st-table > tfoot > tr > td {vertical-align: middle;}.st-table-bordered {border: 1px solid #bbbbbb;}.st-table-bordered > thead > tr > th,.st-table-bordered > tbody > tr > th,.st-table-bordered > tfoot > tr > th,.st-table-bordered > thead > tr > td,.st-table-bordered > tbody > tr > td,.st-table-bordered > tfoot > tr > td {border: 1px solid #cccccc;}.st-table-bordered > thead > tr > th,.st-table-bordered > thead > tr > td,.st-table thead > tr > th {border-bottom: none;}.st-table td,.st-table th {padding: 8px;}.st-table > thead > tr {background-color: #eeeeee;}.st-table-bordered > thead > tr > th,.st-table-bordered > tbody > tr > th,.st-table-bordered > thead > tr > td,.st-table-bordered > tbody > tr > td {border: 1px solid #cccccc;}.st-table-striped > tbody > tr:nth-of-type(odd) {background-color: #ffffff;}.st-table-striped > tbody > tr:nth-of-type(even) {background-color: #f8f8f8;}.st-table-striped > tbody > tr:nth-of-type(odd) {background-color: #ffffff;}.st-table-striped > tbody > tr:nth-of-type(even) {background-color: #f9f9f9;}.st-descr-table > thead > tr > th,.st-descr-table > tbody > tr > th,.st-descr-table > tfoot > tr > th,.st-descr-table > thead > tr > td,.st-descr-table > tbody > tr > td,.st-descr-table > tfoot > tr > td {padding-left: 24px;padding-right: 24px;word-wrap: break-word;}.st-descr-table td {text-align: right;}.st-freq-table,.st-freq-table-nomiss,.st-cross-table {border: medium none;}.st-freq-table > thead > tr:nth-child(1) > th:nth-child(1),.st-cross-table > thead > tr:nth-child(1) > th:nth-child(1),.st-cross-table > thead > tr:nth-child(1) > th:nth-child(3) {border:none;background-color: #ffffff;}.st-freq-table > thead > tr > th,.st-freq-table > tbody > tr > th,.st-freq-table > tfoot > tr > th,.st-freq-table > thead > tr > td,.st-freq-table > tbody > tr > td,.st-freq-table > tfoot > tr > td,.st-freq-table-nomiss > thead > tr > th,.st-freq-table-nomiss > tbody > tr > th,.st-freq-table-nomiss > tfoot > tr > th,.st-freq-table-nomiss > thead > tr > td,.st-freq-table-nomiss > tbody > tr > td,.st-freq-table-nomiss > tfoot > tr > td,.st-cross-table > thead > tr > th,.st-cross-table > tbody > tr > th,.st-cross-table > tfoot > tr > th,.st-cross-table > thead > tr > td,.st-cross-table > tbody > tr > td,.st-cross-table > tfoot > tr > td {padding-left: 20px;padding-right: 20px;}.st-cross-table td {text-align: center;}.st-small {font-size: 13px;}.st-small td,.st-small th {padding: 8px;}.st-small > thead > tr > th,.st-small > tbody > tr > th,.st-small > tfoot > tr > th,.st-small > thead > tr > td,.st-small > tbody > tr > td,.st-small > tfoot > tr > td {padding-left: 12px;padding-right: 12px;}</style>
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+<link href="data:text/css;charset=utf-8,table%2Est%2Dtable%20%3E%20thead%20%3E%20tr%20%7B%0Abackground%2Dcolor%3A%20%23eeeeee%3B%0A%7D%0Atable%2Est%2Dtable%20th%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Atable%2Est%2Dtable%20td%20span%20%7B%0Adisplay%3A%20block%3B%0A%7D%0A%2Est%2Dcontainer%20%7B%0Awidth%3A%20100%25%3B%0Apadding%2Dright%3A%2015px%3B%0Apadding%2Dleft%3A%2015px%3B%0Amargin%2Dright%3A%20auto%3B%0Amargin%2Dleft%3A%20auto%3B%0Amargin%2Dtop%3A%2015px%3B%0A%7D%0A%2Est%2Dmultiline%20%7B%0Awhite%2Dspace%3A%20pre%3B%0A%7D%0A%2Est%2Dtable%20%7B%0Awidth%3A%20auto%3B%0Atable%2Dlayout%3A%20auto%3B%0Amargin%2Dtop%3A%2020px%3B%0Amargin%2Dbottom%3A%2020px%3B%0Amax%2Dwidth%3A%20100%25%3B%0Abackground%2Dcolor%3A%20transparent%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0A%2Est%2Dtable%20%3E%20thead%20%3E%20tr%20%3E%20th%2C%0A%2Est%2Dtable%20%3E%20tbody%20%3E%20tr%20%3E%20th%2C%0A%2Est%2Dtable%20%3E%20tfoot%20%3E%20tr%20%3E%20th%2C%0A%2Est%2Dtable%20%3E%20thead%20%3E%20tr%20%3E%20td%2C%0A%2Est%2Dtable%20%3E%20tbody%20%3E%20tr%20%3E%20td%2C%0A%2Est%2Dtable%20%3E%20tfoot%20%3E%20tr%20%3E%20td%20%7B%0Avertical%2Dalign%3A%20middle%3B%0A%7D%0A%2Est%2Dtable%2Dbordered%20%7B%0Aborder%3A%201px%20solid%20%23bbbbbb%3B%0A%7D%0A%2Est%2Dtable%2Dbordered%20%3E%20thead%20%3E%20tr%20%3E%20th%2C%0A%2Est%2Dtable%2Dbordered%20%3E%20tbody%20%3E%20tr%20%3E%20th%2C%0A%2Est%2Dtable%2Dbordered%20%3E%20tfoot%20%3E%20tr%20%3E%20th%2C%0A%2Est%2Dtable%2Dbordered%20%3E%20thead%20%3E%20tr%20%3E%20td%2C%0A%2Est%2Dtable%2Dbordered%20%3E%20tbody%20%3E%20tr%20%3E%20td%2C%0A%2Est%2Dtable%2Dbordered%20%3E%20tfoot%20%3E%20tr%20%3E%20td%20%7B%0Aborder%3A%201px%20solid%20%23cccccc%3B%0A%7D%0A%2Est%2Dtable%2Dbordered%20%3E%20thead%20%3E%20tr%20%3E%20th%2C%0A%2Est%2Dtable%2Dbordered%20%3E%20thead%20%3E%20tr%20%3E%20td%2C%0A%2Est%2Dtable%20thead%20%3E%20tr%20%3E%20th%20%7B%0Aborder%2Dbottom%3A%20none%3B%0A%7D%0A%2Est%2Dtable%20td%2C%0A%2Est%2Dtable%20th%20%7B%0Apadding%3A%208px%3B%0A%7D%0A%2Est%2Dtable%20%3E%20thead%20%3E%20tr%20%7B%0Abackground%2Dcolor%3A%20%23eeeeee%3B%0A%7D%0A%2Est%2Dtable%2Dbordered%20%3E%20thead%20%3E%20tr%20%3E%20th%2C%0A%2Est%2Dtable%2Dbordered%20%3E%20tbody%20%3E%20tr%20%3E%20th%2C%0A%2Est%2Dtable%2Dbordered%20%3E%20thead%20%3E%20tr%20%3E%20td%2C%0A%2Est%2Dtable%2Dbordered%20%3E%20tbody%20%3E%20tr%20%3E%20td%20%7B%0Aborder%3A%201px%20solid%20%23cccccc%3B%0A%7D%0A%2Est%2Dtable%2Dstriped%20%3E%20tbody%20%3E%20tr%3Anth%2Dof%2Dtype%28odd%29%20%7B%0Abackground%2Dcolor%3A%20%23ffffff%3B%0A%7D%0A%2Est%2Dtable%2Dstriped%20%3E%20tbody%20%3E%20tr%3Anth%2Dof%2Dtype%28even%29%20%7B%0Abackground%2Dcolor%3A%20%23f8f8f8%3B%0A%7D%0A%2Est%2Dtable%2Dstriped%20%3E%20tbody%20%3E%20tr%3Anth%2Dof%2Dtype%28odd%29%20%7B%0Abackground%2Dcolor%3A%20%23ffffff%3B%0A%7D%0A%2Est%2Dtable%2Dstriped%20%3E%20tbody%20%3E%20tr%3Anth%2Dof%2Dtype%28even%29%20%7B%0Abackground%2Dcolor%3A%20%23f9f9f9%3B%0A%7D%0A%2Est%2Ddescr%2Dtable%20%3E%20thead%20%3E%20tr%20%3E%20th%2C%0A%2Est%2Ddescr%2Dtable%20%3E%20tbody%20%3E%20tr%20%3E%20th%2C%0A%2Est%2Ddescr%2Dtable%20%3E%20tfoot%20%3E%20tr%20%3E%20th%2C%0A%2Est%2Ddescr%2Dtable%20%3E%20thead%20%3E%20tr%20%3E%20td%2C%0A%2Est%2Ddescr%2Dtable%20%3E%20tbody%20%3E%20tr%20%3E%20td%2C%0A%2Est%2Ddescr%2Dtable%20%3E%20tfoot%20%3E%20tr%20%3E%20td%20%7B%0Apadding%2Dleft%3A%2024px%3B%0Apadding%2Dright%3A%2024px%3B%0Aword%2Dwrap%3A%20break%2Dword%3B%0A%7D%0A%2Est%2Ddescr%2Dtable%20td%20%7B%0Atext%2Dalign%3A%20right%3B%0A%7D%0A%2Est%2Dfreq%2Dtable%2C%0A%2Est%2Dfreq%2Dtable%2Dnomiss%2C%0A%2Est%2Dcross%2Dtable%20%7B%0Aborder%3A%20medium%20none%3B%0A%7D%0A%2Est%2Dfreq%2Dtable%20%3E%20thead%20%3E%20tr%3Anth%2Dchild%281%29%20%3E%20th%3Anth%2Dchild%281%29%2C%0A%2Est%2Dcross%2Dtable%20%3E%20thead%20%3E%20tr%3Anth%2Dchild%281%29%20%3E%20th%3Anth%2Dchild%281%29%2C%0A%2Est%2Dcross%2Dtable%20%3E%20thead%20%3E%20tr%3Anth%2Dchild%281%29%20%3E%20th%3Anth%2Dchild%283%29%20%7B%0Aborder%3Anone%3B%0Abackground%2Dcolor%3A%20%23ffffff%3B%0A%7D%0A%2Est%2Dfreq%2Dtable%20%3E%20thead%20%3E%20tr%20%3E%20th%2C%0A%2Est%2Dfreq%2Dtable%20%3E%20tbody%20%3E%20tr%20%3E%20th%2C%0A%2Est%2Dfreq%2Dtable%20%3E%20tfoot%20%3E%20tr%20%3E%20th%2C%0A%2Est%2Dfreq%2Dtable%20%3E%20thead%20%3E%20tr%20%3E%20td%2C%0A%2Est%2Dfreq%2Dtable%20%3E%20tbody%20%3E%20tr%20%3E%20td%2C%0A%2Est%2Dfreq%2Dtable%20%3E%20tfoot%20%3E%20tr%20%3E%20td%2C%0A%2Est%2Dfreq%2Dtable%2Dnomiss%20%3E%20thead%20%3E%20tr%20%3E%20th%2C%0A%2Est%2Dfreq%2Dtable%2Dnomiss%20%3E%20tbody%20%3E%20tr%20%3E%20th%2C%0A%2Est%2Dfreq%2Dtable%2Dnomiss%20%3E%20tfoot%20%3E%20tr%20%3E%20th%2C%0A%2Est%2Dfreq%2Dtable%2Dnomiss%20%3E%20thead%20%3E%20tr%20%3E%20td%2C%0A%2Est%2Dfreq%2Dtable%2Dnomiss%20%3E%20tbody%20%3E%20tr%20%3E%20td%2C%0A%2Est%2Dfreq%2Dtable%2Dnomiss%20%3E%20tfoot%20%3E%20tr%20%3E%20td%2C%0A%2Est%2Dcross%2Dtable%20%3E%20thead%20%3E%20tr%20%3E%20th%2C%0A%2Est%2Dcross%2Dtable%20%3E%20tbody%20%3E%20tr%20%3E%20th%2C%0A%2Est%2Dcross%2Dtable%20%3E%20tfoot%20%3E%20tr%20%3E%20th%2C%0A%2Est%2Dcross%2Dtable%20%3E%20thead%20%3E%20tr%20%3E%20td%2C%0A%2Est%2Dcross%2Dtable%20%3E%20tbody%20%3E%20tr%20%3E%20td%2C%0A%2Est%2Dcross%2Dtable%20%3E%20tfoot%20%3E%20tr%20%3E%20td%20%7B%0Apadding%2Dleft%3A%2020px%3B%0Apadding%2Dright%3A%2020px%3B%0A%7D%0A%2Est%2Dcross%2Dtable%20td%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%2Est%2Dsmall%20%7B%0Afont%2Dsize%3A%2013px%3B%0A%7D%0A%2Est%2Dsmall%20td%2C%0A%2Est%2Dsmall%20th%20%7B%0Apadding%3A%208px%3B%0A%7D%0A%2Est%2Dsmall%20%3E%20thead%20%3E%20tr%20%3E%20th%2C%0A%2Est%2Dsmall%20%3E%20tbody%20%3E%20tr%20%3E%20th%2C%0A%2Est%2Dsmall%20%3E%20tfoot%20%3E%20tr%20%3E%20th%2C%0A%2Est%2Dsmall%20%3E%20thead%20%3E%20tr%20%3E%20td%2C%0A%2Est%2Dsmall%20%3E%20tbody%20%3E%20tr%20%3E%20td%2C%0A%2Est%2Dsmall%20%3E%20tfoot%20%3E%20tr%20%3E%20td%20%7B%0Apadding%2Dleft%3A%2012px%3B%0Apadding%2Dright%3A%2012px%3B%0A%7D%0A" rel="stylesheet" type="text/css" />
 
 </head>
 
@@ -281,7 +71,7 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 <h1 class="title toc-ignore">Recommendations for Using summarytools With Rmarkdown</h1>
 <h4 class="author"><em>Dominic Comtois</em></h4>
-<h4 class="date"><em>2018-06-07</em></h4>
+<h4 class="date"><em>2018-06-17</em></h4>
 
 
 
@@ -301,9 +91,9 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <h2>Important Note</h2>
 <p><code>knitr</code> option <code>results = 'asis'</code> must be specified to get good results. This can be done globally via <code>opts_chunk$set(results='asis')</code>, or in the individual chunks.</p>
 <p>The following summarytools global options have been set:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co">#st_options('omit.headings', TRUE)</span></a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">st_options</span>(<span class="st">'bootstrap.css'</span>, <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw">st_options</span>(<span class="st">'footnote'</span>, <span class="ot">NA</span>)</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="co">#st_options('omit.headings', TRUE)</span>
+<span class="kw">st_options</span>(<span class="st">'bootstrap.css'</span>, <span class="ot">FALSE</span>)
+<span class="kw">st_options</span>(<span class="st">'footnote'</span>, <span class="ot">NA</span>)</code></pre></div>
 </div>
 <div id="using-method-render" class="section level2">
 <h2>Using method = ‘render’</h2>
@@ -336,7 +126,7 @@ output:
 <p><code>freq()</code> is best used with `style = ‘rmarkdown’; html rendering is also possible.</p>
 <div id="rmarkdown-style" class="section level2">
 <h2>Rmarkdown Style</h2>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw">freq</span>(tobacco<span class="op">$</span>gender, <span class="dt">style =</span> <span class="st">'rmarkdown'</span>)</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">freq</span>(tobacco<span class="op">$</span>gender, <span class="dt">style =</span> <span class="st">'rmarkdown'</span>)</code></pre></div>
 <div id="frequencies" class="section level3">
 <h3>Frequencies</h3>
 <p><strong>Variable:</strong> tobacco$gender<br />
@@ -391,7 +181,7 @@ output:
 </div>
 <div id="html-rendering" class="section level2">
 <h2>HTML Rendering</h2>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">print</span>(<span class="kw">freq</span>(tobacco<span class="op">$</span>gender), <span class="dt">method =</span> <span class="st">'render'</span>)</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(<span class="kw">freq</span>(tobacco<span class="op">$</span>gender), <span class="dt">method =</span> <span class="st">'render'</span>)</code></pre></div>
 <div class="container st-container">
 <h3>Frequencies  </h3>
 <strong>Variable</strong>: gender
@@ -459,7 +249,7 @@ output:
 <div id="rmarkdown-style-1" class="section level2">
 <h2>Rmarkdown Style</h2>
 <p>Tables with heading spanning over 2 rows are not fully supported in markdown (yet), but the result is getting close to acceptable.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw">ctable</span>(tobacco<span class="op">$</span>gender, tobacco<span class="op">$</span>smoker, <span class="dt">style =</span> <span class="st">'rmarkdown'</span>)</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ctable</span>(tobacco<span class="op">$</span>gender, tobacco<span class="op">$</span>smoker, <span class="dt">style =</span> <span class="st">'rmarkdown'</span>)</code></pre></div>
 <div id="cross-tabulation-row-proportions" class="section level3">
 <h3>Cross-Tabulation / Row Proportions</h3>
 <p><strong>Variables:</strong> gender * smoker<br />
@@ -495,7 +285,7 @@ output:
 <td align="right">489 (100.00%)</td>
 </tr>
 <tr class="odd">
-<td align="right"><NA></td>
+<td align="right">&lt;NA&gt;</td>
 <td align="right"></td>
 <td align="right">8 (36.36%)</td>
 <td align="right">14 (63.64%)</td>
@@ -515,7 +305,7 @@ output:
 <div id="html-rendering-1" class="section level2">
 <h2>HTML Rendering</h2>
 <p>For best results, use this method.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">print</span>(<span class="kw">ctable</span>(tobacco<span class="op">$</span>gender, tobacco<span class="op">$</span>smoker), <span class="dt">method =</span> <span class="st">'render'</span>)</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(<span class="kw">ctable</span>(tobacco<span class="op">$</span>gender, tobacco<span class="op">$</span>smoker), <span class="dt">method =</span> <span class="st">'render'</span>)</code></pre></div>
 <div class="container st-container">
 <h3>Cross-Tabulation / Row Proportions</h3>
 <strong>Variables</strong>: gender * smoker
@@ -605,7 +395,7 @@ output:
 <p><code>descr()</code> is also best used with <code>style = 'rmarkdown'</code>, and HTML rendering is also supported.</p>
 <div id="rmarkdown-style-2" class="section level2">
 <h2>Rmarkdown Style</h2>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw">descr</span>(tobacco, <span class="dt">style =</span> <span class="st">'rmarkdown'</span>)</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">descr</span>(tobacco, <span class="dt">style =</span> <span class="st">'rmarkdown'</span>)</code></pre></div>
 <pre><code>Non-numerical variable(s) ignored: gender, age.gr, smoker, diseased, disease</code></pre>
 <div id="descriptive-statistics" class="section level3">
 <h3>Descriptive Statistics</h3>
@@ -734,7 +524,7 @@ output:
 <div id="html-rendering-2" class="section level2">
 <h2>HTML Rendering</h2>
 <p>We’ll use table.classes = ‘st-small’ to show how it affects the table’s size (compare to the <code>freq()</code> table rendered earlier).</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw">print</span>(<span class="kw">descr</span>(tobacco), <span class="dt">method =</span> <span class="st">'render'</span>, <span class="dt">table.classes =</span> <span class="st">'st-small'</span>)</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(<span class="kw">descr</span>(tobacco), <span class="dt">method =</span> <span class="st">'render'</span>, <span class="dt">table.classes =</span> <span class="st">'st-small'</span>)</code></pre></div>
 <pre><code>Non-numerical variable(s) ignored: gender, age.gr, smoker, diseased, disease</code></pre>
 <div class="container st-container">
 <h3>Descriptive Statistics  </h3>
@@ -883,7 +673,7 @@ output:
 <div id="grid-style" class="section level2">
 <h2>Grid Style</h2>
 <p>This gives good results, although the histograms are not shown. This has to do with an unresolved issue, but we’re working hard to figure out a solution. Don’t forget to specify <code>plain.ascii = FALSE</code>, or you won’t get good results.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="kw">dfSummary</span>(tobacco, <span class="dt">style =</span> <span class="st">'grid'</span>, <span class="dt">plain.ascii =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">dfSummary</span>(tobacco, <span class="dt">style =</span> <span class="st">'grid'</span>, <span class="dt">plain.ascii =</span> <span class="ot">FALSE</span>)</code></pre></div>
 <div id="data-frame-summary" class="section level3">
 <h3>Data Frame Summary</h3>
 <p><strong>tobacco</strong><br />
@@ -892,11 +682,11 @@ output:
 <colgroup>
 <col width="4%"></col>
 <col width="14%"></col>
-<col width="25%"></col>
+<col width="24%"></col>
 <col width="19%"></col>
-<col width="18%"></col>
-<col width="9%"></col>
-<col width="9%"></col>
+<col width="19%"></col>
+<col width="8%"></col>
+<col width="8%"></col>
 </colgroup>
 <thead>
 <tr class="header">
@@ -911,121 +701,121 @@ output:
 </thead>
 <tbody>
 <tr class="odd">
-<td>1</td>
-<td>gender<br />
-[factor]</td>
-<td>1. F<br />
-2. M</td>
-<td>489 (50.0%)<br />
-489 (50.0%)</td>
-<td>IIIIIIIIIIIIIIII<br />
-IIIIIIIIIIIIIIII</td>
-<td>978<br />
-(97.8%)</td>
-<td>22<br />
-(2.2%)</td>
+<td><p>1</p></td>
+<td><p>gender<br />
+[factor]</p></td>
+<td><p>1. F<br />
+2. M</p></td>
+<td><p>489 (50.0%)<br />
+489 (50.0%)</p></td>
+<td><p>IIIIIIIIIIIIIIII<br />
+IIIIIIIIIIIIIIII</p></td>
+<td><p>978<br />
+(97.8%)</p></td>
+<td><p>22<br />
+(2.2%)</p></td>
 </tr>
 <tr class="even">
-<td>2</td>
-<td>age<br />
-[numeric]</td>
-<td>mean (sd) : 49.6 (18.29)<br />
+<td><p>2</p></td>
+<td><p>age<br />
+[numeric]</p></td>
+<td><p>mean (sd) : 49.6 (18.29)<br />
 min &lt; med &lt; max :<br />
 18 &lt; 50 &lt; 80<br />
-IQR (CV) : 32 (0.37)</td>
-<td>63 distinct val.</td>
+IQR (CV) : 32 (0.37)</p></td>
+<td><p>63 distinct val.</p></td>
 <td></td>
-<td>975<br />
-(97.5%)</td>
-<td>25<br />
-(2.5%)</td>
+<td><p>975<br />
+(97.5%)</p></td>
+<td><p>25<br />
+(2.5%)</p></td>
 </tr>
 <tr class="odd">
-<td>3</td>
-<td>age.gr<br />
-[factor]</td>
-<td>1. 18-34<br />
+<td><p>3</p></td>
+<td><p>age.gr<br />
+[factor]</p></td>
+<td><p>1. 18-34<br />
 2. 35-50<br />
 3. 51-70<br />
-4. 71 +</td>
-<td>258 (26.5%)<br />
+4. 71 +</p></td>
+<td><p>258 (26.5%)<br />
 241 (24.7%)<br />
 317 (32.5%)<br />
-159 (16.3%)</td>
-<td>IIIIIIIIIIIII<br />
+159 (16.3%)</p></td>
+<td><p>IIIIIIIIIIIII<br />
 IIIIIIIIIIII<br />
 IIIIIIIIIIIIIIII<br />
-IIIIIIII</td>
-<td>975<br />
-(97.5%)</td>
-<td>25<br />
-(2.5%)</td>
+IIIIIIII</p></td>
+<td><p>975<br />
+(97.5%)</p></td>
+<td><p>25<br />
+(2.5%)</p></td>
 </tr>
 <tr class="even">
-<td>4</td>
-<td>BMI<br />
-[numeric]</td>
-<td>mean (sd) : 25.73 (4.49)<br />
+<td><p>4</p></td>
+<td><p>BMI<br />
+[numeric]</p></td>
+<td><p>mean (sd) : 25.73 (4.49)<br />
 min &lt; med &lt; max :<br />
 8.83 &lt; 25.62 &lt; 39.44<br />
-IQR (CV) : 5.72 (0.17)</td>
-<td>974 distinct val.</td>
+IQR (CV) : 5.72 (0.17)</p></td>
+<td><p>974 distinct val.</p></td>
 <td></td>
-<td>974<br />
-(97.4%)</td>
-<td>26<br />
-(2.6%)</td>
+<td><p>974<br />
+(97.4%)</p></td>
+<td><p>26<br />
+(2.6%)</p></td>
 </tr>
 <tr class="odd">
-<td>5</td>
-<td>smoker<br />
-[factor]</td>
-<td>1. Yes<br />
-2. No</td>
-<td>298 (29.8%)<br />
-702 (70.2%)</td>
-<td>IIIIII<br />
-IIIIIIIIIIIIIIII</td>
-<td>1000<br />
-(100%)</td>
-<td>0<br />
-(0%)</td>
+<td><p>5</p></td>
+<td><p>smoker<br />
+[factor]</p></td>
+<td><p>1. Yes<br />
+2. No</p></td>
+<td><p>298 (29.8%)<br />
+702 (70.2%)</p></td>
+<td><p>IIIIII<br />
+IIIIIIIIIIIIIIII</p></td>
+<td><p>1000<br />
+(100%)</p></td>
+<td><p>0<br />
+(0%)</p></td>
 </tr>
 <tr class="even">
-<td>6</td>
-<td>cigs.per.day<br />
-[numeric]</td>
-<td>mean (sd) : 6.78 (11.88)<br />
+<td><p>6</p></td>
+<td><p>cigs.per.day<br />
+[numeric]</p></td>
+<td><p>mean (sd) : 6.78 (11.88)<br />
 min &lt; med &lt; max :<br />
 0 &lt; 0 &lt; 40<br />
-IQR (CV) : 11 (1.75)</td>
-<td>37 distinct val.</td>
+IQR (CV) : 11 (1.75)</p></td>
+<td><p>37 distinct val.</p></td>
 <td></td>
-<td>965<br />
-(96.5%)</td>
-<td>35<br />
-(3.5%)</td>
+<td><p>965<br />
+(96.5%)</p></td>
+<td><p>35<br />
+(3.5%)</p></td>
 </tr>
 <tr class="odd">
-<td>7</td>
-<td>diseased<br />
-[factor]</td>
-<td>1. Yes<br />
-2. No</td>
-<td>224 (22.4%)<br />
-776 (77.6%)</td>
-<td>IIII<br />
-IIIIIIIIIIIIIIII</td>
-<td>1000<br />
-(100%)</td>
-<td>0<br />
-(0%)</td>
+<td><p>7</p></td>
+<td><p>diseased<br />
+[factor]</p></td>
+<td><p>1. Yes<br />
+2. No</p></td>
+<td><p>224 (22.4%)<br />
+776 (77.6%)</p></td>
+<td><p>IIII<br />
+IIIIIIIIIIIIIIII</p></td>
+<td><p>1000<br />
+(100%)</p></td>
+<td><p>0<br />
+(0%)</p></td>
 </tr>
 <tr class="even">
-<td>8</td>
-<td>disease<br />
-[character]</td>
-<td>1. Hypertension<br />
+<td><p>8</p></td>
+<td><p>disease<br />
+[character]</p></td>
+<td><p>1. Hypertension<br />
 2. Cancer<br />
 3. Cholesterol<br />
 4. Heart<br />
@@ -1035,8 +825,8 @@ IIIIIIIIIIIIIIII</td>
 8. Hearing<br />
 9. Digestive<br />
 10. Hypotension<br />
-[ 3 others ]</td>
-<td>36 (16.2%)<br />
+[ 3 others ]</p></td>
+<td><p>36 (16.2%)<br />
 34 (15.3%)<br />
 21 ( 9.5%)<br />
 20 ( 9.0%)<br />
@@ -1046,8 +836,8 @@ IIIIIIIIIIIIIIII</td>
 14 ( 6.3%)<br />
 12 ( 5.4%)<br />
 11 ( 5.0%)<br />
-21 ( 9.4%)</td>
-<td>IIIIIIIIIIIIIIII<br />
+21 ( 9.4%)</p></td>
+<td><p>IIIIIIIIIIIIIIII<br />
 IIIIIIIIIIIIIII<br />
 IIIIIIIII<br />
 IIIIIIII<br />
@@ -1057,33 +847,35 @@ IIIIII<br />
 IIIIII<br />
 IIIII<br />
 IIII<br />
-IIIIIIIII</td>
-<td>222<br />
-(22.2%)</td>
-<td>778<br />
-(77.8%)</td>
+IIIIIIIII</p></td>
+<td><p>222<br />
+(22.2%)</p></td>
+<td><p>778<br />
+(77.8%)</p></td>
 </tr>
 <tr class="odd">
-<td>9</td>
-<td>samp.wgts<br />
-[numeric]</td>
-<td>mean (sd) : 1 (0.08)<br />
+<td><p>9</p></td>
+<td><p>samp.wgts<br />
+[numeric]</p></td>
+<td><p>mean (sd) : 1 (0.08)<br />
 min &lt; med &lt; max :<br />
 0.86 &lt; 1.04 &lt; 1.06<br />
-IQR (CV) : 0.19 (0.08)</td>
-<td>0.86!: 267 (26.7%)<br />
+IQR (CV) : 0.19 (0.08)</p></td>
+<td><p>0.86!: 267 (26.7%)<br />
 1.04!: 249 (24.9%)<br />
 1.05!: 324 (32.4%)<br />
 1.06!: 160 (16.0%)<br />
-! rounded</td>
+! rounded</p></td>
 <td>IIIIIIIIIIIII<br />
 IIIIIIIIIIII<br />
 IIIIIIIIIIIIIIII<br />
-IIIIIII</td>
-<td>1000<br />
-(100%)</td>
-<td>0<br />
-(0%)</td>
+IIIIIII<br />
+<br />
+</td>
+<td><p>1000<br />
+(100%)</p></td>
+<td><p>0<br />
+(0%)</p></td>
 </tr>
 </tbody>
 </table>
@@ -1092,7 +884,7 @@ IIIIIII</td>
 <div id="html-rendering-3" class="section level2">
 <h2>HTML Rendering</h2>
 <p>Although the results are not as neat as they are when simply generating an html report from the R interpreter – the transparency of the graphs is lost in translation –, this is the best method still.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="kw">print</span>(<span class="kw">dfSummary</span>(tobacco, <span class="dt">graph.magnif =</span> <span class="fl">0.75</span>), <span class="dt">method =</span> <span class="st">'render'</span>)</a></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(<span class="kw">dfSummary</span>(tobacco, <span class="dt">graph.magnif =</span> <span class="fl">0.75</span>), <span class="dt">method =</span> <span class="st">'render'</span>)</code></pre></div>
 <div class="container st-container">
 <h3>Data Frame Summary  </h3>
 <h4>tobacco</h4>

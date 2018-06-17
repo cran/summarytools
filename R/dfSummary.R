@@ -155,7 +155,7 @@ dfSummary <- function(x, round.digits = st_options('round.digits'),
           sprintf(paste0("(%", maxchar_pct, ".", 1, "f%%)"), props*100))
   }
 
-  # Encode barchars into html-readable image
+  # Encode barplots into html-readable image
   encode_graph <- function(data, graph_type) {
     if (graph_type == "histogram") {
       png(img_png <- tempfile(fileext = ".png"), width = 150 * graph.magnif, 
@@ -192,10 +192,10 @@ dfSummary <- function(x, round.digits = st_options('round.digits'),
     widths <- props / max(props) * maxwidth
     outstr <- character(0)
     for (i in seq_along(widths)) {
-      outstr <- paste(outstr, paste0(rep(x = "I", times = widths[i]), collapse = ""),
-                      sep = "\\\n")
+      outstr <- paste(outstr, paste0(rep(x = 'I', times = widths[i]), collapse = ""),
+                      sep = " \\ \n")
     }
-    outstr <- sub("^\\\\\\n", "", outstr)
+    outstr <- sub("^ \\\\ \\n", "", outstr)
     return(outstr)
   }
 
@@ -296,7 +296,9 @@ dfSummary <- function(x, round.digits = st_options('round.digits'),
         output[i,7] <- ""
         
       } else if (n_levels <= max.distinct.values) {
-        output[i,4] <- paste0(1:n_levels,"\\. ", levels(column_data), collapse = "\\\n")
+        output[i,4] <- paste0(1:n_levels,"\\. ", 
+                              substr(levels(column_data), 1, max.string.width),
+                              collapse = "\\\n")
         counts_props <- align_numbers(counts, props)
         output[i,5] <- paste0("\\", counts_props, collapse = "\\\n")
         if (graph.col && any(!is.na(column_data))) {
@@ -307,7 +309,7 @@ dfSummary <- function(x, round.digits = st_options('round.digits'),
         # more levels than allowed by max.distinct.values
         n_extra_levels <- n_levels - max.distinct.values
         output[i,4] <- paste0(1:max.distinct.values,"\\. ",
-                              levels(column_data)[1:max.distinct.values],
+                              substr(levels(column_data), 1, max.string.width)[1:max.distinct.values],
                               collapse="\\\n")
         output[i,4] <- paste(output[i,4],
                              paste("[", n_extra_levels, "others", "]"),
@@ -350,8 +352,8 @@ dfSummary <- function(x, round.digits = st_options('round.digits'),
         output[i,7] <- ""
 
       } else if (n_miss == n_tot) {
-        output[i,4] <- "All NA's"
-        output[i,5] <- ""
+        output[i,4] <- ""
+        output[i,5] <- "All NA's"
         output[i,6] <- ""
         output[i,7] <- ""
 
@@ -360,7 +362,9 @@ dfSummary <- function(x, round.digits = st_options('round.digits'),
 
         # Report all frequencies when allowed by max.distinct.values
         if (length(counts) <= max.distinct.values + 1) {
-          output[i,4] <- paste0(1:length(counts),"\\. ", names(counts), collapse="\\\n")
+          output[i,4] <- paste0(1:length(counts), "\\. ",
+                                substr(names(counts), 1, max.string.width),
+                                collapse="\\\n")
           props <- round(prop.table(counts), round.digits + 2)
           counts_props <- align_numbers(counts, props)
           output[i,5] <- paste0(counts_props, collapse = "\\\n") # paste0("\\", ...
@@ -446,10 +450,12 @@ dfSummary <- function(x, round.digits = st_options('round.digits'),
         if (graph.col) {
           if (length(counts) <= max.distinct.values) {
             output[i,6] <- encode_graph(counts, "barplot")
+            output[i,7] <- txtbarplot(prop.table(counts))
+            
             if (isTRUE(extra_space)) {
               output[i,6] <- paste0(output[i,6], "\n\n")
+              output[i,7] <- paste0(output[i,7], " \\ \n \\")
             }
-            output[i,7] <- txtbarplot(prop.table(counts))
             
           } else {
             output[i,6] <- encode_graph(column_data, "histogram")
@@ -486,7 +492,9 @@ dfSummary <- function(x, round.digits = st_options('round.digits'),
             "min : ", tmin <- min(column_data, na.rm = TRUE), "\\\n",
             "med : ", median(column_data, na.rm = TRUE), "\\\n",
             "max : ", tmax <- max(column_data, na.rm = TRUE), "\\\n",
-            "range : ", paste(round(dtime <- difftime(tmax, tmin), round.digits), attr(dtime, 'units'))
+            "range : ", sub(pattern = " 0H 0M 0S",
+                            replacement = "",
+                            x = round(as.period(interval(tmin, tmax)), round.digits))
           )
           
           output[i,5] <- paste(length(counts), "distinct val.")
