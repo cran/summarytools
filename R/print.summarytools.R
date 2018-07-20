@@ -1153,7 +1153,7 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
     
     sect_title[[1]] <- "Data Frame Summary  "
 
-    if ("Dataframe" %in% names(data_info)) {
+    if (("Dataframe" %in% names(data_info)) && (!is.null(data_info$Dataframe))) {
       sect_title[[2]] <- data_info$Dataframe
     }  else {
       sect_title[[2]] <- ""
@@ -1267,7 +1267,11 @@ print.summarytools <- function(x, method = "pander", file = "", append = FALSE,
           cell <- gsub('\\\\\n', '\n', cell)
           if (colnames(x)[co] %in% c("No", "Valid", "Missing")) {
             table_row[[length(table_row) + 1]] <- tags$td(cell, align = "center")
-          } else if (colnames(x)[co] %in% c("Variable", "Label", "Properties", "Stats / Values")) {
+          } else if (colnames(x)[co] == "Label") {
+            cell <- gsub('(\\d+)\\\\\\.', '\\1.', cell)
+            cell <- paste(strwrap(cell,width = format_info$split.cells, simplify = TRUE), collapse = "\n")
+            table_row[[length(table_row) + 1]] <- tags$td(cell, align = "left")
+          } else if (colnames(x)[co] %in% c("Variable", "Properties", "Stats / Values")) {
             cell <- gsub('(\\d+)\\\\\\.', '\\1.', cell)
             table_row[[length(table_row) + 1]] <- tags$td(cell, align = "left")
           } else if (colnames(x)[co] == "Freqs (% of Valid)") {

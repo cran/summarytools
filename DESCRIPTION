@@ -1,7 +1,7 @@
 Package: summarytools
 Type: Package
 Title: Tools to Quickly and Neatly Summarize Data
-Version: 0.8.5
+Version: 0.8.6
 Author: Dominic Comtois
 Maintainer: Dominic Comtois <dominic.comtois@gmail.com>
 Description: Data frame summaries, cross-tabulations,
@@ -21,6 +21,6 @@ BugReports: https://github.com/dcomtois/summarytools/issues
 Encoding: UTF-8
 RoxygenNote: 6.0.1
 NeedsCompilation: no
-Packaged: 2018-06-17 07:07:41 UTC; Dominic
+Packaged: 2018-07-20 21:09:14 UTC; Dominic
 Repository: CRAN
-Date/Publication: 2018-06-17 07:19:47 UTC
+Date/Publication: 2018-07-20 21:50:02 UTC

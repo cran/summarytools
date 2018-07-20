@@ -55,9 +55,9 @@
 #'   width of a table. Keeping the default value (\code{Inf}) is recommended.
 #' @param \dots Additional arguments passed to \code{\link[pander]{pander}}.
 #'
-#' @return A data frame containing as many rows as there are columns in \code{x},
-#'   with additional attributes to inform \code{print} function. Columns of the
-#'   output data frame are:
+#' @return A data frame with additional class \code{summarytools} containing as
+#'   many rows as there are columns in \code{x}, with attributes to 
+#'   inform \code{print} method. Columns in the output data frame are:
 #'   \describe{
 #'     \item{No}{Number indicating the order in which column appears in
 #'       the data frame.}
@@ -411,6 +411,7 @@ dfSummary <- function(x, round.digits = st_options('round.digits'),
         output[i,7] <- ""
         
       } else {
+        
         output[i,4] <- paste(
           "mean (sd) : ", round(mean(column_data, na.rm = TRUE), round.digits),
           " (", round(sd(column_data, na.rm = TRUE), round.digits), ")\\\n",
@@ -427,14 +428,14 @@ dfSummary <- function(x, round.digits = st_options('round.digits'),
         extra_space <- FALSE
 
         if (length(counts) <= max.distinct.values &&
-            (is.integer(column_data) || identical(names(column_data), "0") ||
+            (all(column_data%%1 == 0) || identical(names(column_data), "0") ||
               all(abs(as.numeric(names(counts[-which(names(counts)=="0")]))) >= 10^-round.digits))) {
           
           props <- round(prop.table(counts), round.digits + 2)
           counts_props <- align_numbers(counts, props)
           
           output[i,5]  <- paste(paste0(rounded_names <- format(round(as.numeric(names(counts)), round.digits), 
-                                                               nsmall = round.digits),
+                                                               nsmall = round.digits * !all(column_data%%1 == 0)),
                                        ifelse(as.numeric(names(counts)) != as.numeric(rounded_names), "!", " ")),
                                 counts_props, sep = ": ", collapse = "\\\n")
           
@@ -444,7 +445,7 @@ dfSummary <- function(x, round.digits = st_options('round.digits'),
           } 
           
         } else {
-          output[i,5] <- paste(length(counts), "distinct val.")
+          output[i,5] <- paste(length(counts), "distinct values")
         }
 
         if (graph.col) {
