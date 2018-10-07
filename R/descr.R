@@ -72,10 +72,6 @@ descr <- function(x, stats = st_options('descr.stats'), na.rm = TRUE,
   # make x a data.frame
   x.df <- as.data.frame(x)
   
-  if (is.atomic(x) && !is.na(label(x))) {
-    label(x.df[[1]]) <- label(x)
-  }
-  
   if (!is.data.frame(x.df)) {
     stop(paste("x must be a data.frame, a tibble, a data.table or a single vector, and",
                "attempted conversion failed"))
@@ -118,7 +114,7 @@ descr <- function(x, stats = st_options('descr.stats'), na.rm = TRUE,
   }
   
   if (!plain.ascii %in% c(TRUE, FALSE)) {
-    stop("'plain.ascii' argument must either TRUE or FALSE")
+    stop("'plain.ascii' argument must be either TRUE or FALSE")
   }
   
   justify <- switch(tolower(substring(justify, 1, 1)),
@@ -145,6 +141,10 @@ descr <- function(x, stats = st_options('descr.stats'), na.rm = TRUE,
   if (class(parse_info) == "try-catch") {
     parse_info <- list()
   }
+
+  if (!"var_names" %in% names(parse_info)) {
+    parse_info$var_names <- colnames(x.df)
+  }
   
   # Identify and exclude non-numerical columns from x
   col_to_remove <- which(!sapply(x.df, is.numeric))
@@ -159,7 +159,7 @@ descr <- function(x, stats = st_options('descr.stats'), na.rm = TRUE,
     stop("no numerical variable(s) given as argument")
   }
 
-  # No weigths being used -----------------------------------------------------  
+  # No weights being used -----------------------------------------------------  
   if (identical(weights, NA)) {
     # Build skeleton for output dataframe
     output <- data.frame(mean        = numeric(),
@@ -229,8 +229,7 @@ descr <- function(x, stats = st_options('descr.stats'), na.rm = TRUE,
     }
     
     weights_string <- deparse(substitute(weights))
-    weights_label <- try(label(weights), silent = TRUE)
-    
+
     if (sum(is.na(weights)) > 0) {
       warning("Missing values on weight variable have been detected and will be treated as zeroes")
       weights[is.na(weights)] <- 0
@@ -296,16 +295,7 @@ descr <- function(x, stats = st_options('descr.stats'), na.rm = TRUE,
     }
   }
   
-  for(i in seq_along(x.df)) {
-    
-    # Add row names (from col.names/var.name of the parse_args function)
-    if ("var_names" %in% names(parse_info)) {
-      rownames(output)[i] <- parse_info$var_names[i]
-    } else {
-      # this is necessary in order to support by()
-      rownames(output)[i] <- paste0("Var",i)
-    }
-  }
+  rownames(output) <- parse_info$var_names
   
   # Prepare output data -------------------------------------------------------
   
@@ -333,24 +323,17 @@ descr <- function(x, stats = st_options('descr.stats'), na.rm = TRUE,
   attr(output, "date")       <- Sys.Date()
   attr(output, "fn_call")    <- match.call()
   
-  # Extract labels
-  tmp_labels <- label(x, all = TRUE, fallback = FALSE, simplify = TRUE)
-  if (is.character(tmp_labels) && all(tmp_labels == "NA")) {
-    tmp_labels <- NA
-  }
   
   data_info <-
     list(Dataframe       = ifelse("df_name"   %in% names(parse_info), parse_info$df_name, NA),
          Dataframe.label = ifelse("df_label"  %in% names(parse_info), parse_info$df_label, NA),
          Variable        = ifelse("var_names" %in% names(parse_info) && length(parse_info$var_names) == 1,
                                   parse_info$var_names, NA),
-         Variable.labels = tmp_labels,
+         Variable.label  = ifelse(is.atomic(x), label(x), NA),
          Subset          = ifelse("rows_subset" %in% names(parse_info), parse_info$rows_subset, NA),
          Weights         = ifelse(identical(weights, NA), NA,
                                   sub(pattern = paste0(parse_info$df_name, "$"), replacement = "",
                                       x = weights_string, fixed = TRUE)),
-         Weights.label   = ifelse(!identical(weights, NA) && class(weights_label) != "try-error",
-                                  weights_label, NA),
          Group           = ifelse("by_group" %in% names(parse_info), parse_info$by_group, NA),
          by.first        = ifelse("by_group" %in% names(parse_info), parse_info$by_first, NA),
          by.last         = ifelse("by_group" %in% names(parse_info), parse_info$by_last, NA),
