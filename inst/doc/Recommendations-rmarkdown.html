@@ -12,17 +12,17 @@
 
 <meta name="author" content="Dominic Comtois" />
 
-<meta name="date" content="2018-10-07" />
+<meta name="date" content="2019-02-20" />
 
 <title>Recommendations for Using summarytools With Rmarkdown</title>
 
 
 
 <style type="text/css">code{white-space: pre;}</style>
-<style type="text/css">
+<style type="text/css" data-origin="pandoc">
 a.sourceLine { display: inline-block; line-height: 1.25; }
 a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
-a.sourceLine:empty { height: 1.2em; position: absolute; }
+a.sourceLine:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode { white-space: pre; position: relative; }
 div.sourceCode { margin: 1em 0; }
@@ -35,13 +35,11 @@ code.sourceCode { white-space: pre-wrap; }
 a.sourceLine { text-indent: -1em; padding-left: 1em; }
 }
 pre.numberSource a.sourceLine
-  { position: relative; }
-pre.numberSource a.sourceLine:empty
-  { position: absolute; }
+  { position: relative; left: -4em; }
 pre.numberSource a.sourceLine::before
   { content: attr(data-line-number);
-    position: absolute; left: -5em; text-align: right; vertical-align: baseline;
-    border: none; pointer-events: all;
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
     -webkit-touch-callout: none; -webkit-user-select: none;
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
@@ -83,7 +81,29 @@ code span.st { color: #4070a0; } /* String */
 code span.va { color: #19177c; } /* Variable */
 code span.vs { color: #4070a0; } /* VerbatimString */
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
 </style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' || rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
 
 
 
@@ -270,7 +290,6 @@ code > span.ot { color: #007020; }
 code > span.al { color: #ff0000; font-weight: bold; } 
 code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
 </style>
-<style type="text/css">table.st-table > thead > tr {background-color: #eeeeee;}table.st-table th {text-align: center;}table.st-table td span {display: block;}.st-container {width: 100%;padding-right: 15px;padding-left: 15px;margin-right: auto;margin-left: auto;margin-top: 15px;}.st-multiline {white-space: pre;}.st-table {width: auto;table-layout: auto;margin-top: 20px;margin-bottom: 20px;max-width: 100%;background-color: transparent;border-collapse: collapse;}.st-table > thead > tr > th,.st-table > tbody > tr > th,.st-table > tfoot > tr > th,.st-table > thead > tr > td,.st-table > tbody > tr > td,.st-table > tfoot > tr > td {vertical-align: middle;}.st-table-bordered {border: 1px solid #bbbbbb;}.st-table-bordered > thead > tr > th,.st-table-bordered > tbody > tr > th,.st-table-bordered > tfoot > tr > th,.st-table-bordered > thead > tr > td,.st-table-bordered > tbody > tr > td,.st-table-bordered > tfoot > tr > td {border: 1px solid #cccccc;}.st-table-bordered > thead > tr > th,.st-table-bordered > thead > tr > td,.st-table thead > tr > th {border-bottom: none;}.st-table td,.st-table th {padding: 8px;}.st-table > thead > tr {background-color: #eeeeee;}.st-table-bordered > thead > tr > th,.st-table-bordered > tbody > tr > th,.st-table-bordered > thead > tr > td,.st-table-bordered > tbody > tr > td {border: 1px solid #cccccc;}.st-table-striped > tbody > tr:nth-of-type(odd) {background-color: #ffffff;}.st-table-striped > tbody > tr:nth-of-type(even) {background-color: #f8f8f8;}.st-table-striped > tbody > tr:nth-of-type(odd) {background-color: #ffffff;}.st-table-striped > tbody > tr:nth-of-type(even) {background-color: #f9f9f9;}.st-descr-table > thead > tr > th,.st-descr-table > tbody > tr > th,.st-descr-table > tfoot > tr > th,.st-descr-table > thead > tr > td,.st-descr-table > tbody > tr > td,.st-descr-table > tfoot > tr > td {padding-left: 24px;padding-right: 24px;word-wrap: break-word;}.st-descr-table td {text-align: right;}.st-freq-table,.st-freq-table-nomiss,.st-cross-table {border: medium none;}.st-freq-table > thead > tr:nth-child(1) > th:nth-child(1),.st-cross-table > thead > tr:nth-child(1) > th:nth-child(1),.st-cross-table > thead > tr:nth-child(1) > th:nth-child(3) {border:none;background-color: #ffffff;}.st-freq-table > thead > tr > th,.st-freq-table > tbody > tr > th,.st-freq-table > tfoot > tr > th,.st-freq-table > thead > tr > td,.st-freq-table > tbody > tr > td,.st-freq-table > tfoot > tr > td,.st-freq-table-nomiss > thead > tr > th,.st-freq-table-nomiss > tbody > tr > th,.st-freq-table-nomiss > tfoot > tr > th,.st-freq-table-nomiss > thead > tr > td,.st-freq-table-nomiss > tbody > tr > td,.st-freq-table-nomiss > tfoot > tr > td,.st-cross-table > thead > tr > th,.st-cross-table > tbody > tr > th,.st-cross-table > tfoot > tr > th,.st-cross-table > thead > tr > td,.st-cross-table > tbody > tr > td,.st-cross-table > tfoot > tr > td {padding-left: 20px;padding-right: 20px;}.st-cross-table td {text-align: center;}.st-small {font-size: 13px;}.st-small td,.st-small th {padding: 8px;}.st-small > thead > tr > th,.st-small > tbody > tr > th,.st-small > tfoot > tr > th,.st-small > thead > tr > td,.st-small > tbody > tr > td,.st-small > tfoot > tr > td {padding-left: 12px;padding-right: 12px;}</style>
 
 </head>
 
@@ -281,11 +300,44 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 <h1 class="title toc-ignore">Recommendations for Using summarytools With Rmarkdown</h1>
 <h4 class="author"><em>Dominic Comtois</em></h4>
-<h4 class="date"><em>2018-10-07</em></h4>
+<h4 class="date"><em>2019-02-20</em></h4>
 
 
 
-<p>This document uses theme <code>rmarkdown::html_vignette</code>.</p>
+<style type="text/css">
+ img {   background-color:transparent;   border:0; }  table.st-table > thead > tr {    background-color: #eeeeee; }  table.st-table th {   text-align: center; }  table.st-table td span {   display: block; }  .st-container {   width: 100%;   padding-right: 15px;   padding-left: 15px;   margin-right: auto;   margin-left: auto;   margin-top: 15px; }  .st-multiline {   white-space: pre; }  .st-table {     width: auto;     table-layout: auto;     margin-top: 20px;     margin-bottom: 20px;     max-width: 100%;     background-color: transparent;     border-collapse: collapse; }  .st-table > thead > tr > th, .st-table > tbody > tr > th, .st-table > tfoot > tr > th, .st-table > thead > tr > td, .st-table > tbody > tr > td, .st-table > tfoot > tr > td {   vertical-align: middle; }  .st-table-bordered {   border: 1px solid #bbbbbb; }  .st-table-bordered > thead > tr > th, .st-table-bordered > tbody > tr > th, .st-table-bordered > tfoot > tr > th, .st-table-bordered > thead > tr > td, .st-table-bordered > tbody > tr > td, .st-table-bordered > tfoot > tr > td {   border: 1px solid #cccccc; }  .st-table-bordered > thead > tr > th, .st-table-bordered > thead > tr > td, .st-table thead > tr > th {   border-bottom: none; }  .st-table td, .st-table th {   padding: 8px; }  .st-table > thead > tr {    background-color: #eeeeee; }  .st-table-bordered > thead > tr > th, .st-table-bordered > tbody > tr > th, .st-table-bordered > thead > tr > td, .st-table-bordered > tbody > tr > td {   border: 1px solid #cccccc; }   .st-table-striped > tbody > tr:nth-of-type(odd) {   background-color: #ffffff; }  .st-table-striped > tbody > tr:nth-of-type(even) {   background-color: #f8f8f8; }  .st-table-striped > tbody > tr:nth-of-type(odd) {   background-color: #ffffff; }  .st-table-striped > tbody > tr:nth-of-type(even) {   background-color: #f9f9f9; }   .st-descr-table > thead > tr > th, .st-descr-table > tbody > tr > th, .st-descr-table > tfoot > tr > th, .st-descr-table > thead > tr > td, .st-descr-table > tbody > tr > td, .st-descr-table > tfoot > tr > td {   padding-left:  24px;   padding-right: 24px;   word-wrap: break-word; }  .st-descr-table td {   text-align: right; }  .st-freq-table, .st-freq-table-nomiss, .st-cross-table {   border: medium none; }  .st-freq-table  > thead > tr:nth-child(1) > th:nth-child(1), .st-cross-table > thead > tr:nth-child(1) > th:nth-child(1), .st-cross-table > thead > tr:nth-child(1) > th:nth-child(3) {   border:none;   background-color: #ffffff;   text-align: center; }  .st-freq-table > thead > tr > th, .st-freq-table > tbody > tr > th, .st-freq-table > tfoot > tr > th, .st-freq-table > thead > tr > td, .st-freq-table > tbody > tr > td, .st-freq-table > tfoot > tr > td, .st-freq-table-nomiss > thead > tr > th, .st-freq-table-nomiss > tbody > tr > th, .st-freq-table-nomiss > tfoot > tr > th, .st-freq-table-nomiss > thead > tr > td, .st-freq-table-nomiss > tbody > tr > td, .st-freq-table-nomiss > tfoot > tr > td, .st-cross-table > thead > tr > th, .st-cross-table > tbody > tr > th, .st-cross-table > tfoot > tr > th, .st-cross-table > thead > tr > td, .st-cross-table > tbody > tr > td, .st-cross-table > tfoot > tr > td {   padding-left:  20px;   padding-right: 20px; }   .st-protect-top-border {   border-top:1px solid #cccccc !important; }  .st-cross-table td {   text-align: center; }  .st-small {   font-size: 13px; }  .st-small td, .st-small th {   padding: 8px; }  .st-small > thead > tr > th, .st-small > tbody > tr > th, .st-small > tfoot > tr > th, .st-small > thead > tr > td, .st-small > tbody > tr > td, .st-small > tfoot > tr > td {   padding-left:  12px;   padding-right: 12px; } </style>
+<div id="configuration" class="section level2">
+<h2>Configuration</h2>
+<p>This document uses theme <code>rmarkdown::html_vignette</code>. Its <strong>yaml</strong> section looks like this:</p>
+<pre><code>---
+title: &quot;Recommendations for Using summarytools With Rmarkdown&quot;
+author: &quot;Dominic Comtois&quot;
+date: &quot;'r Sys.Date()'&quot;     &lt;--- using backticks, not single quotes
+output: 
+  rmarkdown::html_vignette: 
+    css: 
+    - !expr system.file(&quot;rmarkdown/templates/html_vignette/resources/vignette.css&quot;, package = &quot;rmarkdown&quot;)
+vignette: &gt;
+  %\VignetteIndexEntry{Recommendations for Rmarkdown}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---</code></pre>
+<p>The following <strong>summarytools global options</strong> have been set. More of them can be useful, but this is a good starting point.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">st_options</span>(<span class="dt">bootstrap.css     =</span> <span class="ot">FALSE</span>,       <span class="co"># Already part of the theme so no need for it</span></a>
+<a class="sourceLine" id="cb2-2" data-line-number="2">           <span class="dt">plain.ascii       =</span> <span class="ot">FALSE</span>,       <span class="co"># One of the essential settings</span></a>
+<a class="sourceLine" id="cb2-3" data-line-number="3">           <span class="dt">style             =</span> <span class="st">&quot;rmarkdown&quot;</span>, <span class="co"># Idem.</span></a>
+<a class="sourceLine" id="cb2-4" data-line-number="4">           <span class="dt">dfSummary.silent  =</span> <span class="ot">TRUE</span>,        <span class="co"># Suppresses messages about temporary files</span></a>
+<a class="sourceLine" id="cb2-5" data-line-number="5">           <span class="dt">footnote          =</span> <span class="ot">NA</span>,          <span class="co"># Keeping the results minimalistic</span></a>
+<a class="sourceLine" id="cb2-6" data-line-number="6">           <span class="dt">subtitle.emphasis =</span> <span class="ot">FALSE</span>)       <span class="co"># For the vignette theme, this gives</span></a>
+<a class="sourceLine" id="cb2-7" data-line-number="7">                                            <span class="co"># much better results. Your mileage may vary.</span></a></code></pre></div>
+<p>Also, the following <strong>knitr chunk options</strong> were set this way:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">library</span>(knitr)</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2">opts_chunk<span class="op">$</span><span class="kw">set</span>(<span class="dt">comment=</span><span class="ot">NA</span>, <span class="dt">prompt=</span><span class="ot">FALSE</span>, <span class="dt">cache=</span><span class="ot">FALSE</span>, <span class="dt">echo=</span><span class="ot">TRUE</span>, <span class="dt">results=</span><span class="st">'asis'</span>)</a></code></pre></div>
+<p>Finally, <strong>summarytools’ CSS</strong> has been included in the following manner, with chunk option <code>echo = FALSE</code>:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw">st_css</span>()</a></code></pre></div>
+</div>
+<div id="demo-examples" class="section level2">
+<h2>Demo / Examples</h2>
 <p>Below are examples using recommended styles for <em>Rmarkdown</em> rendering. Available styles in summarytools are the same as <code>pander</code>’s:</p>
 <ul>
 <li><em>simple</em> (default)<br />
@@ -296,31 +348,8 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 </li>
 <li><em>multiline</em></li>
 </ul>
-<p>For <code>freq()</code>, <code>descr()</code> (and <code>ctable()</code>, although with caveats), <em>rmarkdown</em> style is recommended. For <code>dfSummary()</code>, <em>grid</em> is recommended.</p>
-<div id="important-note" class="section level2">
-<h2>Important Note</h2>
-<p><code>knitr</code> option <code>results = 'asis'</code> must be specified to get good results. This can be done globally via <code>opts_chunk$set(results='asis')</code>, or in the individual chunks.</p>
-<p>The following summarytools global options have been set:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="co">#st_options('omit.headings', TRUE)</span></a>
-<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw">st_options</span>(<span class="st">'bootstrap.css'</span>, <span class="ot">FALSE</span>)</a>
-<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw">st_options</span>(<span class="st">'footnote'</span>, <span class="ot">NA</span>)</a></code></pre></div>
-</div>
-<div id="using-method-render" class="section level2">
-<h2>Using method = ‘render’</h2>
-<p>To generate tables using summarytool’s own html rendering, the <em>.Rmd</em> document’s configuration part (yaml) must point to the package’s <code>summarytools.css</code> file. This can be achieved in several ways; the current vignette uses this configuration:</p>
-<pre><code>output: 
-  rmarkdown::html_vignette: 
-    css: 
-    - !expr system.file(&quot;rmarkdown/templates/html_vignette/resources/vignette.css&quot;, package = &quot;rmarkdown&quot;)
-    - !expr system.file(&quot;includes/stylesheets/summarytools.css&quot;, package = &quot;summarytools&quot;)</code></pre>
-<p>An alternative is to point to the directory on your system containing <em>summarytools.css</em>:</p>
-<pre><code>---
-title: &quot;RMarkdown using summarytools&quot;
-output: 
-  html_document: 
-    css: C:/R/win-library/3.4/summarytools/includes/stylesheets/summarytools.css
----</code></pre>
-<p>Starting with <code>freq()</code>, we’ll review the recommended methods and styles to get going with <em>summarytools</em> in <em>Rmarkdown</em> documents.</p>
+<p>For <code>freq()</code>, <code>descr()</code> (and <code>ctable()</code>, although with caveats), <em>rmarkdown</em> style is recommended. For<code>dfSummary()</code>, <em>grid</em> is recommended.</p>
+<p>Starting with <code>freq()</code>, we’ll review the recommended methods and styles to quickly get satisfying results in your <em>Rmarkdown</em> documents.</p>
 <p>Jump to…</p>
 <ul>
 <li><a href="#ctable">ctable()</a><br />
@@ -336,11 +365,11 @@ output:
 <p><code>freq()</code> is best used with `style = ‘rmarkdown’; html rendering is also possible.</p>
 <div id="rmarkdown-style" class="section level2">
 <h2>Rmarkdown Style</h2>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw">freq</span>(tobacco<span class="op">$</span>gender, <span class="dt">style =</span> <span class="st">'rmarkdown'</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">freq</span>(tobacco<span class="op">$</span>gender, <span class="dt">style =</span> <span class="st">'rmarkdown'</span>)</a></code></pre></div>
 <div id="frequencies" class="section level3">
 <h3>Frequencies</h3>
-<p><strong>Variable:</strong> tobacco$gender<br />
-<strong>Type:</strong> Factor (unordered)</p>
+<p><strong>tobacco$gender</strong><br />
+<strong>Type:</strong> Factor</p>
 <table>
 <thead>
 <tr class="header">
@@ -391,31 +420,34 @@ output:
 </div>
 <div id="html-rendering" class="section level2">
 <h2>HTML Rendering</h2>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">print</span>(<span class="kw">freq</span>(tobacco<span class="op">$</span>gender), <span class="dt">method =</span> <span class="st">'render'</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw">print</span>(<span class="kw">freq</span>(tobacco<span class="op">$</span>gender), <span class="dt">method =</span> <span class="st">'render'</span>)</a></code></pre></div>
 <div class="container st-container">
-<h3>Frequencies  </h3>
-<strong>Variable</strong>: gender
-  <br><strong>Type</strong>: Factor (unordered)
+<h3>Frequencies</h3>
+<strong>
+tobacco$gender
+<br/>
+</strong>
+<strong>Type</strong>: Factor
 <br/>
 <table class="table table-striped table-bordered st-table st-table-striped st-table-bordered st-freq-table ">
   <thead>
     <tr>
       <th colspan="2"></th>
-      <th colspan="2">Valid</th>
-      <th colspan="2">Total</th>
+      <th colspan="2" align="center" class="st-protect-top-border">Valid</th>
+      <th colspan="2" align="center" class="st-protect-top-border">Total</th>
     </tr>
     <tr>
-      <th>gender</th>
-      <th>Freq</th>
-      <th>%</th>
-      <th>% Cumul</th>
-      <th>%</th>
-      <th>% Cumul</th>
+      <th align="center">gender</th>
+      <th align="center">Freq</th>
+      <th align="center">%</th>
+      <th align="center">% Cum.</th>
+      <th align="center">%</th>
+      <th align="center">% Cum.</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <th>F</th>
+      <th align="center" class="st-protect-top-border">F</th>
       <td align="center">489</td>
       <td align="center">50.00</td>
       <td align="center">50.00</td>
@@ -423,7 +455,7 @@ output:
       <td align="center">48.90</td>
     </tr>
     <tr>
-      <th>M</th>
+      <th align="center" class="st-protect-top-border">M</th>
       <td align="center">489</td>
       <td align="center">50.00</td>
       <td align="center">100.00</td>
@@ -431,7 +463,7 @@ output:
       <td align="center">97.80</td>
     </tr>
     <tr>
-      <th>&lt;NA&gt;</th>
+      <th align="center" class="st-protect-top-border">&lt;NA&gt;</th>
       <td align="center">22</td>
       <td align="center"></td>
       <td align="center"></td>
@@ -439,7 +471,7 @@ output:
       <td align="center">100.00</td>
     </tr>
     <tr>
-      <th>Total</th>
+      <th align="center" class="st-protect-top-border">Total</th>
       <td align="center">1000</td>
       <td align="center">100.00</td>
       <td align="center">100.00</td>
@@ -458,11 +490,11 @@ output:
 <h1>ctable()</h1>
 <div id="rmarkdown-style-1" class="section level2">
 <h2>Rmarkdown Style</h2>
-<p>Tables with heading spanning over 2 rows are not fully supported in markdown (yet), but the result is getting close to acceptable.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="kw">ctable</span>(tobacco<span class="op">$</span>gender, tobacco<span class="op">$</span>smoker, <span class="dt">style =</span> <span class="st">'rmarkdown'</span>)</a></code></pre></div>
+<p>Tables with heading spanning over 2 rows are not fully supported in markdown (yet), but the result is getting close to acceptable. This, however, is not true for all themes. That’s why the rendering method is preferred.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">ctable</span>(tobacco<span class="op">$</span>gender, tobacco<span class="op">$</span>smoker, <span class="dt">style =</span> <span class="st">'rmarkdown'</span>)</a></code></pre></div>
 <div id="cross-tabulation-row-proportions" class="section level3">
-<h3>Cross-Tabulation / Row Proportions</h3>
-<p><strong>Variables:</strong> gender * smoker<br />
+<h3>Cross-Tabulation, Row Proportions</h3>
+<p><strong>gender * smoker</strong><br />
 <strong>Data Frame:</strong> tobacco</p>
 <table>
 <tbody>
@@ -483,30 +515,30 @@ output:
 <tr class="odd">
 <td align="right">F</td>
 <td align="right"></td>
-<td align="right">147 (30.06%)</td>
-<td align="right">342 (69.94%)</td>
-<td align="right">489 (100.00%)</td>
+<td align="right">147 (30.1%)</td>
+<td align="right">342 (69.9%)</td>
+<td align="right">489 (100.0%)</td>
 </tr>
 <tr class="even">
 <td align="right">M</td>
 <td align="right"></td>
-<td align="right">143 (29.24%)</td>
-<td align="right">346 (70.76%)</td>
-<td align="right">489 (100.00%)</td>
+<td align="right">143 (29.2%)</td>
+<td align="right">346 (70.8%)</td>
+<td align="right">489 (100.0%)</td>
 </tr>
 <tr class="odd">
 <td align="right">&lt;NA&gt;</td>
 <td align="right"></td>
-<td align="right">8 (36.36%)</td>
-<td align="right">14 (63.64%)</td>
-<td align="right">22 (100.00%)</td>
+<td align="right">8 (36.4%)</td>
+<td align="right">14 (63.6%)</td>
+<td align="right">22 (100.0%)</td>
 </tr>
 <tr class="even">
 <td align="right">Total</td>
 <td align="right"></td>
-<td align="right">298 (29.80%)</td>
-<td align="right">702 (70.20%)</td>
-<td align="right">1000 (100.00%)</td>
+<td align="right">298 (29.8%)</td>
+<td align="right">702 (70.2%)</td>
+<td align="right">1000 (100.0%)</td>
 </tr>
 </tbody>
 </table>
@@ -515,83 +547,99 @@ output:
 <div id="html-rendering-1" class="section level2">
 <h2>HTML Rendering</h2>
 <p>For best results, use this method.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1"><span class="kw">print</span>(<span class="kw">ctable</span>(tobacco<span class="op">$</span>gender, tobacco<span class="op">$</span>smoker), <span class="dt">method =</span> <span class="st">'render'</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw">print</span>(<span class="kw">ctable</span>(tobacco<span class="op">$</span>gender, tobacco<span class="op">$</span>smoker), <span class="dt">method =</span> <span class="st">'render'</span>)</a></code></pre></div>
 <div class="container st-container">
-<h3>Cross-Tabulation / Row Proportions</h3>
-<strong>Variables</strong>: gender * smoker
-  <br><strong>Data Frame</strong>: tobacco
+<h3>Cross-Tabulation, Row Proportions</h3>
+<strong>
+gender * smoker
+<br/>
+</strong>
+<strong>Data Frame</strong>: tobacco
+<br/>
 <table class="table table-bordered st-table st-table-bordered st-cross-table ">
 <thead>
 <tr>
 <th></th>
-<th colspan="2">smoker</th>
-<th></th>
+<th colspan="8" align="center" class="st-protect-top-border">smoker</th>
+<th colspan="4"></th>
 </tr>
 <tr>
 <td align="center">
 <strong>gender</strong>
 </td>
-<th align="center">Yes</th>
-<th align="center">No</th>
-<th align="center">Total</th>
+<th colspan="4" align="center">Yes</th>
+<th colspan="4" align="center">No</th>
+<th colspan="4" align="center">Total</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td align="center">
-<strong>F</strong>
-</td>
 <td>
-<span>147&nbsp;(30.06&#37;)</span>
+<strong align="center">F</strong>
 </td>
-<td>
-<span>342&nbsp;(69.94&#37;)</span>
-</td>
-<td>
-<span>&nbsp;489&nbsp;(100.00&#37;)</span>
-</td>
+<td align="right" style="padding:0 0 0 15px;border-right:0;text-align:right">147</td>
+<td align="left" style="padding:0 1px 0 4px;border-left:0;border-right:0;text-align:left">(</td>
+<td align="left" style="padding:0;border-left:0;border-right:0;text-align:right">30.1%</td>
+<td align="left" style="padding:0 15px 0 1px;border-left:0;text-align:right">)</td>
+<td align="right" style="padding:0 0 0 15px;border-right:0;text-align:right">342</td>
+<td align="left" style="padding:0 1px 0 4px;border-left:0;border-right:0;text-align:left">(</td>
+<td align="left" style="padding:0;border-left:0;border-right:0;text-align:right">69.9%</td>
+<td align="left" style="padding:0 15px 0 1px;border-left:0;text-align:right">)</td>
+<td align="right" style="padding:0 0 0 15px;border-right:0;text-align:right">489</td>
+<td align="left" style="padding:0 1px 0 4px;border-left:0;border-right:0;text-align:left">(</td>
+<td align="left" style="padding:0;border-left:0;border-right:0;text-align:right">100.0%</td>
+<td align="left" style="padding:0 15px 0 1px;border-left:0;text-align:right">)</td>
 </tr>
 <tr>
-<td align="center">
-<strong>M</strong>
-</td>
 <td>
-<span>143&nbsp;(29.24&#37;)</span>
+<strong align="center">M</strong>
 </td>
-<td>
-<span>346&nbsp;(70.76&#37;)</span>
-</td>
-<td>
-<span>&nbsp;489&nbsp;(100.00&#37;)</span>
-</td>
+<td align="right" style="padding:0 0 0 15px;border-right:0;text-align:right">143</td>
+<td align="left" style="padding:0 1px 0 4px;border-left:0;border-right:0;text-align:left">(</td>
+<td align="left" style="padding:0;border-left:0;border-right:0;text-align:right">29.2%</td>
+<td align="left" style="padding:0 15px 0 1px;border-left:0;text-align:right">)</td>
+<td align="right" style="padding:0 0 0 15px;border-right:0;text-align:right">346</td>
+<td align="left" style="padding:0 1px 0 4px;border-left:0;border-right:0;text-align:left">(</td>
+<td align="left" style="padding:0;border-left:0;border-right:0;text-align:right">70.8%</td>
+<td align="left" style="padding:0 15px 0 1px;border-left:0;text-align:right">)</td>
+<td align="right" style="padding:0 0 0 15px;border-right:0;text-align:right">489</td>
+<td align="left" style="padding:0 1px 0 4px;border-left:0;border-right:0;text-align:left">(</td>
+<td align="left" style="padding:0;border-left:0;border-right:0;text-align:right">100.0%</td>
+<td align="left" style="padding:0 15px 0 1px;border-left:0;text-align:right">)</td>
 </tr>
 <tr>
-<td align="center">
-<strong>&lt;NA&gt;</strong>
-</td>
 <td>
-<span>&nbsp;&nbsp;8&nbsp;(36.36&#37;)</span>
+<strong align="center">&lt;NA&gt;</strong>
 </td>
-<td>
-<span>&nbsp;14&nbsp;(63.64&#37;)</span>
-</td>
-<td>
-<span>&nbsp;&nbsp;22&nbsp;(100.00&#37;)</span>
-</td>
+<td align="right" style="padding:0 0 0 15px;border-right:0;text-align:right">8</td>
+<td align="left" style="padding:0 1px 0 4px;border-left:0;border-right:0;text-align:left">(</td>
+<td align="left" style="padding:0;border-left:0;border-right:0;text-align:right">36.4%</td>
+<td align="left" style="padding:0 15px 0 1px;border-left:0;text-align:right">)</td>
+<td align="right" style="padding:0 0 0 15px;border-right:0;text-align:right">14</td>
+<td align="left" style="padding:0 1px 0 4px;border-left:0;border-right:0;text-align:left">(</td>
+<td align="left" style="padding:0;border-left:0;border-right:0;text-align:right">63.6%</td>
+<td align="left" style="padding:0 15px 0 1px;border-left:0;text-align:right">)</td>
+<td align="right" style="padding:0 0 0 15px;border-right:0;text-align:right">22</td>
+<td align="left" style="padding:0 1px 0 4px;border-left:0;border-right:0;text-align:left">(</td>
+<td align="left" style="padding:0;border-left:0;border-right:0;text-align:right">100.0%</td>
+<td align="left" style="padding:0 15px 0 1px;border-left:0;text-align:right">)</td>
 </tr>
 <tr>
-<td align="center">
-<strong>Total</strong>
-</td>
 <td>
-<span>298&nbsp;(29.80&#37;)</span>
+<strong align="center">Total</strong>
 </td>
-<td>
-<span>702&nbsp;(70.20&#37;)</span>
-</td>
-<td>
-<span>1000&nbsp;(100.00&#37;)</span>
-</td>
+<td align="right" style="padding:0 0 0 15px;border-right:0;text-align:right">298</td>
+<td align="left" style="padding:0 1px 0 4px;border-left:0;border-right:0;text-align:left">(</td>
+<td align="left" style="padding:0;border-left:0;border-right:0;text-align:right">29.8%</td>
+<td align="left" style="padding:0 15px 0 1px;border-left:0;text-align:right">)</td>
+<td align="right" style="padding:0 0 0 15px;border-right:0;text-align:right">702</td>
+<td align="left" style="padding:0 1px 0 4px;border-left:0;border-right:0;text-align:left">(</td>
+<td align="left" style="padding:0;border-left:0;border-right:0;text-align:right">70.2%</td>
+<td align="left" style="padding:0 15px 0 1px;border-left:0;text-align:right">)</td>
+<td align="right" style="padding:0 0 0 15px;border-right:0;text-align:right">1000</td>
+<td align="left" style="padding:0 1px 0 4px;border-left:0;border-right:0;text-align:left">(</td>
+<td align="left" style="padding:0;border-left:0;border-right:0;text-align:right">100.0%</td>
+<td align="left" style="padding:0 15px 0 1px;border-left:0;text-align:right">)</td>
 </tr>
 </tbody>
 </table>
@@ -605,18 +653,18 @@ output:
 <p><code>descr()</code> is also best used with <code>style = 'rmarkdown'</code>, and HTML rendering is also supported.</p>
 <div id="rmarkdown-style-2" class="section level2">
 <h2>Rmarkdown Style</h2>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1"><span class="kw">descr</span>(tobacco, <span class="dt">style =</span> <span class="st">'rmarkdown'</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1"><span class="kw">descr</span>(tobacco, <span class="dt">style =</span> <span class="st">'rmarkdown'</span>)</a></code></pre></div>
 <pre><code>Non-numerical variable(s) ignored: gender, age.gr, smoker, diseased, disease</code></pre>
 <div id="descriptive-statistics" class="section level3">
 <h3>Descriptive Statistics</h3>
-<p><strong>Data Frame:</strong> tobacco<br />
+<p><strong>tobacco</strong><br />
 <strong>N:</strong> 1000</p>
 <table>
 <thead>
 <tr class="header">
 <th align="right"> </th>
-<th align="right">age</th>
 <th align="right">BMI</th>
+<th align="right">age</th>
 <th align="right">cigs.per.day</th>
 <th align="right">samp.wgts</th>
 </tr>
@@ -624,78 +672,78 @@ output:
 <tbody>
 <tr class="odd">
 <td align="right"><strong>Mean</strong></td>
-<td align="right">49.60</td>
 <td align="right">25.73</td>
+<td align="right">49.60</td>
 <td align="right">6.78</td>
 <td align="right">1.00</td>
 </tr>
 <tr class="even">
-<td align="right"><strong>Std.Dev</strong></td>
-<td align="right">18.29</td>
+<td align="right"><strong>Std.Dev.</strong></td>
 <td align="right">4.49</td>
+<td align="right">18.29</td>
 <td align="right">11.88</td>
 <td align="right">0.08</td>
 </tr>
 <tr class="odd">
 <td align="right"><strong>Min</strong></td>
-<td align="right">18.00</td>
 <td align="right">8.83</td>
+<td align="right">18.00</td>
 <td align="right">0.00</td>
 <td align="right">0.86</td>
 </tr>
 <tr class="even">
 <td align="right"><strong>Q1</strong></td>
-<td align="right">34.00</td>
 <td align="right">22.93</td>
+<td align="right">34.00</td>
 <td align="right">0.00</td>
 <td align="right">0.86</td>
 </tr>
 <tr class="odd">
 <td align="right"><strong>Median</strong></td>
-<td align="right">50.00</td>
 <td align="right">25.62</td>
+<td align="right">50.00</td>
 <td align="right">0.00</td>
 <td align="right">1.04</td>
 </tr>
 <tr class="even">
 <td align="right"><strong>Q3</strong></td>
-<td align="right">66.00</td>
 <td align="right">28.65</td>
+<td align="right">66.00</td>
 <td align="right">11.00</td>
 <td align="right">1.05</td>
 </tr>
 <tr class="odd">
 <td align="right"><strong>Max</strong></td>
-<td align="right">80.00</td>
 <td align="right">39.44</td>
+<td align="right">80.00</td>
 <td align="right">40.00</td>
 <td align="right">1.06</td>
 </tr>
 <tr class="even">
 <td align="right"><strong>MAD</strong></td>
-<td align="right">23.72</td>
 <td align="right">4.18</td>
+<td align="right">23.72</td>
 <td align="right">0.00</td>
 <td align="right">0.01</td>
 </tr>
 <tr class="odd">
 <td align="right"><strong>IQR</strong></td>
-<td align="right">32.00</td>
 <td align="right">5.72</td>
+<td align="right">32.00</td>
 <td align="right">11.00</td>
 <td align="right">0.19</td>
 </tr>
 <tr class="even">
 <td align="right"><strong>CV</strong></td>
-<td align="right">0.37</td>
 <td align="right">0.17</td>
+<td align="right">0.37</td>
 <td align="right">1.75</td>
 <td align="right">0.08</td>
 </tr>
 <tr class="odd">
 <td align="right"><strong>Skewness</strong></td>
-<td align="right">-0.04</td>
 <td align="right">0.02</td>
+<td align="right">-0.04</td>
 <td align="right">1.54</td>
 <td align="right">-1.04</td>
 </tr>
@@ -708,22 +756,22 @@ output:
 </tr>
 <tr class="odd">
 <td align="right"><strong>Kurtosis</strong></td>
-<td align="right">-1.26</td>
 <td align="right">0.26</td>
+<td align="right">-1.26</td>
 <td align="right">0.90</td>
 <td align="right">-0.90</td>
 </tr>
 <tr class="even">
 <td align="right"><strong>N.Valid</strong></td>
-<td align="right">975.00</td>
 <td align="right">974.00</td>
+<td align="right">975.00</td>
 <td align="right">965.00</td>
 <td align="right">1000.00</td>
 </tr>
 <tr class="odd">
-<td align="right"><strong>Pct.Valid</strong></td>
-<td align="right">97.50</td>
+<td align="right"><strong>% Valid</strong></td>
 <td align="right">97.40</td>
+<td align="right">97.50</td>
 <td align="right">96.50</td>
 <td align="right">100.00</td>
 </tr>
@@ -734,108 +782,112 @@ output:
 <div id="html-rendering-2" class="section level2">
 <h2>HTML Rendering</h2>
 <p>We’ll use table.classes = ‘st-small’ to show how it affects the table’s size (compare to the <code>freq()</code> table rendered earlier).</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1"><span class="kw">print</span>(<span class="kw">descr</span>(tobacco), <span class="dt">method =</span> <span class="st">'render'</span>, <span class="dt">table.classes =</span> <span class="st">'st-small'</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1"><span class="kw">print</span>(<span class="kw">descr</span>(tobacco), <span class="dt">method =</span> <span class="st">'render'</span>, <span class="dt">table.classes =</span> <span class="st">'st-small'</span>)</a></code></pre></div>
 <pre><code>Non-numerical variable(s) ignored: gender, age.gr, smoker, diseased, disease</code></pre>
 <div class="container st-container">
-<h3>Descriptive Statistics  </h3>
-<strong>Data Frame</strong>: tobacco
-  <br><strong>N</strong>: 1000
+<h3>Descriptive Statistics</h3>
+<strong>
+tobacco
+<br/>
+</strong>
+<strong>N</strong>: 1000
+<br/>
 <table class="table table-bordered table-striped st-table st-table-bordered st-table-striped st-descr-table st-small">
   <thead>
     <tr>
       <th></th>
-      <th align="center">age</th>
-      <th align="center">BMI</th>
-      <th align="center">cigs.per.day</th>
-      <th align="center">samp.wgts</th>
+      <th align="center" class="st-protect-top-border">BMI</th>
+      <th align="center" class="st-protect-top-border">age</th>
+      <th align="center" class="st-protect-top-border">cigs.per.day</th>
+      <th align="center" class="st-protect-top-border">samp.wgts</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td>
         <strong>Mean</strong></td>
-      <td><span>49.60</span></td>
       <td><span>25.73</span></td>
+      <td><span>49.60</span></td>
       <td><span>6.78</span></td>
       <td><span>1.00</span></td>
     </tr>
     <tr>
       <td>
-        <strong>Std.Dev</strong></td>
-      <td><span>18.29</span></td>
+        <strong>Std.Dev.</strong></td>
       <td><span>4.49</span></td>
+      <td><span>18.29</span></td>
       <td><span>11.88</span></td>
       <td><span>0.08</span></td>
     </tr>
     <tr>
       <td>
         <strong>Min</strong></td>
-      <td><span>18.00</span></td>
       <td><span>8.83</span></td>
+      <td><span>18.00</span></td>
       <td><span>0.00</span></td>
       <td><span>0.86</span></td>
     </tr>
     <tr>
       <td>
         <strong>Q1</strong></td>
-      <td><span>34.00</span></td>
       <td><span>22.93</span></td>
+      <td><span>34.00</span></td>
       <td><span>0.00</span></td>
       <td><span>0.86</span></td>
     </tr>
     <tr>
       <td>
         <strong>Median</strong></td>
-      <td><span>50.00</span></td>
       <td><span>25.62</span></td>
+      <td><span>50.00</span></td>
       <td><span>0.00</span></td>
       <td><span>1.04</span></td>
     </tr>
     <tr>
       <td>
         <strong>Q3</strong></td>
-      <td><span>66.00</span></td>
       <td><span>28.65</span></td>
+      <td><span>66.00</span></td>
       <td><span>11.00</span></td>
       <td><span>1.05</span></td>
     </tr>
     <tr>
       <td>
         <strong>Max</strong></td>
-      <td><span>80.00</span></td>
       <td><span>39.44</span></td>
+      <td><span>80.00</span></td>
       <td><span>40.00</span></td>
       <td><span>1.06</span></td>
     </tr>
     <tr>
       <td>
         <strong>MAD</strong></td>
-      <td><span>23.72</span></td>
       <td><span>4.18</span></td>
+      <td><span>23.72</span></td>
       <td><span>0.00</span></td>
       <td><span>0.01</span></td>
     </tr>
     <tr>
       <td>
         <strong>IQR</strong></td>
-      <td><span>32.00</span></td>
       <td><span>5.72</span></td>
+      <td><span>32.00</span></td>
       <td><span>11.00</span></td>
       <td><span>0.19</span></td>
     </tr>
     <tr>
       <td>
         <strong>CV</strong></td>
-      <td><span>0.37</span></td>
       <td><span>0.17</span></td>
+      <td><span>0.37</span></td>
       <td><span>1.75</span></td>
       <td><span>0.08</span></td>
     </tr>
     <tr>
       <td>
         <strong>Skewness</strong></td>
-      <td><span>-0.04</span></td>
       <td><span>0.02</span></td>
+      <td><span>-0.04</span></td>
       <td><span>1.54</span></td>
       <td><span>-1.04</span></td>
     </tr>
@@ -850,24 +902,24 @@ output:
     <tr>
       <td>
         <strong>Kurtosis</strong></td>
-      <td><span>-1.26</span></td>
       <td><span>0.26</span></td>
+      <td><span>-1.26</span></td>
       <td><span>0.90</span></td>
       <td><span>-0.90</span></td>
     </tr>
     <tr>
       <td>
         <strong>N.Valid</strong></td>
-      <td><span>975</span></td>
       <td><span>974</span></td>
+      <td><span>975</span></td>
       <td><span>965</span></td>
       <td><span>1000</span></td>
     </tr>
     <tr>
       <td>
-        <strong>Pct.Valid</strong></td>
-      <td><span>97.50</span></td>
+        <strong>% Valid</strong></td>
       <td><span>97.40</span></td>
+      <td><span>97.50</span></td>
       <td><span>96.50</span></td>
       <td><span>100.00</span></td>
     </tr>
@@ -882,19 +934,20 @@ output:
 <h1>dfSummary()</h1>
 <div id="grid-style" class="section level2">
 <h2>Grid Style</h2>
-<p>This gives good results, although the histograms are not shown. This has to do with an unresolved issue, but we’re working hard to figure out a solution. Don’t forget to specify <code>plain.ascii = FALSE</code>, or you won’t get good results.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb12-1" data-line-number="1"><span class="kw">dfSummary</span>(tobacco, <span class="dt">style =</span> <span class="st">'grid'</span>, <span class="dt">plain.ascii =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
+<p>This style gives good results, and since v0.9, the graphs are shown as true images. Don’t forget to specify <code>plain.ascii = FALSE</code> (or set it as a global option with <code>st_options(plain.ascii = FALSE)</code>), or you won’t get good results.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="kw">dfSummary</span>(tobacco, <span class="dt">style =</span> <span class="st">'grid'</span>, <span class="dt">graph.magnif =</span> <span class="fl">0.75</span>, <span class="dt">tmp.img.dir =</span> <span class="st">&quot;/tmp&quot;</span>)</a></code></pre></div>
 <div id="data-frame-summary" class="section level3">
 <h3>Data Frame Summary</h3>
 <p><strong>tobacco</strong><br />
-<strong>N:</strong> 1000</p>
+<strong>Dimensions:</strong> 1000 x 9<br />
+<strong>Duplicates:</strong> 2</p>
 <table>
 <colgroup>
 <col width="4%"></col>
-<col width="14%"></col>
-<col width="24%"></col>
-<col width="19%"></col>
-<col width="19%"></col>
+<col width="13%"></col>
+<col width="23%"></col>
+<col width="18%"></col>
+<col width="22%"></col>
 <col width="8%"></col>
 <col width="8%"></col>
 </colgroup>
@@ -904,7 +957,7 @@ output:
 <th>Variable</th>
 <th>Stats / Values</th>
 <th>Freqs (% of Valid)</th>
-<th>Text Graph</th>
+<th>Graph</th>
 <th>Valid</th>
 <th>Missing</th>
 </tr>
@@ -918,8 +971,7 @@ output:
 2. M</td>
 <td>489 (50.0%)<br />
 489 (50.0%)</td>
-<td>IIIIIIIIIIIIIIII<br />
-IIIIIIIIIIIIIIII</td>
+<td><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEQAAAAtCAQAAAC94QWrAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElNRQfjAhQMOgWlZoO2AAAAdElEQVRYw+3WMQrAIBBE0d2QC6bMCZPOI2q7CjYhrAP+6baRB2MxXk0jx2oAkFnOeDzJH+b2CcTsSmSU7pKpBggQIECAANkGMsyA8u2VH+JxC2UP6bCLdKqRgXR/5GWzClUDBAgQIECAbAPR3KwrI1MNkDEN1HALwGEQ8skAAAAldEVYdGRhdGU6Y3JlYXRlADIwMTktMDItMjBUMTI6NTg6MDUtMDU6MDBY9g86AAAAJXRFWHRkYXRlOm1vZGlmeQAyMDE5LTAyLTIwVDEyOjU4OjA1LTA1OjAwKau3hgAAAABJRU5ErkJggg==" /></td>
 <td>978<br />
 (97.8%)</td>
 <td>22<br />
@@ -929,12 +981,12 @@ IIIIIIIIIIIIIIII</td>
 <td>2</td>
 <td>age<br />
 [numeric]</td>
-<td>mean (sd) : 49.6 (18.29)<br />
-min &lt; med &lt; max :<br />
+<td>Mean (sd) : 49.6 (18.3)<br />
+min &lt; med &lt; max:<br />
 18 &lt; 50 &lt; 80<br />
-IQR (CV) : 32 (0.37)</td>
+IQR (CV) : 32 (0.4)</td>
 <td>63 distinct values</td>
-<td></td>
+<td><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHQAAABUCAQAAAD5P9uaAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElNRQfjAhQMOgWlZoO2AAABH0lEQVR42u2bXQ6DIBAGpeF4PUB7wnqA3q99BUwxWwHx25k3Y9AdfhZ1Y/gsPridHQCiiP5HTA/mXq/rJrxHqLdIT8elIfZQbNyzo7epbVPRY6H0xc0aRVQNN6KmZNQ3q65ddzdj1u2bVcur2+627ahnMgzR1nQuyvhqHbMzovPui9bo3CQjRNU4+Kw7e7pqJjp3smooukc54m1f2yYSLUc8Fx+p3Vm0Jj52orvJuoiqMXiN5ozchU8VHbkLu5m6iKqBqBqIqoGoGoiqgagaiKqBqBqIqpF9M7pOyeig6JWKRlbcTF1E1UBUDUTVQFQNRNVAVA1E1UBUDUTVQFQNRNVAVA1E1UBUDTeiIS2JvsTqo+mvz0HM7Sdupi6ianwBAc0prnKCnKkAAAAldEVYdGRhdGU6Y3JlYXRlADIwMTktMDItMjBUMTI6NTg6MDUtMDU6MDBY9g86AAAAJXRFWHRkYXRlOm1vZGlmeQAyMDE5LTAyLTIwVDEyOjU4OjA1LTA1OjAwKau3hgAAAABJRU5ErkJggg==" /></td>
 <td>975<br />
 (97.5%)</td>
 <td>25<br />
@@ -952,10 +1004,7 @@ IQR (CV) : 32 (0.37)</td>
 241 (24.7%)<br />
 317 (32.5%)<br />
 159 (16.3%)</td>
-<td>IIIIIIIIIIIII<br />
-IIIIIIIIIIII<br />
-IIIIIIIIIIIIIIII<br />
-IIIIIIII</td>
+<td><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADEAAABQCAQAAAAaPVVoAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElNRQfjAhQMOgWlZoO2AAAApklEQVRYw+3XQQqAIBCF4Qwv2K5OWDuPWNuxYLRJJYb/7aToo0Z6GM6pd+bughMiysX+YTBrkCu5iPmNixFIyjUfs4CAgIAw5/anTbanqAmyItr1uOyL0R/qML5G3ngqYWu90vx8bFoICAiIPxMUa2WaFOszm3iNRsfJPPlEfWxaCAgIiD8TFGtlDMWqn08LRE2xvp+Wj00LAQEBYc7o1usTH7MYQFy5gRds4AVd3QAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAxOS0wMi0yMFQxMjo1ODowNS0wNTowMFj2DzoAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMTktMDItMjBUMTI6NTg6MDUtMDU6MDApq7eGAAAAAElFTkSuQmCC" /></td>
 <td>975<br />
 (97.5%)</td>
 <td>25<br />
@@ -965,12 +1014,12 @@ IIIIIIII</td>
 <td>4</td>
 <td>BMI<br />
 [numeric]</td>
-<td>mean (sd) : 25.73 (4.49)<br />
-min &lt; med &lt; max :<br />
-8.83 &lt; 25.62 &lt; 39.44<br />
-IQR (CV) : 5.72 (0.17)</td>
+<td>Mean (sd) : 25.7 (4.5)<br />
+min &lt; med &lt; max:<br />
+8.8 &lt; 25.6 &lt; 39.4<br />
+IQR (CV) : 5.7 (0.2)</td>
 <td>974 distinct values</td>
-<td></td>
+<td><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHQAAABUCAQAAAD5P9uaAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElNRQfjAhQMOgWlZoO2AAABN0lEQVR42u2cQRKDIBAEQ8rn+YDkhfEB+V9ySy0HqiKwyzg7fdKL2OWAC1iWzy0H99U3IFGJ9rHZk6j+elQNPYpXO/bCW/dVhth/R++gFtNEV6JsSJQNibKRRnRRwWCxdZJflQQgGlMlKbpzOZbP78Oiu5vjqELekia6EmVDomxIlA2JsiFRNiTKhkTZAFhKsfjts4GJ+k3P00RXomw49tH1K39Bois28NsougjM3JWBFp0Z/TTRlSgbEmVDomxIlA2JsiFRNtKITp2mYS2eOIqu/2wqTNSP0TX8y4iOZiXNYCRRNiTKRhrR4dcLcjU0VRRrK6mNoovN+e2ni4qe7y5poitRNjr6KNqb87+ZatdghLWOUN+N1X4a6Uo06o8XMdr1IyjW7QUWylHsEy1kbk3SjLoSZeMLkwMuFVIUZWEAAAAldEVYdGRhdGU6Y3JlYXRlADIwMTktMDItMjBUMTI6NTg6MDUtMDU6MDBY9g86AAAAJXRFWHRkYXRlOm1vZGlmeQAyMDE5LTAyLTIwVDEyOjU4OjA1LTA1OjAwKau3hgAAAABJRU5ErkJggg==" /></td>
 <td>974<br />
 (97.4%)</td>
 <td>26<br />
@@ -984,8 +1033,7 @@ IQR (CV) : 5.72 (0.17)</td>
 2. No</td>
 <td>298 (29.8%)<br />
 702 (70.2%)</td>
-<td>IIIIII<br />
-IIIIIIIIIIIIIIII</td>
+<td><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFsAAAAtCAQAAABrRN/OAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElNRQfjAhQMOgWlZoO2AAAAkElEQVRo3u3XOw6EMBAEUQb5gmRwQsg4IqRjJw78YRpVZWgl9ILWirFnUWz9GgA7fsk/nB2Gvtsoqn9xyn/aGl99jzIXiY4ENmzYoYING3aoYMOuVny4zvrwbM38ZRD7HPZnguhIRNnZtq/QKzncSjrfkuPK/yxERwIbNuxQwYYNO1SwYVf7wy2pk+hIYM/sBZ6uC8CNFUxmAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDE5LTAyLTIwVDEyOjU4OjA1LTA1OjAwWPYPOgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxOS0wMi0yMFQxMjo1ODowNS0wNTowMCmrt4YAAAAASUVORK5CYII=" /></td>
 <td>1000<br />
 (100%)</td>
 <td>0<br />
@@ -995,12 +1043,12 @@ IIIIIIIIIIIIIIII</td>
 <td>6</td>
 <td>cigs.per.day<br />
 [numeric]</td>
-<td>mean (sd) : 6.78 (11.88)<br />
-min &lt; med &lt; max :<br />
+<td>Mean (sd) : 6.8 (11.9)<br />
+min &lt; med &lt; max:<br />
 0 &lt; 0 &lt; 40<br />
-IQR (CV) : 11 (1.75)</td>
+IQR (CV) : 11 (1.8)</td>
 <td>37 distinct values</td>
-<td></td>
+<td><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHQAAABUCAQAAAD5P9uaAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElNRQfjAhQMOgWlZoO2AAAA20lEQVR42u3cQQqDMBQA0abkeB6gPaE9gPer21+oISZCcDJvJ6L8CdGdpu9jDs/RAxhqaJscD9bCA/tKo0c9L46cf08tB5dso2fuNs3WNZTGUBpDaQylMZTGUBpDaQylMZTGUBpDaQylMZTGUBpDaQylMZTGUBpDaQylMZTGUBpDaQylMZTGUBpDaQylMZTGUBpDaQylMZQm997gc5MP4LtDR38AX1rod1joC0LbhrhO3UJXh7YM/X+ErTBay5k61aF3/0PDNG/dFHfkCvvnT3wZJVjboWm2rqE0OyNCFwDE0Xl2AAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDE5LTAyLTIwVDEyOjU4OjA1LTA1OjAwWPYPOgAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxOS0wMi0yMFQxMjo1ODowNS0wNTowMCmrt4YAAAAASUVORK5CYII=" /></td>
 <td>965<br />
 (96.5%)</td>
 <td>35<br />
@@ -1014,8 +1062,7 @@ IQR (CV) : 11 (1.75)</td>
 2. No</td>
 <td>224 (22.4%)<br />
 776 (77.6%)</td>
-<td>IIII<br />
-IIIIIIIIIIIIIIII</td>
+<td><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGMAAAAtCAQAAAAQYB0CAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElNRQfjAhQMOgWlZoO2AAAAl0lEQVRo3u2YMQ6AIBAExfBBO32hdj5R24MOLW7Y7HSEBJhkj3CUZ1FgzT6ANfQ0ahycHwplL1lHjxvXdmobXOrOcugQCZU1SFiDhDVIWIOENUhYg4SIRvdQpzy8RymxU5rreyG2TSKhEtFoauOaKlVHSNXPXjyP9jISCZU1SFiDhDVIWIOENUhYg4SIhmIvPi8iobIGiRcHKgvARlqPuwAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAxOS0wMi0yMFQxMjo1ODowNS0wNTowMFj2DzoAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMTktMDItMjBUMTI6NTg6MDUtMDU6MDApq7eGAAAAAElFTkSuQmCC" /></td>
 <td>1000<br />
 (100%)</td>
 <td>0<br />
@@ -1047,17 +1094,7 @@ IIIIIIIIIIIIIIII</td>
 12 ( 5.4%)<br />
 11 ( 5.0%)<br />
 21 ( 9.5%)</td>
-<td>IIIIIIIIIIIIIIII<br />
-IIIIIIIIIIIIIII<br />
-IIIIIIIII<br />
-IIIIIIII<br />
-IIIIIIII<br />
-IIIIIIII<br />
-IIIIII<br />
-IIIIII<br />
-IIIII<br />
-IIII<br />
-IIIIIIIII</td>
+<td><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB8AAADOCAQAAABsxRE4AAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElNRQfjAhQMOgWlZoO2AAAA4klEQVRo3u3ZMRLCIBBGYXC8oJ2eULscUTslUXbXIWJ+8ugsvlF2h9eY76nlHJr0n/mx/HANDeKSKzylk4unDd0dDpfjixc3fclz+cRj3Sue+6o//hb4+nOucr82y9lI7x0O789Hr828L+bd32tjT0N673B4f05tnofawOE/5dK1IVZw+H64dKzc2litcWvjzUJ673B4fz5ubezSfLh7WZvIHKT3Dof359K1IVZw+H64dKyM2vitMWoTm4L03uHw/nzM2kRaU61NdAbSe4fD+/Mxa/M6/KUFh2+Fr1kbtbs38gemCUBMahx0pgAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAxOS0wMi0yMFQxMjo1ODowNS0wNTowMFj2DzoAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMTktMDItMjBUMTI6NTg6MDUtMDU6MDApq7eGAAAAAElFTkSuQmCC" /></td>
 <td>222<br />
 (22.2%)</td>
 <td>778<br />
@@ -1067,19 +1104,16 @@ IIIIIIIII</td>
 <td>9</td>
 <td>samp.wgts<br />
 [numeric]</td>
-<td>mean (sd) : 1 (0.08)<br />
-min &lt; med &lt; max :<br />
-0.86 &lt; 1.04 &lt; 1.06<br />
-IQR (CV) : 0.19 (0.08)</td>
+<td>Mean (sd) : 1 (0.1)<br />
+min &lt; med &lt; max:<br />
+0.9 &lt; 1 &lt; 1.1<br />
+IQR (CV) : 0.2 (0.1)</td>
 <td>0.86!: 267 (26.7%)<br />
 1.04!: 249 (24.9%)<br />
 1.05!: 324 (32.4%)<br />
 1.06!: 160 (16.0%)<br />
 ! rounded</td>
-<td>IIIIIIIIIIIII<br />
-IIIIIIIIIIII<br />
-IIIIIIIIIIIIIIII<br />
-IIIIIII<br />
+<td><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADEAAABQCAQAAAAaPVVoAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElNRQfjAhQMOgWlZoO2AAAAp0lEQVRYw+3XQQqAIBCFYY0u2K5OWDuPWMtGIbNJRYb/rYygjxrpoT9d60zNBSPELC/2X4NZ/b0Wy5hwblED4fGOjVlAQEBAqJP8aYPuKdl4WRH1elz2Re8PdahfQzZeltC2Xn6CNjYtBAQExMgExVqYSsWaZhOvUe04KRNP1MamhYCAgBiZoFgLoyjW3On0lSgp1u/TsrFpISAgINTp3XptYmMWHYgLtWEXbK3Sa30AAAAldEVYdGRhdGU6Y3JlYXRlADIwMTktMDItMjBUMTI6NTg6MDUtMDU6MDBY9g86AAAAJXRFWHRkYXRlOm1vZGlmeQAyMDE5LTAyLTIwVDEyOjU4OjA1LTA1OjAwKau3hgAAAABJRU5ErkJggg==" /><br />
 <br />
 </td>
 <td>1000<br />
@@ -1093,22 +1127,27 @@ IIIIIII<br />
 </div>
 <div id="html-rendering-3" class="section level2">
 <h2>HTML Rendering</h2>
-<p>Although the results are not as neat as they are when simply generating an html report from the R interpreter – the transparency of the graphs is lost in translation –, this is the best method still.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb13-1" data-line-number="1"><span class="kw">print</span>(<span class="kw">dfSummary</span>(tobacco, <span class="dt">graph.magnif =</span> <span class="fl">0.75</span>), <span class="dt">method =</span> <span class="st">'render'</span>)</a></code></pre></div>
+<p>This method has also been much improved in version 0.9 of <strong>summarytools</strong>.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb14-1" data-line-number="1"><span class="kw">print</span>(<span class="kw">dfSummary</span>(tobacco, <span class="dt">graph.magnif =</span> <span class="fl">0.75</span>), <span class="dt">method =</span> <span class="st">'render'</span>)</a></code></pre></div>
 <div class="container st-container">
-<h3>Data Frame Summary  </h3>
-<h4>tobacco</h4>
-<strong>N</strong>: 1000
+<h3>Data Frame Summary</h3>
+<strong>
+tobacco
+<br/>
+</strong>
+<strong>Dimensions</strong>: 1000 x 9
+  <br/><strong>Duplicates</strong>: 2
+<br/>
 <table class="table table-striped table-bordered st-table st-table-striped st-table-bordered st-multiline ">
   <thead>
     <tr>
-      <th align="center"><strong>No</strong></th>
-      <th align="center"><strong>Variable</strong></th>
-      <th align="center"><strong>Stats / Values</strong></th>
-      <th align="center"><strong>Freqs (% of Valid)</strong></th>
-      <th align="center"><strong>Graph</strong></th>
-      <th align="center"><strong>Valid</strong></th>
-      <th align="center"><strong>Missing</strong></th>
+      <th align="center" class="no st-protect-top-border"><strong>No</strong></th>
+      <th align="center" class="variable st-protect-top-border"><strong>Variable</strong></th>
+      <th align="center" class="stats.values st-protect-top-border"><strong>Stats / Values</strong></th>
+      <th align="center" class="freqs.pct.valid st-protect-top-border"><strong>Freqs (% of Valid)</strong></th>
+      <th align="center" class="graph st-protect-top-border"><strong>Graph</strong></th>
+      <th align="center" class="valid st-protect-top-border"><strong>Valid</strong></th>
+      <th align="center" class="missing st-protect-top-border"><strong>Missing</strong></th>
     </tr>
   </thead>
   <tbody>
@@ -1118,9 +1157,8 @@ IIIIIII<br />
 [factor]</td>
       <td align="left">1. F
 2. M</td>
-      <td align="left">489 (50.0%)
-489 (50.0%)</td>
-      <td align="center" border="0"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHAAAAAnCAMAAADgtTw2AAAADFBMVEX9/v2mpqb39/f9/v0TNkn1AAAABHRSTlP///8AQCqp9AAAAENJREFUWIXt1cEJACEQBEE9889ZQ7hXg1idQMGyMGPFjR6cbQf8yoBAIBAI/AfWe5gvfg7mJ33gS4FAIBB4IVjvYdwGnGwie3heCy4AAAAASUVORK5CYII="></td>
+      <td align="left" style="padding:0;vertical-align:middle"><table style="border-collapse:collapse;border:none;margin:0"><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">489</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">50.0%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">489</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">50.0%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr></table></td>
+      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAEQAAAAtCAQAAAC94QWrAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElNRQfjAhQMOgWlZoO2AAAAdElEQVRYw+3WMQrAIBBE0d2QC6bMCZPOI2q7CjYhrAP+6baRB2MxXk0jx2oAkFnOeDzJH+b2CcTsSmSU7pKpBggQIECAANkGMsyA8u2VH+JxC2UP6bCLdKqRgXR/5GWzClUDBAgQIECAbAPR3KwrI1MNkDEN1HALwGEQ8skAAAAldEVYdGRhdGU6Y3JlYXRlADIwMTktMDItMjBUMTI6NTg6MDUtMDU6MDBY9g86AAAAJXRFWHRkYXRlOm1vZGlmeQAyMDE5LTAyLTIwVDEyOjU4OjA1LTA1OjAwKau3hgAAAABJRU5ErkJggg=="></td>
       <td align="center">978
 (97.8%)</td>
       <td align="center">22
@@ -1130,12 +1168,12 @@ IIIIIII<br />
       <td align="center">2</td>
       <td align="left">age
 [numeric]</td>
-      <td align="left">mean (sd) : 49.6 (18.29)
-min &lt; med &lt; max :
-18 &lt; 50 &lt; 80
-IQR (CV) : 32 (0.37)</td>
-      <td align="left">63 distinct values</td>
-      <td align="center" border="0"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHAAAABLCAMAAACfg/MXAAAADFBMVEX9/v2mpqby8vL9/v28xacEAAAABHRSTlP///8AQCqp9AAAAJtJREFUaIHt10EOgCAMRFHQ+9/ZhTGRCkjB1qB/Niy0fWDAaFidEwA7Eo+4gcuefrA6ZROw1gHQAIwyalBukjvwuCzHdlBUDILJ/BOw9Ex6wVy7UK0cBHPt/g627PNHwcKK/cD8S9wQFLAfeGoAODcoj6k5qLsdEBAQEBAQ8F1Q/a0wDGorAQEBAQEBAQEBAQGnAJ1y+XvyyPfBDcjZRwPjT8SoAAAAAElFTkSuQmCC"></td>
+      <td align="left">Mean (sd) : 49.6 (18.3)
+min < med < max:
+18 < 50 < 80
+IQR (CV) : 32 (0.4)</td>
+      <td align="left" style="vertical-align:middle">63 distinct values</td>
+      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAHQAAABUCAQAAAD5P9uaAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElNRQfjAhQMOgY8b9IMAAABH0lEQVR42u2bXQ6DIBAGpeF4PUB7wnqA3q99BUwxWwHx25k3Y9AdfhZ1Y/gsPridHQCiiP5HTA/mXq/rJrxHqLdIT8elIfZQbNyzo7epbVPRY6H0xc0aRVQNN6KmZNQ3q65ddzdj1u2bVcur2+627ahnMgzR1nQuyvhqHbMzovPui9bo3CQjRNU4+Kw7e7pqJjp3smooukc54m1f2yYSLUc8Fx+p3Vm0Jj52orvJuoiqMXiN5ozchU8VHbkLu5m6iKqBqBqIqoGoGoiqgagaiKqBqBqIqpF9M7pOyeig6JWKRlbcTF1E1UBUDUTVQFQNRNVAVA1E1UBUDUTVQFQNRNVAVA1E1UBUDTeiIS2JvsTqo+mvz0HM7Sdupi6ianwBAc0prnKCnKkAAAAldEVYdGRhdGU6Y3JlYXRlADIwMTktMDItMjBUMTI6NTg6MDYtMDU6MDBpHhWnAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDE5LTAyLTIwVDEyOjU4OjA2LTA1OjAwGEOtGwAAAABJRU5ErkJggg=="></td>
       <td align="center">975
 (97.5%)</td>
       <td align="center">25
@@ -1149,11 +1187,8 @@ IQR (CV) : 32 (0.37)</td>
 2. 35-50
 3. 51-70
 4. 71 +</td>
-      <td align="left">258 (26.5%)
-241 (24.7%)
-317 (32.5%)
-159 (16.3%)</td>
-      <td align="center" border="0"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHAAAABOCAMAAADPTmKkAAAADFBMVEX9/v2mpqb39/f9/v0TNkn1AAAABHRSTlP///8AQCqp9AAAAHBJREFUaIHt1gEKgCAQRFGr+9+5C2TEggOt71/ggQrjuMKNDcBjXRPwXBUQCAQCgXUwvYfhunwxXsHUcwECgUDgn8H0PIXrsvjzVn4TH58TEAgEAoGfwPQexhc/DlbPpg4Wbx8IBAKBW4HpeQrXH7wBwLpNBaHkZ50AAAAASUVORK5CYII="></td>
+      <td align="left" style="padding:0;vertical-align:middle"><table style="border-collapse:collapse;border:none;margin:0"><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">258</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">26.5%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">241</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">24.7%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">317</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">32.5%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">159</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">16.3%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr></table></td>
+      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAADEAAABQCAQAAAAaPVVoAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElNRQfjAhQMOgY8b9IMAAAApklEQVRYw+3XQQqAIBCF4Qwv2K5OWDuPWNuxYLRJJYb/7aToo0Z6GM6pd+bughMiysX+YTBrkCu5iPmNixFIyjUfs4CAgIAw5/anTbanqAmyItr1uOyL0R/qML5G3ngqYWu90vx8bFoICAiIPxMUa2WaFOszm3iNRsfJPPlEfWxaCAgIiD8TFGtlDMWqn08LRE2xvp+Wj00LAQEBYc7o1usTH7MYQFy5gRds4AVd3QAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAxOS0wMi0yMFQxMjo1ODowNi0wNTowMGkeFacAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMTktMDItMjBUMTI6NTg6MDYtMDU6MDAYQ60bAAAAAElFTkSuQmCC"></td>
       <td align="center">975
 (97.5%)</td>
       <td align="center">25
@@ -1163,12 +1198,12 @@ IQR (CV) : 32 (0.37)</td>
       <td align="center">4</td>
       <td align="left">BMI
 [numeric]</td>
-      <td align="left">mean (sd) : 25.73 (4.49)
-min &lt; med &lt; max :
-8.83 &lt; 25.62 &lt; 39.44
-IQR (CV) : 5.72 (0.17)</td>
-      <td align="left">974 distinct values</td>
-      <td align="center" border="0"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHAAAABLCAMAAACfg/MXAAAADFBMVEX9/v2mpqby8vL9/v28xacEAAAABHRSTlP///8AQCqp9AAAAKJJREFUaIHt2AEKgCAMhWG1+985iAhDZ5PcsPzfAfbxInEYNucEQCHxjB+YjgACAk4Adh//t2B3zw+A51d0BDMJEBAQEBBwYrBj0xgDJn1RwBuVbTM+YMVYDNQcjqGgpicgICAgoBMYy6vXGCynzwS2r0UDMDWLAgKOBmtPh7agNBBQXMPtQKHnumDlCjQGHwZqweLfsQZT7l5gdEqroVn+D+6JAlak0tkapgAAAABJRU5ErkJggg=="></td>
+      <td align="left">Mean (sd) : 25.7 (4.5)
+min < med < max:
+8.8 < 25.6 < 39.4
+IQR (CV) : 5.7 (0.2)</td>
+      <td align="left" style="vertical-align:middle">974 distinct values</td>
+      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAHQAAABUCAQAAAD5P9uaAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElNRQfjAhQMOgY8b9IMAAABN0lEQVR42u2cQRKDIBAEQ8rn+YDkhfEB+V9ySy0HqiKwyzg7fdKL2OWAC1iWzy0H99U3IFGJ9rHZk6j+elQNPYpXO/bCW/dVhth/R++gFtNEV6JsSJQNibKRRnRRwWCxdZJflQQgGlMlKbpzOZbP78Oiu5vjqELekia6EmVDomxIlA2JsiFRNiTKhkTZAFhKsfjts4GJ+k3P00RXomw49tH1K39Bois28NsougjM3JWBFp0Z/TTRlSgbEmVDomxIlA2JsiFRNtKITp2mYS2eOIqu/2wqTNSP0TX8y4iOZiXNYCRRNiTKRhrR4dcLcjU0VRRrK6mNoovN+e2ni4qe7y5poitRNjr6KNqb87+ZatdghLWOUN+N1X4a6Uo06o8XMdr1IyjW7QUWylHsEy1kbk3SjLoSZeMLkwMuFVIUZWEAAAAldEVYdGRhdGU6Y3JlYXRlADIwMTktMDItMjBUMTI6NTg6MDYtMDU6MDBpHhWnAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDE5LTAyLTIwVDEyOjU4OjA2LTA1OjAwGEOtGwAAAABJRU5ErkJggg=="></td>
       <td align="center">974
 (97.4%)</td>
       <td align="center">26
@@ -1180,9 +1215,8 @@ IQR (CV) : 5.72 (0.17)</td>
 [factor]</td>
       <td align="left">1. Yes
 2. No</td>
-      <td align="left">298 (29.8%)
-702 (70.2%)</td>
-      <td align="center" border="0"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHAAAAAnCAMAAADgtTw2AAAADFBMVEX9/v2mpqb39/f9/v0TNkn1AAAABHRSTlP///8AQCqp9AAAAERJREFUWIXt1tEJACAMA9Gq++/sCobAgXC3wPsppHPghgdXWA/uKEFBQUFBQQSk9xDugxejLD6aMkFBQUFBwTeQ3kO4C/vtJyh24tRHAAAAAElFTkSuQmCC"></td>
+      <td align="left" style="padding:0;vertical-align:middle"><table style="border-collapse:collapse;border:none;margin:0"><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">298</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">29.8%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">702</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">70.2%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr></table></td>
+      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAFsAAAAtCAQAAABrRN/OAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElNRQfjAhQMOgY8b9IMAAAAkElEQVRo3u3XOw6EMBAEUQb5gmRwQsg4IqRjJw78YRpVZWgl9ILWirFnUWz9GgA7fsk/nB2Gvtsoqn9xyn/aGl99jzIXiY4ENmzYoYING3aoYMOuVny4zvrwbM38ZRD7HPZnguhIRNnZtq/QKzncSjrfkuPK/yxERwIbNuxQwYYNO1SwYVf7wy2pk+hIYM/sBZ6uC8CNFUxmAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDE5LTAyLTIwVDEyOjU4OjA2LTA1OjAwaR4VpwAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxOS0wMi0yMFQxMjo1ODowNi0wNTowMBhDrRsAAAAASUVORK5CYII="></td>
       <td align="center">1000
 (100%)</td>
       <td align="center">0
@@ -1192,12 +1226,12 @@ IQR (CV) : 5.72 (0.17)</td>
       <td align="center">6</td>
       <td align="left">cigs.per.day
 [numeric]</td>
-      <td align="left">mean (sd) : 6.78 (11.88)
-min &lt; med &lt; max :
-0 &lt; 0 &lt; 40
-IQR (CV) : 11 (1.75)</td>
-      <td align="left">37 distinct values</td>
-      <td align="center" border="0"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHAAAABLCAMAAACfg/MXAAAADFBMVEX9/v2mpqby8vL9/v28xacEAAAABHRSTlP///8AQCqp9AAAAGVJREFUaIHt2UEKgCAQQFGr+9/ZXSQ5JBIj1Ps7cYbn3nIkV/4Bbk0Z4H4JCAQCgUAgEAgEAoFAIBAIBAKBQCAQCAROge9/9D2B0c3gS+5jHbApvIlX4rEAHDpMrCwFkzrBzL4PVoiGW59749CFAAAAAElFTkSuQmCC"></td>
+      <td align="left">Mean (sd) : 6.8 (11.9)
+min < med < max:
+0 < 0 < 40
+IQR (CV) : 11 (1.8)</td>
+      <td align="left" style="vertical-align:middle">37 distinct values</td>
+      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAHQAAABUCAQAAAD5P9uaAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElNRQfjAhQMOgY8b9IMAAAA20lEQVR42u3cQQqDMBQA0abkeB6gPaE9gPer21+oISZCcDJvJ6L8CdGdpu9jDs/RAxhqaJscD9bCA/tKo0c9L46cf08tB5dso2fuNs3WNZTGUBpDaQylMZTGUBpDaQylMZTGUBpDaQylMZTGUBpDaQylMZTGUBpDaQylMZTGUBpDaQylMZTGUBpDaQylMZTGUBpDaQylMZQm997gc5MP4LtDR38AX1rod1joC0LbhrhO3UJXh7YM/X+ErTBay5k61aF3/0PDNG/dFHfkCvvnT3wZJVjboWm2rqE0OyNCFwDE0Xl2AAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDE5LTAyLTIwVDEyOjU4OjA2LTA1OjAwaR4VpwAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxOS0wMi0yMFQxMjo1ODowNi0wNTowMBhDrRsAAAAASUVORK5CYII="></td>
       <td align="center">965
 (96.5%)</td>
       <td align="center">35
@@ -1209,9 +1243,8 @@ IQR (CV) : 11 (1.75)</td>
 [factor]</td>
       <td align="left">1. Yes
 2. No</td>
-      <td align="left">224 (22.4%)
-776 (77.6%)</td>
-      <td align="center" border="0"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHAAAAAnCAMAAADgtTw2AAAADFBMVEX9/v2mpqb39/f9/v0TNkn1AAAABHRSTlP///8AQCqp9AAAAEVJREFUWIXt1rENACAMxMAA++/MBoTiZSjsBa6J9KkFVzw4uuLgPCcoKCgoKPgCpPcQ7scXI1t/NNkEBQUFBQXvQHoP4TYNZChFG0QMJQAAAABJRU5ErkJggg=="></td>
+      <td align="left" style="padding:0;vertical-align:middle"><table style="border-collapse:collapse;border:none;margin:0"><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">224</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">22.4%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">776</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">77.6%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr></table></td>
+      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAGMAAAAtCAQAAAAQYB0CAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElNRQfjAhQMOgY8b9IMAAAAl0lEQVRo3u2YMQ6AIBAExfBBO32hdj5R24MOLW7Y7HSEBJhkj3CUZ1FgzT6ANfQ0ahycHwplL1lHjxvXdmobXOrOcugQCZU1SFiDhDVIWIOENUhYg4SIRvdQpzy8RymxU5rreyG2TSKhEtFoauOaKlVHSNXPXjyP9jISCZU1SFiDhDVIWIOENUhYg4SIhmIvPi8iobIGiRcHKgvARlqPuwAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAxOS0wMi0yMFQxMjo1ODowNi0wNTowMGkeFacAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMTktMDItMjBUMTI6NTg6MDYtMDU6MDAYQ60bAAAAAElFTkSuQmCC"></td>
       <td align="center">1000
 (100%)</td>
       <td align="center">0
@@ -1232,18 +1265,8 @@ IQR (CV) : 11 (1.75)</td>
 9. Digestive
 10. Hypotension
 [ 3 others ]</td>
-      <td align="left">36 (16.2%)
-34 (15.3%)
-21 (9.5%)
-20 (9.0%)
-20 (9.0%)
-19 (8.6%)
-14 (6.3%)
-14 (6.3%)
-12 (5.4%)
-11 (5.0%)
-21 (9.5%)</td>
-      <td align="center" border="0"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHAAAADWCAMAAAA+e/aKAAAADFBMVEX9/v2mpqb39/f9/v0TNkn1AAAABHRSTlP///8AQCqp9AAAAONJREFUeJzt2zEOwkAQBEED//8zRCRE4KPltWs+UNJppXbi7RFvAwKBn+Ct3Qu8lwMCgUDgULDOUx7gHMwe8w1W5wIEAoHAyWCdp3gTi/81uOYYgEAgEAhcCtY9jDfuE+MXMLwYIBAIBI4F6zzFU/xTXCkQCAQC94OKvxos3/Ox72iAQCAQeCGwzlO8gxd/DfjnKwECgUDgKcA6T/EU/xRXCgQCgcCBoE+M1WD2mG+wOhcgEAgETgbrPMU7ZvEXg+HFAIFAIHAsWOcp3jGLv/LBL/HTKhAIBAL3g3We4gGBwI89AVXZ5rjnmH1MAAAAAElFTkSuQmCC"></td>
+      <td align="left" style="padding:0;vertical-align:middle"><table style="border-collapse:collapse;border:none;margin:0"><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">36</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">16.2%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">34</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">15.3%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">21</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">9.5%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">20</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">9.0%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">20</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">9.0%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">19</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">8.6%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">14</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">6.3%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">14</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">6.3%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">12</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">5.4%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">11</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">5.0%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 5px 0 7px;margin:0;border:0" align="right">21</td><td style="padding:0 2px 0 0;border:0;" align="left">(</td><td style="padding:0;border:0" align="right">9.5%</td><td style="padding:0 4px 0 2px;border:0" align="left">)</td></tr></table></td>
+      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAB8AAADOCAQAAABsxRE4AAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElNRQfjAhQMOgY8b9IMAAAA4klEQVRo3u3ZMRLCIBBGYXC8oJ2eULscUTslUXbXIWJ+8ugsvlF2h9eY76nlHJr0n/mx/HANDeKSKzylk4unDd0dDpfjixc3fclz+cRj3Sue+6o//hb4+nOucr82y9lI7x0O789Hr828L+bd32tjT0N673B4f05tnofawOE/5dK1IVZw+H64dKzc2litcWvjzUJ673B4fz5ubezSfLh7WZvIHKT3Dof359K1IVZw+H64dKyM2vitMWoTm4L03uHw/nzM2kRaU61NdAbSe4fD+/Mxa/M6/KUFh2+Fr1kbtbs38gemCUBMahx0pgAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAxOS0wMi0yMFQxMjo1ODowNi0wNTowMGkeFacAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMTktMDItMjBUMTI6NTg6MDYtMDU6MDAYQ60bAAAAAElFTkSuQmCC"></td>
       <td align="center">222
 (22.2%)</td>
       <td align="center">778
@@ -1253,16 +1276,12 @@ IQR (CV) : 11 (1.75)</td>
       <td align="center">9</td>
       <td align="left">samp.wgts
 [numeric]</td>
-      <td align="left">mean (sd) : 1 (0.08)
-min &lt; med &lt; max :
-0.86 &lt; 1.04 &lt; 1.06
-IQR (CV) : 0.19 (0.08)</td>
-      <td align="left">0.86! : 267 (26.7%)
-1.04! : 249 (24.9%)
-1.05! : 324 (32.4%)
-1.06! : 160 (16.0%)
-! rounded</td>
-      <td align="center" border="0"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHAAAABOCAMAAADPTmKkAAAADFBMVEX9/v2mpqb39/f9/v0TNkn1AAAABHRSTlP///8AQCqp9AAAAHBJREFUaIHt1gEKgCAUREGr+9+5C5iE4ULfeRcYUGFtV7i2AXgsrA+eywICgUAgcBpM72G4Ml+MEZh6LkAgEAj8M5iep3BlFv+xpd/E3msCAoFAIPAVmN7D+OLHwcmj+QDOXT4QCAQC9wLT8xSuPngDcbxM8qn5u3AAAAAASUVORK5CYII=">
+      <td align="left">Mean (sd) : 1 (0.1)
+min < med < max:
+0.9 < 1 < 1.1
+IQR (CV) : 0.2 (0.1)</td>
+      <td align="left" style="padding:0;vertical-align:middle"><table style="border-collapse:collapse;border:none;margin:0"><tr style="background-color:transparent"><td style="padding:0 0 0 7px;margin:0;border:0" align="right">0.86!</td><td style="padding:0 2px;border:0;" align="left">:</td><td style="padding:0 4px 0 6px;margin:0;border:0" align="right">267</td><td style="padding:0;border:0" align="left">(</td><td style="padding:0 2px;margin:0;border:0" align="right">26.7%</td><td style="padding:0 4px 0 0;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 0 0 7px;margin:0;border:0" align="right">1.04!</td><td style="padding:0 2px;border:0;" align="left">:</td><td style="padding:0 4px 0 6px;margin:0;border:0" align="right">249</td><td style="padding:0;border:0" align="left">(</td><td style="padding:0 2px;margin:0;border:0" align="right">24.9%</td><td style="padding:0 4px 0 0;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 0 0 7px;margin:0;border:0" align="right">1.05!</td><td style="padding:0 2px;border:0;" align="left">:</td><td style="padding:0 4px 0 6px;margin:0;border:0" align="right">324</td><td style="padding:0;border:0" align="left">(</td><td style="padding:0 2px;margin:0;border:0" align="right">32.4%</td><td style="padding:0 4px 0 0;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 0 0 7px;margin:0;border:0" align="right">1.06!</td><td style="padding:0 2px;border:0;" align="left">:</td><td style="padding:0 4px 0 6px;margin:0;border:0" align="right">160</td><td style="padding:0;border:0" align="left">(</td><td style="padding:0 2px;margin:0;border:0" align="right">16.0%</td><td style="padding:0 4px 0 0;border:0" align="left">)</td></tr><tr style="background-color:transparent"><td style="padding:0 0 0 7px;border:0;margin:0" colspan=3>! rounded</td></tr></table></td>
+      <td align="left" style="vertical-align:middle;padding:0;background-color:transparent"><img style="border:none;background-color:transparent;padding:0" src="data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAADEAAABQCAQAAAAaPVVoAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAAmJLR0QA/4ePzL8AAAAHdElNRQfjAhQMOgY8b9IMAAAAp0lEQVRYw+3XQQqAIBCFYY0u2K5OWDuPWMtGIbNJRYb/rYygjxrpoT9d60zNBSPELC/2X4NZ/b0Wy5hwblED4fGOjVlAQEBAqJP8aYPuKdl4WRH1elz2Re8PdahfQzZeltC2Xn6CNjYtBAQExMgExVqYSsWaZhOvUe04KRNP1MamhYCAgBiZoFgLoyjW3On0lSgp1u/TsrFpISAgINTp3XptYmMWHYgLtWEXbK3Sa30AAAAldEVYdGRhdGU6Y3JlYXRlADIwMTktMDItMjBUMTI6NTg6MDYtMDU6MDBpHhWnAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDE5LTAyLTIwVDEyOjU4OjA2LTA1OjAwGEOtGwAAAABJRU5ErkJggg==">
 
 </td>
       <td align="center">1000
@@ -1274,6 +1293,11 @@ IQR (CV) : 0.19 (0.08)</td>
 </table>
 </div>
 <p><a href="#top">Back to top</a></p>
+</div>
+<div id="final-notes" class="section level2">
+<h2>Final Notes</h2>
+<p>This is by no way a definitive guide; depending on the themes you use, you could find that other settings yield better results. Also, this document focuses on <em>HTML</em> document rendering. If you are looking to create a <em>Word</em> of a <em>pdf</em> document, you might want to try different combinations of options.</p>
+<p>One thing that seems clear though: the <em>rendering</em> method is <strong>not</strong> well-suited for <em>Word</em> documents.</p>
 </div>
 </div>
 

@@ -6,72 +6,90 @@
 \usage{
 dfSummary(x, round.digits = st_options("round.digits"),
   varnumbers = st_options("dfSummary.varnumbers"),
-  labels.col = length(label(x, all = TRUE)) > 0,
+  labels.col = st_options("dfSummary.labels.col"),
   valid.col = st_options("dfSummary.valid.col"),
   na.col = st_options("dfSummary.na.col"),
   graph.col = st_options("dfSummary.graph.col"),
   graph.magnif = st_options("dfSummary.graph.magnif"),
-  style = "multiline", plain.ascii = st_options("plain.ascii"),
-  justify = "left", omit.headings = st_options("omit.headings"),
+  style = st_options("dfSummary.style"),
+  plain.ascii = st_options("plain.ascii"), justify = "left",
+  col.widths = NA, headings = st_options("headings"),
+  display.labels = st_options("display.labels"),
   max.distinct.values = 10, trim.strings = FALSE,
-  max.string.width = 25, split.cells = 40, split.tables = Inf, ...)
+  max.string.width = 25, split.cells = 40, split.tables = Inf,
+  tmp.img.dir = st_options("tmp.img.dir"),
+  silent = st_options("dfSummary.silent"), ...)
 }
 \arguments{
 \item{x}{A data frame.}
 
-\item{round.digits}{Number of significant digits to display. Defaults
-to \code{2} and can be set globally; see \code{\link{st_options}}.}
+\item{round.digits}{Number of significant digits to display. Defaults to
+\code{2} and can be set globally; see \code{\link{st_options}}.}
 
-\item{varnumbers}{Logical. Should the first column contain variable number? Defaults
-to \code{TRUE}. Can be set globally; see \code{\link{st_options}}, option 
-\dQuote{dfSummary.varnumbers}.}
+\item{varnumbers}{Logical. Should the first column contain variable number?
+Defaults to \code{TRUE}. Can be set globally; see \code{\link{st_options}},
+option \dQuote{dfSummary.varnumbers}.}
 
 \item{labels.col}{Logical. If \code{TRUE}, variable labels (as defined with
-\pkg{rapportools}, \pkg{Hmisc} or \pkg{summarytools}' \code{label} functions)
-will be displayed. By default, the \emph{labels} column is shown if at least
-one column has a defined label.}
+\pkg{rapportools}, \pkg{Hmisc} or \pkg{summarytools}' \code{label}
+functions) will be displayed. \code{TRUE} by default, but the \emph{labels}
+column is only shown if at least one column has a defined label. This
+option can also be set globally; see \code{\link{st_options}}, option 
+\dQuote{dfSummary.labels.col}.}
 
-\item{valid.col}{Logical. Include column indicating count and proportion of valid
-(non-missing) values. \code{TRUE} by default, but can be set globally; see 
-\code{\link{st_options}}, option \dQuote{dfSummary.valid.col}.}
+\item{valid.col}{Logical. Include column indicating count and proportion of
+valid (non-missing) values. \code{TRUE} by default, but can be set
+globally; see \code{\link{st_options}}, option
+\dQuote{dfSummary.valid.col}.}
 
-\item{na.col}{Logical. Include column indicating count and proportion of missing
-(NA) values. \code{TRUE} by default, but can be set globally; see 
+\item{na.col}{Logical. Include column indicating count and proportion of
+missing (NA) values. \code{TRUE} by default, but can be set globally; see
 \code{\link{st_options}}, option \dQuote{dfSummary.na.col}.}
 
 \item{graph.col}{Logical. Display barplots / histograms column in \emph{html}
-reports. \code{TRUE} by default, but can be set globally; see 
+reports. \code{TRUE} by default, but can be set globally; see
 \code{\link{st_options}}, option \dQuote{dfSummary.graph.col}.}
 
-\item{graph.magnif}{Numeric. Magnification factor, useful if the graphs show up
-too large (then use a value < 1) or too small (use a value > 1). Must be 
-positive. Can be set globally; see \code{\link{st_options}}, option 
-\dQuote{dfSummary.graph.magnif}.}
+\item{graph.magnif}{Numeric. Magnification factor, useful if the graphs show
+up too large (then use a value < 1) or too small (use a value > 1). Must be
+positive. Default to \code{1}. Can be set globally; see
+\code{\link{st_options}}, option \dQuote{dfSummary.graph.magnif}.}
 
-\item{style}{Style to be used by \code{\link[pander]{pander}} when
-rendering output table. Defaults to \dQuote{multiline}. The only other valid
-option is \dQuote{grid}. Style \dQuote{simple} is not supported for this particular
-function, and \dQuote{rmarkdown} will fallback to \dQuote{multiline}.}
+\item{style}{Style to be used by \code{\link[pander]{pander}} when rendering
+output table. Defaults to \dQuote{multiline}. The only other valid option
+is \dQuote{grid}. Style \dQuote{simple} is not supported for this
+particular function, and \dQuote{rmarkdown} will fallback to
+\dQuote{multiline}.}
 
 \item{plain.ascii}{Logical. \code{\link[pander]{pander}} argument; when
-\code{TRUE}, no markup characters will be used (useful when printing
-to console). Defaults to \code{TRUE}. Set to \code{FALSE} when in context of 
-markdown rendering. To change the default value globally, see \code{\link{st_options}}.}
+\code{TRUE}, no markup characters will be used (useful when printing to
+console). Defaults to \code{TRUE}. Set to \code{FALSE} when in context of
+markdown rendering. To change the default value globally, see
+\code{\link{st_options}}.}
 
-\item{justify}{String indicating alignment of columns; one of \dQuote{l} (left)
-\dQuote{c} (center), or \dQuote{r} (right). Defaults to \dQuote{l}.}
+\item{justify}{String indicating alignment of columns; one of \dQuote{l}
+(left) \dQuote{c} (center), or \dQuote{r} (right). Defaults to \dQuote{l}.}
 
-\item{omit.headings}{Logical. Set to \code{TRUE} to omit headings. To change this 
+\item{col.widths}{Numeric or character. Vector of column widths. If numeric,
+values are assumed to be numbers of pixels. Otherwise, any CSS-supported
+units can be used. \code{NA} by default, meaning widths are calculated 
+automatically.}
+
+\item{headings}{Logical. Set to \code{FALSE} to omit headings. To change this
 default value globally, see \code{\link{st_options}}.}
 
-\item{max.distinct.values}{The maximum number of values to display frequencies
-for. If variable has more distinct values than this number, the remaining
-frequencies will be reported as a whole, along with the number of additional
-distinct values. Defaults to 10.}
+\item{display.labels}{Logical. Should data frame label be displayed in the
+title section?  Default is \code{TRUE}. To change this default value
+globally, see \code{\link{st_options}}.}
+
+\item{max.distinct.values}{The maximum number of values to display
+frequencies for. If variable has more distinct values than this number, the
+remaining frequencies will be reported as a whole, along with the number of
+additional distinct values. Defaults to 10.}
 
 \item{trim.strings}{Logical; for character variables, should leading and
-trailing white space be removed? Defaults to \code{FALSE}. See \emph{details}
-section.}
+trailing white space be removed? Defaults to \code{FALSE}. See
+\emph{details} section.}
 
 \item{max.string.width}{Limits the number of characters to display in the
 frequency tables. Defaults to \code{25}.}
@@ -80,34 +98,41 @@ frequency tables. Defaults to \code{25}.}
 It is the number of characters allowed on a line before splitting the cell.
 Defaults to \code{40}.}
 
-\item{split.tables}{\pkg{pander} argument which determines the maximum
-width of a table. Keeping the default value (\code{Inf}) is recommended.}
+\item{split.tables}{\pkg{pander} argument which determines the maximum width
+of a table. Keeping the default value (\code{Inf}) is recommended.}
+
+\item{tmp.img.dir}{Character. Directory used to store temporary images when
+rendering dfSummary() with `method = "pander"`, `plain.ascii = TRUE` and 
+`style = "grid"`. See \emph{Details}.}
+
+\item{silent}{Logical. Hide console messages. \code{FALSE} by default. To 
+change this value globally, see \code{\link{st_options}}.}
 
 \item{\dots}{Additional arguments passed to \code{\link[pander]{pander}}.}
 }
 \value{
 A data frame with additional class \code{summarytools} containing as
-  many rows as there are columns in \code{x}, with attributes to 
-  inform \code{print} method. Columns in the output data frame are:
+  many rows as there are columns in \code{x}, with attributes to inform
+  \code{print} method. Columns in the output data frame are:
   \describe{
-    \item{No}{Number indicating the order in which column appears in
-      the data frame.}
+    \item{No}{Number indicating the order in which column appears in the data
+     frame.}
     \item{Variable}{Name of the variable, along with its class(es).}
     \item{Label}{Label of the variable (if applicable).}
     \item{Stats / Values}{For factors, a list of their values, limited by the
       \code{max.distinct.values} parameter. For character variables, the most
-      common values (in descending frequency order), also limited by
+       common values (in descending frequency order), also limited by
       \code{max.distinct.values}. For numerical variables, common univariate
       statistics (mean, std. deviation, min, med, max, IQR and CV).}
-    \item{Freqs (\% of Valid)}{For factors and character variables, the frequencies
-      and proportions of the values listed in the previous column. For numerical
-      vectors, number of distinct values, or frequency of distinct values if
-      their number is not greater than \code{max.distinct.values}.}
+    \item{Freqs (\% of Valid)}{For factors and character variables, the
+      frequencies and proportions of the values listed in the previous
+      column. For numerical vectors, number of distinct values, or frequency
+      of distinct values if their number is not greater than
+      \code{max.distinct.values}.}
     \item{Text Graph}{An ascii histogram for numerical variables, and ascii
-      barplot for factors and character variables.}
-    \item{Valid}{Number and proportion of valid values.}
-    \item{Missing}{Number and proportion of missing (NA and NAN) values.}
-}
+      barplot for factors and character variables.} \item{Valid}{Number and
+      proportion of valid values.}
+    \item{Missing}{Number and proportion of missing (NA and NAN) values.} }
 }
 \description{
 Summary of a data frame consisting of: variable names, labels if any, factor
@@ -115,21 +140,46 @@ levels, frequencies and/or numerical summary statistics, and valid/missing
 observation counts.
 }
 \details{
-The default \code{plain.ascii = TRUE} option is there to make results
-  appear cleaner in the console. When used in a context of \emph{rmarkdown} rendering,
-  set this option to \code{FALSE}.
+The default \code{plain.ascii = TRUE} option is there to make
+  results appear cleaner in the console. When used in a context of
+  \emph{rmarkdown} rendering, set this option to \code{FALSE}.
 
   When the \code{trim.strings} is set to \code{TRUE}, trimming is done
   \emph{before} calculating frequencies, so those will be impacted
   accordingly.
 
-  The package vignette \dQuote{Recommendations for Rmarkdown} provides valuable 
-  information for creating optimal \emph{Rmarkdown} documents with summarytools.
+  Specifying \code{tmp.img.dir} allows producing results consistent with
+  pandoc styling while also showing \emph{png} graphs. Due to the fact that
+  in Pandoc, column widths are determined by the length of cell contents
+  \strong{even if said content is merely a link to an image}, we cannot
+  use the standard R temporary directory to store the images. We need a
+  shorter path; on Mac OS and Linux, using \dQuote{/tmp} is a sensible
+  choice, since this directory is cleaned up automatically on a regular
+  basis. On Windows however, there is no such convenient directory and the
+  user will have to choose a directory and cleanup the temporary images
+  manually after the document has been rendered. Providing a relative path
+  such as \dQuote{img} is recommended. The maximum length for this parameter
+  is set to 5 characters. It can be set globally using 
+  \code{\link{st_options}}; for example: \code{st_options(tmp.img.dir = ".")}.
 }
 \examples{
-data(tobacco)
+data("tobacco")
 dfSummary(tobacco)
-\dontrun{view(dfSummary(iris))}
+
+# Exclude some columns
+dfSummary(tobacco, varnumbers = FALSE, valid.col = FALSE)
+
+# Limit number of categories to be displayed for factors / categorical data
+dfSummary(tobacco, max.distinct.values = 5, style = "grid")
+
+\dontrun{
+# Show in Viewer or browser (view: no capital V!)
+view(dfSummary(iris))
+
+# Rmarkdown-ready
+dfSummary(tobacco, style = "rmarkdown", plain.ascii = TRUE,
+          varnumbers = FALSE, valid.col = FALSE, tmp.img.dir = "./img")
+}
 
 }
 \author{

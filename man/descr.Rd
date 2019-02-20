@@ -8,18 +8,20 @@ descr(x, stats = st_options("descr.stats"), na.rm = TRUE,
   round.digits = st_options("round.digits"),
   transpose = st_options("descr.transpose"),
   style = st_options("style"), plain.ascii = st_options("plain.ascii"),
-  justify = "right", omit.headings = st_options("omit.headings"),
+  justify = "right", headings = st_options("headings"),
   display.labels = st_options("display.labels"), split.tables = 100,
   weights = NA, rescale.weights = FALSE, ...)
 }
 \arguments{
 \item{x}{A numerical vector or a data frame.}
 
-\item{stats}{Which stats to produce. Either \dQuote{all} (default), or a
-selection of : \dQuote{mean}, \dQuote{sd}, \dQuote{min}, \dQuote{q1}, \dQuote{med}, 
-\dQuote{q3}, \dQuote{max}, \dQuote{mad}, \dQuote{iqr}, \dQuote{cv}, \dQuote{skewness},
-\dQuote{se.skewness}, \dQuote{kurtosis}, \dQuote{n.valid}, and \dQuote{pct.valid}.
-This can be set globally via \code{\link{st_options}} (\dQuote{descr.stats}).}
+\item{stats}{Which stats to produce. Either \dQuote{all} (default),
+\dQuote{fivenum}, \dQuote{common} (see Details), or a selection of :
+\dQuote{mean}, \dQuote{sd}, \dQuote{min}, \dQuote{q1}, \dQuote{med},
+\dQuote{q3}, \dQuote{max}, \dQuote{mad}, \dQuote{iqr}, \dQuote{cv},
+\dQuote{skewness}, \dQuote{se.skewness}, \dQuote{kurtosis},
+\dQuote{n.valid}, and \dQuote{pct.valid}. This can be set globally via
+\code{\link{st_options}} (\dQuote{descr.stats}).}
 
 \item{na.rm}{Argument to be passed to statistical functions. Defaults to
 \code{TRUE}. Can be set globally; see \code{\link{st_options}}.}
@@ -27,57 +29,86 @@ This can be set globally via \code{\link{st_options}} (\dQuote{descr.stats}).}
 \item{round.digits}{Number of significant digits to display. Defaults to
 \code{2}, and can be set globally (see \code{\link{st_options}}).}
 
-\item{transpose}{Logical. Makes variables appears as columns, and stats as rows.
-Defaults to \code{FALSE}. To change this default value, see \code{\link{st_options}}
-(option \dQuote{descr.transpose}).}
+\item{transpose}{Logical. Makes variables appears as columns, and stats as
+rows. Defaults to \code{FALSE}. To change this default value, see
+\code{\link{st_options}} (option \dQuote{descr.transpose}).}
 
 \item{style}{Style to be used by \code{\link[pander]{pander}} when rendering
-output table; One of \dQuote{simple} (default), \dQuote{grid}, or \dQuote{rmarkdown} 
-This option can be set globally; see \code{\link{st_options}}.}
+output table; One of \dQuote{simple} (default), \dQuote{grid}, or
+\dQuote{rmarkdown} This option can be set globally; see
+\code{\link{st_options}}.}
 
 \item{plain.ascii}{Logical. \code{\link[pander]{pander}} argument; when
-\code{TRUE}, no markup characters will be used (useful when printing
-to console). Defaults to \code{TRUE} unless \code{style = 'rmarkdown'},
-in which case it will be set to \code{FALSE} automatically. To change the default 
-value globally, see \code{\link{st_options}}.}
+\code{TRUE}, no markup characters will be used (useful when printing to
+console). Defaults to \code{TRUE} unless \code{style = 'rmarkdown'}, in
+which case it will be set to \code{FALSE} automatically. To change the
+default value globally, see \code{\link{st_options}}.}
 
-\item{justify}{Alignment of numbers in cells; \dQuote{l} for left, \dQuote{c} for center,
-or \dQuote{r} for right (default). Has no effect on \emph{html} tables.}
+\item{justify}{Alignment of numbers in cells; \dQuote{l} for left, \dQuote{c}
+for center, or \dQuote{r} for right (default). Has no effect on \emph{html}
+tables.}
 
-\item{omit.headings}{Logical. Set to \code{TRUE} to omit heading section. Can be set
-globally via \code{\link{st_options}}.}
+\item{headings}{Logical. Set to \code{FALSE} to omit heading section. Can be
+set globally via \code{\link{st_options}}. \code{TRUE} by default.}
 
-\item{display.labels}{Logical. Should variable / data frame labels be displayed in
-the title section?  Default is \code{TRUE}. To change this default value globally,
-see \code{\link{st_options}}.}
+\item{display.labels}{Logical. Should variable / data frame labels be
+displayed in the title section?  Default is \code{TRUE}. To change this
+default value globally, see \code{\link{st_options}}.}
 
 \item{split.tables}{Pander argument that specifies how many characters wide a
 table can be. \code{100} by default.}
 
-\item{weights}{Vector of weights having same length as x. \code{NA}
-(default) indicates that no weights are used.}
+\item{weights}{Vector of weights having same length as x. \code{NA} (default)
+indicates that no weights are used.}
 
-\item{rescale.weights}{Logical. When set to \code{TRUE}, the
-total count will be the same as the unweighted \code{x}. \code{FALSE} by
-default.}
+\item{rescale.weights}{Logical. When set to \code{TRUE}, the total count will
+be the same as the unweighted \code{x}. \code{FALSE} by default.}
 
 \item{\dots}{Additional arguments passed to \code{\link[pander]{pander}}.}
 }
 \value{
-A nn object of classes \code{matrix} and \code{summarytools} containing 
-  the statistics, with extra attributes used by \link{print} method.
+An object having classes \code{matrix} and \code{summarytools}
+  containing the statistics, with extra attributes used by \link{print}
+  method.
 }
 \description{
 Calculates mean, sd, min, Q1*, median, Q3*, max, MAD, IQR*, CV, 
-skewness*, SE.skewness*, and kurtosis* on numerical vectors. (*) Not available 
-when using sampling weights.
+skewness*, SE.skewness*, and kurtosis* on numerical vectors. (*) Not 
+available when using sampling weights.
 }
 \examples{
-data(exams)
+data("exams")
+
+# All stats for all numerical variabls
 descr(exams)
+
+# Only common statistics
+descr(exams, stats = "common")
+
+# Arbitrary selection of statistics, transposed
 descr(exams, stats = c("mean", "sd", "min", "max"), transpose = TRUE)
-data(tobacco)
-with(tobacco, view(by(BMI, gender, descr), method = "pander"))
+
+# Rmarkdown-ready
+descr(exams, plain.ascii = FALSE, style = "rmarkdown")
+
+# Grouped statistics
+data("tobacco")
+with(tobacco, stby(BMI, gender, descr))
+
+# Grouped statistics, transposed
+with(tobacco, stby(BMI, age.gr, descr, stats = "common", transpose = TRUE))
+
+\dontrun{
+# Show in Viewer (or browser if not in RStudio)
+view(descr(exams))
+
+# Save to html file with title
+print(descr(exams),
+      file = "descr_exams.html", 
+      report.title = "BMI by Age Group",
+      footnote = "<b>Schoolyear:</b> 2018-2019<br/><b>Semester:</b> Fall")
+
+}
 
 }
 \author{
