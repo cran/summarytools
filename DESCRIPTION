@@ -1,7 +1,7 @@
 Package: summarytools
 Type: Package
 Title: Tools to Quickly and Neatly Summarize Data
-Version: 0.9.1
+Version: 0.9.2
 Authors@R: person("Dominic", "Comtois", email = "dominic.comtois@gmail.com", 
   role = c("aut", "cre"))
 Description: Data frame summaries, cross-tabulations,
@@ -23,8 +23,8 @@ BugReports: https://github.com/dcomtois/summarytools/issues
 Encoding: UTF-8
 RoxygenNote: 6.1.1
 NeedsCompilation: no
-Packaged: 2019-02-20 17:58:07 UTC; dominic
+Packaged: 2019-02-22 00:14:51 UTC; dominic
 Author: Dominic Comtois [aut, cre]
 Maintainer: Dominic Comtois <dominic.comtois@gmail.com>
 Repository: CRAN
-Date/Publication: 2019-02-20 18:50:03 UTC
+Date/Publication: 2019-02-22 09:10:03 UTC

@@ -41,9 +41,9 @@ descr(iris, stats = "common", transpose = TRUE, headings = FALSE)
 #  library(summarytools)
 #  view(dfSummary(iris))
 
-## ------------------------------------------------------------------------
-dfSummary(tobacco, plain.ascii = FALSE, style = "grid", 
-          graph.magnif = 0.75, valid.col = FALSE, tmp.img.dir = "/tmp")
+## ---- eval=FALSE---------------------------------------------------------
+#  dfSummary(tobacco, plain.ascii = FALSE, style = "grid",
+#            graph.magnif = 0.75, valid.col = FALSE, tmp.img.dir = "/tmp")
 
 ## ------------------------------------------------------------------------
 (iris_stats_by_species <- stby(data = iris, 

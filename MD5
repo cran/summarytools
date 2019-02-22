@@ -1,6 +1,6 @@
-3ae94ea347dfa5fb36f565dabc57f66d *DESCRIPTION
+be8ed42598b24c85516e86020a072f21 *DESCRIPTION
 f306fe195becc80ce0c02783837714ba *NAMESPACE
-d2d911437995b38813a44f31006ec9e6 *NEWS.md
+f9e892bcf2d9c4f58f3246d8b625cfa9 *NEWS.md
 91dec60d8f5ce539aa5e5660f0333677 *R/cleartmp.R
 939b9f27054f843574879b7599bc4cb6 *R/ctable.R
 0c76ab1ce9c1367c71d3feceacc33351 *R/descr.R
@@ -31,12 +31,12 @@ f78b393d3a1e19b1b7ad0f6fad627d88 *data/examens.RData
 1fca66148319cd2900162c4422f6219d *data/exams.RData
 ca88c62a6a990c0bd232485e490e53ba *data/tabagisme.RData
 72ea37cbdc9c435bb834143ded289f72 *data/tobacco.RData
-788384fad80b689b553259072d9760ab *inst/doc/Introduction.R
-9897fbd01c9a1a30ccdbefd4ff4b4181 *inst/doc/Introduction.Rmd
-784ade36b2892e0cada965500361e2d3 *inst/doc/Introduction.html
-c0c9e8fcf29acb2cd69e2d91da4c7a9f *inst/doc/Recommendations-rmarkdown.R
-1a484f9187d22eeac6284ab073d2c056 *inst/doc/Recommendations-rmarkdown.Rmd
-80913bbfd17eb2bfe1445b52340d2226 *inst/doc/Recommendations-rmarkdown.html
+072372143ef382497cdac418c8e31afe *inst/doc/Introduction.R
+a76e7990a6b6b217097bf0925c647bc0 *inst/doc/Introduction.Rmd
+bb5687c16baf60c973684b858890126e *inst/doc/Introduction.html
+2d0d9a328be5add47e61ef2224232e1d *inst/doc/Recommendations-rmarkdown.R
+70b26633b3d7674616f83beecf577634 *inst/doc/Recommendations-rmarkdown.Rmd
+16c43e4beebab69963ec453b8d011554 *inst/doc/Recommendations-rmarkdown.html
 7a8bd5f3b3bcf967162830d773b5467d *inst/includes/stylesheets/bootstrap-grid.css
 f9f7fb2cd2b04d40bfef994bb32088d5 *inst/includes/stylesheets/bootstrap-grid.min.css
 3b5174fd3f50c1686aeebe8841f40edc *inst/includes/stylesheets/bootstrap-reboot.css
@@ -67,6 +67,7 @@ a16b84d19fbff6588f5ea7a0f6702f0c *man/stby.Rd
 a348f412c73cebf6d5c167d6e76510fd *man/useTranslations.Rd
 ac3fe96d75f109771f195ba125d47b2c *man/view.Rd
 e15adee5c47e45e6272f7bf4857d489a *man/what.is.Rd
-9897fbd01c9a1a30ccdbefd4ff4b4181 *vignettes/Introduction.Rmd
-1a484f9187d22eeac6284ab073d2c056 *vignettes/Recommendations-rmarkdown.Rmd
+a76e7990a6b6b217097bf0925c647bc0 *vignettes/Introduction.Rmd
+70b26633b3d7674616f83beecf577634 *vignettes/Recommendations-rmarkdown.Rmd
 af74f06f61cf019eedf305bbd72c60ba *vignettes/dfSummary_in_RStudio_Viewer.png
+5df2e3bdbefb3eec7d1f8a1f64d810aa *vignettes/dfSummary_md.png

@@ -1,3 +1,7 @@
+Version 0.9.2
+-------------
+No change.
+
 Version 0.9.1
 -------------  
 For users updating solely from CRAN, this is a **major** update. _Many_ changes

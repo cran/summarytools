@@ -40,8 +40,8 @@ descr(tobacco, style = 'rmarkdown')
 ## ------------------------------------------------------------------------
 print(descr(tobacco), method = 'render', table.classes = 'st-small')
 
-## ----dfs_grid, results='asis'--------------------------------------------
-dfSummary(tobacco, style = 'grid', graph.magnif = 0.75, tmp.img.dir = "/tmp")
+## ----dfs_grid, eval=FALSE------------------------------------------------
+#  dfSummary(tobacco, style = 'grid', graph.magnif = 0.75, tmp.img.dir = "/tmp")
 
 ## ------------------------------------------------------------------------
 print(dfSummary(tobacco, graph.magnif = 0.75), method = 'render')
