@@ -42,6 +42,10 @@ parse_args <- function(sys_calls, sys_frames, match_call,
         ((length(output[[item]]) == 0 || is.na(output[[item]])) &&
           length(value) == 1 && class(value) == class(output[[item]]))) {
       names(value) <- NULL
+      
+      if (sum(value %in% c(".", NA)) == length(value))
+        value <- NA_character_
+      
       output[[item]] <- value
       
       # Check if output is ready to be returned
@@ -230,7 +234,8 @@ parse_args <- function(sys_calls, sys_frames, match_call,
           upd_output("df_label", label(obj))
           if(isTRUE(var_name)) {
             obj2_name <- sub(re3, "\\2", str, perl = TRUE)
-            obj2      <- try(eval(parse(text = obj2_name), envir = obj))
+            obj2      <- try(eval(parse(text = obj2_name), envir = obj), 
+                             silent = TRUE)
             if (!inherits(obj2, "try-error") && is.atomic(obj2)) {
               upd_output("var_name",  obj2_name)
               upd_output("var_label", NA_character_)
@@ -249,7 +254,18 @@ parse_args <- function(sys_calls, sys_frames, match_call,
     upd_output("var_label", NA_character_)
     return(FALSE)
   }
-    
+  
+  # When pipe is used, this recursive function gets the "deepest" lhs
+  # that constitues something other than a function call
+  get_lhs <- function(x) {
+    if ("lhs" %in% names(x) && is.call(x$lhs)) {
+      x$lhs <- pryr::standardise_call(x$lhs)
+      return(get_lhs(x$lhs))
+    } else {
+      return(x$lhs)
+    }
+  }
+  
   # Declare a few "constant" ---------------------------------------------------
   oper <- c("$", "[", "[[", "<", ">", "<=", ">=", "==", ":", "%>%")
   fn.env <- environment()
@@ -280,17 +296,19 @@ parse_args <- function(sys_calls, sys_frames, match_call,
   #  Make a list of all data items contained in the environments
   ls_sys_frames <- lapply(sys_frames, ls)
   funs_stack    <- lapply(sys_calls, head, 1)
-  names(ls_sys_frames) = as.character(unlist(funs_stack))
+  names(ls_sys_frames) <- sub("summarytools::", "",
+                              as.character(unlist(funs_stack)),
+                              fixed = TRUE)
   
   # Look for position of by() + tapply(), with() lapply() and %>% in sys.calls()
-  pos <- list()
+  pos         <- list()
   pos$by      <- which(funs_stack %in% c("by()", "stby()"))
   pos$with    <- which(funs_stack == "with()")
   pos$pipe    <- which(funs_stack == "`%>%`()")
   pos$dollar  <- which(funs_stack == "`%$%`()")
   pos$lapply  <- which(funs_stack == "lapply()")
   pos$tapply  <- which(funs_stack == "tapply()")
-  pos$fun     <- which(funs_stack == paste0(caller, "()"))
+  pos$fun     <- which(grepl(paste0(caller, "()"), funs_stack))
   
   pos <- pos[-which(unlist(lapply(pos, length)) == 0)]
   
@@ -365,8 +383,19 @@ parse_args <- function(sys_calls, sys_frames, match_call,
             tmp_name <- calls$dollar$lhs
             if (length(tmp_name) == 1) {
               upd_output("df_name",  deparse(tmp_name))
-              upd_output("df_label", label(x))
+            } else {
+              upd_output("df_name",  NA_character_)
             }
+            upd_output("df_label", label(x))
+          }
+        } else if (tmp_name == "." && "pipe" %in% names(calls)) {
+          calls$pipe <- standardise_call(calls$pipe)
+          calls$pipe$lhs <- standardise_call(calls$pipe$lhs)
+          tmp_name <- get_lhs(calls$pipe$lhs)
+          if (length(tmp_name) == 1) {
+            upd_output("df_name",  deparse(tmp_name))
+          } else if (is.null(tmp_name)) {
+            upd_output("df_name", deparse(calls$pipe$lhs))
           }
         } else {
           upd_output("df_name", deparse(calls$with$data))
@@ -414,17 +443,24 @@ parse_args <- function(sys_calls, sys_frames, match_call,
     }
   }
 
-    # in the call stack: %>% -----------------------------------------------------
+  # in the call stack: %>% -----------------------------------------------------
   if ("pipe" %in% names(calls)) {
     calls$pipe <- standardise_call(calls$pipe)
     obj_name <- deparse(calls$pipe$lhs)
-    obj <- eval(sys_frames[[pos$pipe]]$lhs, 
+    obj_name <- sub(paste0(caller, "\\((.+)\\)"), "\\1", obj_name)
+    obj <- eval(sys_frames[[pos$pipe]][[obj_name]], 
                 envir = sys_frames[[pos$pipe]]$parent)
     if (is.data.frame(obj)) {
       if (length(calls$pipe$lhs) == 1) {
         upd_output("df_name", obj_name)
       } else {
-        upd_output("df_name", setdiff(as.character(calls$pipe$lhs), oper)[1])
+        calls$pipe$lhs <- standardise_call(calls$pipe$lhs)
+        tmp_name <- get_lhs(calls$pipe$lhs)
+        if (length(tmp_name) == 1) {
+          upd_output("df_name", deparse(tmp_name))
+        } else if (is.null(tmp_name)) {
+          upd_output("df_name", setdiff(as.character(calls$pipe$lhs), oper)[1])
+        }
       }
       upd_output("df_label", label(obj))
       v_name <- setdiff(as.character(calls$pipe$rhs), c(caller, oper))
