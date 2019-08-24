@@ -9,6 +9,7 @@
 #'   custom.css = st_options("custom.css"), silent = FALSE, 
 #'   footnote = st_options("footnote"),
 #'   max.tbl.height = Inf,
+#'   collapse = 0,
 #'   escape.pipe = st_options("escape.pipe"), \dots)
 #'
 #' @inheritParams print.summarytools
@@ -18,7 +19,7 @@
 #' renders the \emph{html} code appropriate for \emph{Rmarkdown} documents. 
 #'
 #' For objects of class \dQuote{summarytools}, this function is simply
-#' a wrapper around \code{link{print.summarytools}} with \emph{method} set to
+#' a wrapper around \code{\link{print.summarytools}} with \emph{method} set to
 #' \dQuote{viewer}.
 #'  
 #' Objects of class \dQuote{by} or \dQuote{list} are dispatched to the present
@@ -26,15 +27,21 @@
 #' \code{\link{print.summarytools}} can only manage one object at a time. 
 #'  
 #' @export
-view <- function(x, method = "viewer", file = "", append = FALSE, 
-                 report.title = NA, table.classes = NA, 
-                 bootstrap.css = st_options("bootstrap.css"), 
-                 custom.css = st_options("custom.css"), silent = FALSE, 
-                 footnote = st_options("footnote"), 
+view <- function(x, 
+                 method         = "viewer",
+                 file           = "",
+                 append         = FALSE, 
+                 report.title   = NA, 
+                 table.classes  = NA, 
+                 bootstrap.css  = st_options("bootstrap.css"), 
+                 custom.css     = st_options("custom.css"), 
+                 silent         = FALSE, 
+                 footnote       = st_options("footnote"), 
                  max.tbl.height = Inf,
-                 escape.pipe = st_options("escape.pipe"),
+                 collapse       = 0,
+                 escape.pipe    = st_options("escape.pipe"),
                  ...) {
-
+  
   # Check that the appropriate method is chosen when a file name is given
   if (grepl("\\.r?md$", file, ignore.case = TRUE, perl = TRUE) &&
       method != "pander") {
@@ -46,7 +53,7 @@ view <- function(x, method = "viewer", file = "", append = FALSE,
     method <- "browser"
   }
   
-  # Objects not created via by() or lapply() -----------------------------------
+  # Objects not created via by() / stby() / lapply() (not a list) --------------
   if (inherits(x, "summarytools") && 
       (isTRUE(attr(x, "st_type") %in% 
               c("freq", "ctable", "descr", "dfSummary")))) {
@@ -62,6 +69,7 @@ view <- function(x, method = "viewer", file = "", append = FALSE,
                        silent         = silent,
                        footnote       = footnote,
                        max.tbl.height = max.tbl.height,
+                       collapse       = collapse,
                        escape.pipe    = escape.pipe,
                        ...)
 
@@ -69,8 +77,8 @@ view <- function(x, method = "viewer", file = "", append = FALSE,
   } else if (inherits(x = x, what = c("stby","by")) &&
              attr(x[[1]], "st_type") == "descr" &&
              ((!attr(x[[1]], "data_info")$transposed && dim(x[[1]])[2] == 1) || 
-              ( attr(x[[1]], "data_info")$transposed && dim(x[[1]])[1] == 1))) {
-    
+              ( attr(x[[1]], "data_info")$transposed && dim(x[[1]])[1] == 1))) {             
+
     # Special case: descr by() objects with 1 variable -------------------------
     
     if (attr(x[[1]], "data_info")$transposed) {
@@ -111,10 +119,11 @@ view <- function(x, method = "viewer", file = "", append = FALSE,
                        custom.css    = custom.css,
                        silent        = silent,
                        footnote      = footnote,
+                       collapse      = collapse,
                        escape.pipe   = escape.pipe,
                        ...)
     
-  } else if (inherits(x, what = c("stby", "by")) &&
+  } else if (inherits(x = x, what = c("stby", "by")) &&
              attr(x[[1]], "st_type") %in% c("freq", "ctable",
                                             "descr", "dfSummary")) {
     
@@ -124,7 +133,23 @@ view <- function(x, method = "viewer", file = "", append = FALSE,
       method <- "browser"
       message("Switching method to 'browser'")
     }
-
+    
+    # Remove NULL objects from list
+    null_ind <- which(vapply(x, is.null, TRUE))
+    if (length(null_ind) > 0) {
+      # by_levels <- expand.grid(attr(x, "dimnames"))
+      # by_vars   <- names(attr(x, "dimnames"))
+      # msg <- "Following group(s) had 0 observations:\n"
+      # for (i in seq_along(null_ind)) {
+      #   by_values <- as.character(unlist(by_levels[null_ind[i],]))
+      #   msg <- paste0(msg, "  ", null_ind[i], ". ",
+      #                 paste(by_vars, by_values, collapse = ", ", sep = " = "),
+      #                 "\n")
+      # }
+      # message(msg)
+      x <- x[-null_ind]
+    }
+    
     if (method %in% c("viewer", "browser")) {
 
       # by object, viewer / browser --------------------------------------------
@@ -165,6 +190,7 @@ view <- function(x, method = "viewer", file = "", append = FALSE,
                              custom.css    = custom.css,
                              silent        = silent,
                              footnote      = footnote,
+                             collapse      = collapse,
                              escape.pipe   = escape.pipe,
                              open.doc      = open.doc,
                              ...)
@@ -177,6 +203,7 @@ view <- function(x, method = "viewer", file = "", append = FALSE,
                              table.classes = table.classes,
                              silent        = TRUE,
                              footnote      = footnote,
+                             collapse      = collapse,
                              escape.pipe   = escape.pipe,
                              group.only    = TRUE,
                              open.doc      = open.doc,
@@ -190,6 +217,7 @@ view <- function(x, method = "viewer", file = "", append = FALSE,
                              table.classes = table.classes,
                              silent        = silent,
                              footnote      = footnote,
+                             collapse      = collapse,
                              group.only    = TRUE,
                              open.doc      = open.doc,
                              ...)
@@ -211,6 +239,7 @@ view <- function(x, method = "viewer", file = "", append = FALSE,
                                     custom.css    = custom.css,
                                     silent        = silent,
                                     footnote      = NA,
+                                    collapse      = collapse,
                                     ...))
           
         } else if (i < length(x)) {
@@ -220,6 +249,7 @@ view <- function(x, method = "viewer", file = "", append = FALSE,
                                table.classes = table.classes,
                                silent        = silent,
                                footnote      = NA,
+                               collapse      = collapse,
                                group.only    = TRUE,
                                ...)
           
@@ -231,6 +261,7 @@ view <- function(x, method = "viewer", file = "", append = FALSE,
                                table.classes = table.classes,
                                silent        = silent,
                                footnote      = footnote,
+                               collapse      = collapse,
                                group.only    = TRUE,
                                ...)
           
@@ -294,6 +325,7 @@ view <- function(x, method = "viewer", file = "", append = FALSE,
                              file          = file,
                              silent        = silent,
                              footnote      = NA,
+                             collapse      = collapse,
                              append        = FALSE,
                              var.only      = FALSE,
                              report.title  = report.title,
@@ -311,6 +343,7 @@ view <- function(x, method = "viewer", file = "", append = FALSE,
                              var.only      = TRUE,
                              silent        = TRUE,
                              footnote      = NA,
+                             collapse      = collapse,
                              escape.pipe   = escape.pipe,
                              table.classes = table.classes,
                              ...)
@@ -322,6 +355,7 @@ view <- function(x, method = "viewer", file = "", append = FALSE,
                              var.only      = TRUE,
                              silent        = silent,
                              footnote      = footnote,
+                             collapse      = collapse,
                              escape.pipe   = escape.pipe,
                              table.classes = table.classes,
                              open.doc      = open.doc,
@@ -339,6 +373,7 @@ view <- function(x, method = "viewer", file = "", append = FALSE,
                                     method        = method,
                                     silent        = TRUE,
                                     footnote      = NA,
+                                    collapse      = collapse,
                                     table.classes = table.classes,
                                     bootstrap.css = bootstrap.css,
                                     custom.css    = custom.css,
@@ -352,6 +387,7 @@ view <- function(x, method = "viewer", file = "", append = FALSE,
                              var.only      = TRUE,
                              silent        = TRUE,
                              footnote      = NA,
+                             collapse      = collapse,
                              table.classes = table.classes,
                              bootstrap.css = FALSE,
                              var.only      = TRUE,
@@ -363,6 +399,7 @@ view <- function(x, method = "viewer", file = "", append = FALSE,
                                var.only      = TRUE,
                                silent        = silent,
                                footnote      = footnote,
+                               collapse      = collapse,
                                table.classes = table.classes,
                                bootstrap.css = FALSE,
                                var.only      = TRUE,

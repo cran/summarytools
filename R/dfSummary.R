@@ -138,31 +138,93 @@
 #'
 #' @keywords univar attribute classes category
 #' @author Dominic Comtois, \email{dominic.comtois@@gmail.com}
-#' @importFrom dplyr n_distinct
+#' @importFrom dplyr n_distinct group_keys
 #' @importFrom stats start end
 #' @export
-dfSummary <- function(x, round.digits = st_options("round.digits"),
-                      varnumbers = st_options("dfSummary.varnumbers"),
-                      labels.col = st_options("dfSummary.labels.col"),
-                      valid.col = st_options("dfSummary.valid.col"),
-                      na.col = st_options("dfSummary.na.col"),
-                      graph.col = st_options("dfSummary.graph.col"),
-                      graph.magnif = st_options("dfSummary.graph.magnif"),
-                      style = st_options("dfSummary.style"),
-                      plain.ascii = st_options("plain.ascii"),
-                      justify = "left", col.widths = NA, 
-                      headings = st_options("headings"),
-                      display.labels = st_options("display.labels"),
-                      max.distinct.values = 10, 
-                      trim.strings = FALSE,
-                      max.string.width = 25, 
-                      split.cells = 40,
-                      split.tables = Inf,
-                      tmp.img.dir = st_options('tmp.img.dir'),
-                      silent = st_options('dfSummary.silent'), ...) {
+dfSummary <- function(x,
+                      round.digits     = st_options("round.digits"),
+                      varnumbers       = st_options("dfSummary.varnumbers"),
+                      labels.col       = st_options("dfSummary.labels.col"),
+                      valid.col        = st_options("dfSummary.valid.col"),
+                      na.col           = st_options("dfSummary.na.col"),
+                      graph.col        = st_options("dfSummary.graph.col"),
+                      graph.magnif     = st_options("dfSummary.graph.magnif"),
+                      style            = st_options("dfSummary.style"),
+                      plain.ascii      = st_options("plain.ascii"),
+                      justify          = "l",
+                      col.widths       = NA,
+                      headings         = st_options("headings"),
+                      display.labels   = st_options("display.labels"),
+                      max.distinct.values = 10,
+                      trim.strings     = FALSE,
+                      max.string.width = 25,
+                      split.cells      = 40,
+                      split.tables     = Inf,
+                      tmp.img.dir      = st_options('tmp.img.dir'),
+                      silent           = st_options('dfSummary.silent'),
+                      ...) {
   
+  # handle objects of class "grouped_df" (dplyr::group_by)
+  if (inherits(x, "grouped_df")) {
+    parse_info <- try(
+      parse_args(sys.calls(), sys.frames(), match.call(),
+                 var_name  = FALSE, var_label = FALSE,
+                 caller = "dfSummary"),
+      silent = TRUE)
+
+    outlist <- list()
+    g_ks    <- map_groups(group_keys(x))
+    g_inds  <- attr(x, "groups")$.rows
+    for (g in seq_along(g_ks)) {
+      outlist[[g]] <- dfSummary(x = as_tibble(x[g_inds[[g]], ]),
+                                round.digits        = round.digits,
+                                varnumbers          = varnumbers,
+                                labels.col          = labels.col,
+                                valid.col           = valid.col,
+                                na.col              = na.col,
+                                graph.col           = graph.col,
+                                graph.magnif        = graph.magnif,
+                                style               = style,
+                                plain.ascii         = plain.ascii,
+                                justify             = justify,
+                                col.widths          = col.widths,
+                                headings            = headings,
+                                display.labels      = display.labels,
+                                max.distinct.values = max.distinct.values,
+                                trim.strings        = trim.strings,
+                                max.string.width    = max.string.width,
+                                split.cells         = split.cells,
+                                split.tables        = split.tables,
+                                tmp.img.dir         = tmp.img.dir,
+                                silent              = silent,
+                                ...                 = ...)
+      
+      if (!inherits(parse_info, "try-error")) {
+        if (!is.null(parse_info$df_name))
+          attr(outlist[[g]], "data_info")$Data.frame <- parse_info$df_name
+        if (!is.null(parse_info$df_label))
+          attr(outlist[[g]], "data_info")$Data.frame.label <- parse_info$df_label
+        if (!is.null(parse_info$var_name))
+          attr(outlist[[g]], "data_info")$Variable <- parse_info$var_name
+        if (!is.null(parse_info$var_label))
+          attr(outlist[[g]], "data_info")$Variable.label <- parse_info$var_label
+      }
+      attr(outlist[[g]], "data_info")$by_var <- 
+        setdiff(colnames(attr(x, "groups")), ".rows")
+      attr(outlist[[g]], "data_info")$Group    <- g_ks[g]
+      attr(outlist[[g]], "data_info")$by_first <- g == 1
+      attr(outlist[[g]], "data_info")$by_last  <- g == length(g_ks)
+    }
+    class(outlist) <- "stby"
+    return(outlist)
+  }
 
   # Validate arguments ---------------------------------------------------------
+  if (is.null(x)) {
+    tmp_x_name <- deparse(substitute(x))
+    stop(tmp_x_name, " is either NULL or does not exist")
+  }
+  
   errmsg <- character()  # problems with arguments will be stored here
   
   # Flag to replace colname when x is not a data frame
@@ -195,7 +257,6 @@ dfSummary <- function(x, round.digits = st_options("round.digits"),
   }
   
   # Get info on x from parsing function ----------------------------------------
-  #max.varnames <- as.numeric(converted_to_df)
   parse_info <- try(parse_args(sys.calls(), sys.frames(), match.call(),
                                #max.varnames = max.varnames,
                                var_name = converted_to_df, 
@@ -426,7 +487,12 @@ crunch_factor <- function(column_data, email_val) {
   outlist[[2]] <- ""
   outlist[[3]] <- ""
   outlist[[4]] <- ""
-  
+
+  column_data <- ws_to_symbol(column_data)
+
+  levels(column_data)[levels(column_data) == ""] <- 
+    paste0("(", trs("empty.str"), ")")
+    
   max.string.width    <- parent.frame()$max.string.width
   max.distinct.values <- parent.frame()$max.distinct.values
   graph.magnif        <- parent.frame()$graph.magnif
@@ -438,7 +504,7 @@ crunch_factor <- function(column_data, email_val) {
   props    <- prop.table(counts)
   
   if (n_levels == 0 && n_valid == 0) {
-    outlist[[1]] <- "No levels defined" # TODO: Add translation
+    outlist[[1]] <- trs("no.levels.defined")
     outlist[[2]] <- trs("all.nas")
     outlist[[3]] <- ""
     outlist[[4]] <- ""
@@ -538,9 +604,14 @@ crunch_character <- function(column_data, email_val) {
   
   if (isTRUE(parent.frame()$trim.strings)) {
     column_data <- trimws(column_data)
+  } else {
+    # https://stackoverflow.com/questions/46728047/r-rstudio-console-encoding-windows
+    column_data <- ws_to_symbol(column_data)
   }
   
   n_empty <- sum(column_data == "", na.rm = TRUE)
+  
+  column_data[column_data == ""] <- paste0("(", trs("empty.str"), ")")
   
   if (n_empty == parent.frame()$n_tot) {
     outlist[[1]] <- paste0(trs("all.empty.str"), "\n")

@@ -9,7 +9,7 @@
 #'    bootstrap.css = st_options('bootstrap.css'), 
 #'    custom.css = st_options('custom.css'), silent = FALSE, 
 #'    footnote = st_options('footnote'), max.tbl.height = Inf,
-#'    escape.pipe = st_options('escape.pipe'), \dots)
+#'    collapse = 0, escape.pipe = st_options("escape.pipe"), \dots) 
 #'
 #' @param x A summarytools object that was generated with \code{\link{freq}},
 #'   \code{\link{descr}}, \code{\link{ctable}} or \code{\link{dfSummary}}.
@@ -47,6 +47,9 @@
 #'  in a \code{<div>} with the specified height and a scroll bar. Intended
 #'  to be used in \emph{Rmd} documents. Has no effect when \code{method} is 
 #'  \dQuote{pander}. \code{Inf} by default.
+#' @param collapse Numeric. \code{0} by default. Set to \code{1} to make
+#'  \code{freq()} sections collapsible (when clicking on the variable name).
+#'  Future versions might provide alternate collapsing options.
 #' @param escape.pipe Logical. Set to \code{TRUE} when using \code{style='grid'}
 #'   and \code{file} argument is supplied if the intent is to generate a text
 #'   file that can be converted to other formats using \emph{Pandoc}. To change
@@ -145,19 +148,30 @@ print.summarytools <- function(x,
                                silent         = FALSE, 
                                footnote       = st_options("footnote"),
                                max.tbl.height = Inf,
+                               collapse       = 0,
                                escape.pipe    = st_options("escape.pipe"), 
                                ...) {
 
   # object is a list, either created
   # - using lapply() 
   # - using freq with a dataframe as x
+  # - using dplyr::group_by
   if (is.list(x) && 
       !attr(x, "st_type") %in% c("ctable", "descr", "dfSummary")) {
-    view(x, method = method, file = file, append = append,
-         report.title = report.title, table.classes = table.classes, 
-         bootstrap.css = bootstrap.css, custom.css = custom.css, 
-         silent = silent, footnote = footnote, 
-         escape.pipe = escape.pipe, ...)
+    view(x,
+         method        = method,
+         file          = file,
+         append        = append,
+         report.title  = report.title,
+         table.classes = table.classes, 
+         bootstrap.css = bootstrap.css,
+         custom.css    = custom.css, 
+         silent        = silent,
+         footnote      = footnote,
+         collapse      = collapse,
+         escape.pipe   = escape.pipe,
+         ...)
+    
     return(invisible())
   }
   
@@ -167,8 +181,7 @@ print.summarytools <- function(x,
   on.exit(panderOptions("knitr.auto.asis", knitr.auto.asis.value))
   
   dotArgs <- list(...)
-  mc <- match.call()
-  
+
   # Recup arguments from view() if present -------------------------------------
   if ("open.doc" %in% names(dotArgs)) {
     open.doc <- eval(dotArgs[["open.doc"]])
@@ -185,130 +198,15 @@ print.summarytools <- function(x,
   }
   
   # Parameter validation -------------------------------------------------------
-  errmsg <- character()
-  
-  method <- switch(tolower(substring(method, 1, 1)),
-                   p = "pander",
-                   b = "browser",
-                   v = "viewer",
-                   r = "render")
-
-  if (attr(x, "lang") != st_options("lang")) {
-    op <- st_options("lang")
-    st_options(lang = attr(x, "lang"))
-    on.exit(st_options(lang = op), add = TRUE)
-  }
-
-  if (!isTRUE(test_choice(method, 
-                          c("pander", "browser", "viewer", "render")))) {
-    errmsg %+=% paste("'method' must be one of 'pander', 'browser', 'viewer',",
-                      "or 'render'")
-  }
-
-  if (!isTRUE(test_int(max.tbl.height, lower = 100, na.ok = FALSE)) &&
-      !is.infinite(max.tbl.height)) {
-    errmsg %+=% "'max.tbl.height' must be an integer between 100 and Inf"
-  } else {
-    attr(x, "format_info")$max.tbl.height <- max.tbl.height
-  }
-  
-  if (file == "" && isTRUE(append)) {
-    errmsg %+=% "'append' is set to TRUE but no file name has been specified"
-  }
-
-  if (file != "" && isTRUE(append) && !file.exists(file)) {
-    errmsg %+=% "'append' is set to TRUE but specified file does not exist"
-  }
-
-  if (file != "" && isTRUE(append) && !is.na(report.title)) {
-    errmsg %+=% "Appending existing file -- 'report.title' arg. will be ignored"
-  }
-
-  if (!isTRUE(test_string(report.title, na.ok = TRUE))) {
-    errmsg %+=% "'report.title' must either be NA or a character string"
-  }
-
-  if (!isTRUE(test_logical(escape.pipe, len = 1, any.missing = FALSE))) {
-    errmsg %+=% "'escape.pipe' must be either TRUE or FALSE"
-  }
-
-  if (!is.na(custom.css) && 
-      !isTRUE(check_file_exists(custom.css, access = "r"))) {
-    errmsg %+=% "'custom.css' must point to an existing file."
-  }
-
-  if (!isTRUE(test_logical(silent, len = 1, any.missing = FALSE))) {
-    errmsg %+=% "'silent' must be either TRUE or FALSE"
-  }
-
-  if (file != "" && !isTRUE(test_path_for_output(file, overwrite = TRUE))) {
-     errmsg %+=% "'file' path is not valid - check that directory exists"
-  }
-  
-  # Change method to browser when file name was (most likely) provided by user
-  if (grepl("\\.html$", file, ignore.case = TRUE, perl = TRUE) &&
-      !grepl(pattern = tempdir(), x = file, fixed = TRUE) && 
-      method == "pander") {
-    method <- "browser"
-    message("Switching method to 'browser'")
-  }
-  
-  if (method == "pander" && !is.na(table.classes)) {
-    errmsg %+=% "'table.classes' option does not apply to method 'pander'"
-  }
-  
-  if (method == "pander" && !is.na(custom.css)) {
-    errmsg %+=% "'custom.css' option does not apply to method 'pander'"
-  }
-  
-  # Set plain.ascii to false and adjust style when file name ends with .md
-  if (grepl("\\.md$", file, ignore.case = TRUE, perl = TRUE) 
-      && !"style" %in% names(dotArgs)) {
-    if (isTRUE(attr(x, "format_info")$plain.ascii) && 
-        !"plain.ascii" %in% names(dotArgs)) {
-      tmp_msg_flag <- TRUE
-      dotArgs %+=% list(plain.ascii = FALSE)
-    } else {
-      tmp_msg_flag <- FALSE
-    }
-
-    newstyle = switch(attr(x, "st_type"),
-                      freq      = "rmarkdown",
-                      ctable    = "grid",
-                      descr     = "rmarkdown",
-                      dfSummary = "grid")
-    
-    if (attr(x, "format_info")$style %in% c("simple", "multiline")) {
-      dotArgs %+=% list(style = newstyle)
-      if (isTRUE(tmp_msg_flag)) {
-        message("Setting 'plain.ascii' to FALSE and Changing style to '",
-                newstyle, "' for improved markdown compatibility")
-      } else {
-        message("Changing style to '", newstyle, 
-                "' for improved markdown compatibility")
-      }
-    } else if (isTRUE(tmp_msg_flag)) {
-      message("Setting 'plain.ascii' to FALSE for improved markdown ",
-              "compatibility")
-    }
-  }
+  mc <- match.call()
+  errmsg <- check_arguments_print(mc)
   
   if (length(errmsg) > 0) {
     stop(paste(errmsg, collapse = "\n  "))
   }
-  
-  if (is.na(footnote)) {
-    footnote <- ""
-  }
 
-  if (!"silent" %in% names(mc)) {
-    if (attr(x, "st_type") == "descr") {
-      silent <- st_options("descr.silent")
-    } else if (attr(x, "st_type") == "dfSummary") {
-      silent <- st_options("dfSummary.silent")
-    }
-  }
-  
+  attr(x, "format_info")$collapse <- collapse
+    
   # Display message if list object printed with base print() method with pander
   if (method == "pander" && 
       (identical(deparse(sys.calls()[[sys.nframe()-1]][2]), "x[[i]]()") ||
@@ -329,24 +227,15 @@ print.summarytools <- function(x,
   # Here we check for arguments that can be specified at the function level for
   # freq, descr, ctable and dfSummary (we don't include print/view args)
   overrided_args <- character()
-  # Todo: remove "omit.headings" in next release
   for (format_element in c("style", "plain.ascii", "round.digits",
                            "justify", "cumul", "totals", "report.nas",
                            "missing", "headings", "display.labels",
                            "display.type", "varnumbers", "labels.col", 
                            "graph.col", "col.widths", "na.col", "valid.col", 
-                           "split.tables", "omit.headings")) {
+                           "split.tables")) {
     if (format_element %in% names(dotArgs)) {
-      if (format_element == "omit.headings") {
-        message("'omit.headings' will disappear in future releases; ",
-                "use 'headings' instead")
-        attr(x, "format_info")[["headings"]] <- 
-          !isTRUE(eval(dotArgs[["omit.headings"]]))
-        overrided_args <- append(overrided_args, "headings")
-      } else {
-        attr(x, "format_info")[[format_element]] <- dotArgs[[format_element]]
-        overrided_args <- append(overrided_args, format_element)
-      }
+      attr(x, "format_info")[[format_element]] <- dotArgs[[format_element]]
+      overrided_args <- append(overrided_args, format_element)
     }
   }
   
@@ -356,15 +245,11 @@ print.summarytools <- function(x,
   for (format_element in c("style", "plain.ascii", "round.digits", 
                            "headings", "display.labels")) {
     if (!format_element %in% c(overrided_args, names(attr(x, "fn_call")))) {
-      # Todo: following condition is to be removed in further releases
-      if (!(format_element == "headings" &&
-            "omit.headings" %in% names(attr(x, "fn_call")))) {
-        if (!(format_element == "style" &&
-              attr(x, "st_type") == "dfSummary") &&
-            !(format_element == "round.digits" && 
-              attr(x, "st_type") == "ctable")) {
-          attr(x, "format_info")[[format_element]] <- st_options(format_element)
-        }
+      if (!(format_element == "style" &&
+            attr(x, "st_type") == "dfSummary") &&
+          !(format_element == "round.digits" && 
+            attr(x, "st_type") == "ctable")) {
+        attr(x, "format_info")[[format_element]] <- st_options(format_element)
       }
     }
   }
@@ -504,26 +389,34 @@ print.summarytools <- function(x,
     
     if (isTRUE(append)) {
       f <- file(file, open = "r", encoding = "utf-8")
-      html_content_in <- paste(readLines(f, warn = FALSE, encoding = "utf-8"), 
-                               collapse="\n")
+      html_content_in <- paste(readLines(f, warn = FALSE, encoding = "utf-8"),
+                               collapse = "\n")
       close(f)
       top_part    <- sub("(^.+)(</body>.+)", "\\1", html_content_in)
       bottom_part <- sub("(^.+)(</body>.+)", "\\2", html_content_in)
       insert_part <- 
         iconv(paste(capture.output(tags$div(class="container st-container", 
                                             res)), 
-                    collapse="\n"), to = "utf-8")
+                    collapse = "\n"), to = "utf-8")
       html_content <- paste(capture.output(cat(top_part, insert_part, 
-                                               bottom_part)), collapse="\n")
+                                               bottom_part)), collapse = "\n")
       
     } else {
-
+      
       if (method %in% c("browser", "viewer")) {
         html_content <-
           tags$div(
             class="container st-container",
             tags$head(
               tags$title(HTML(conv_non_ascii(report.title))),
+              if (collapse)
+                includeScript(system.file(
+                  package="summarytools", "includes/scripts/jquery-3.4.0.slim.min.js"
+                )),
+              if (collapse)
+                includeScript(system.file(
+                  package="summarytools", "includes/scripts/bootstrap.min.js"
+                )),
               if (isTRUE(bootstrap.css))
                 includeCss(system.file(package="summarytools", 
                                        "includes/stylesheets/bootstrap.min.css")),
@@ -690,6 +583,11 @@ print_freq <- function(x, method) {
                                     replacement = "\\\\<\\1\\\\>",
                                     x = row.names(freq_table), perl = TRUE)
     }
+    
+    # Translate the "(Other)" category (when "rows" was used to filter out
+    # some values
+    rownames(freq_table)[which(rownames(freq_table) == "(Other)")] <-
+      trs("other")
     
     # set encoding to native to allow proper display of accentuated characters
     if (parent.frame()$file == "") {
@@ -859,6 +757,18 @@ print_freq <- function(x, method) {
         )
     }
     
+    # Encapsulate the table in a collapsible div if necessary
+    if (format_info$collapse) {
+      div_id <- paste0(sample(c(letters, LETTERS), size = 1),
+                      paste(sample(c(letters, LETTERS, 0:9), size = 11),
+                            collapse = ""))
+      freq_table_html <- div(freq_table_html,
+                             class = "collapse show",
+                             id    = div_id)
+    } else {
+      div_id <- NA
+    }
+
     # Cleanup extra spacing and linefeeds in html to correct layout issues
     freq_table_html <- gsub(pattern = "\\s*(\\d*)\\s*(<span|</td>)",
                             replacement = "\\1\\2", 
@@ -869,8 +779,15 @@ print_freq <- function(x, method) {
                             x = freq_table_html,
                             perl = TRUE)
     
+    # Change visual aspect of "white space" symbol
+    freq_table_html <-
+      gsub(pattern = paste0("(",intToUtf8(183),"+)"),
+           replacement = "&thinsp;<span class='st-ws-char'>\\1</span>",
+           x = freq_table_html,
+           perl = TRUE)
+    
     # Prepare the main "div" for the html report
-    div_list <- build_heading_html(format_info, data_info, method)
+    div_list <- build_heading_html(format_info, data_info, method, div_id)
     
     if (length(div_list) > 0 &&
         !("shiny.tag" %in% class(div_list[[length(div_list)]]))) {
@@ -1625,9 +1542,19 @@ print_dfs <- function(x, method) {
         )
     }
     
+    # cleanup source html for redundant space
     dfs_table_html <-
       gsub(pattern = "(<th.*?>)\\s+(<strong>.*?</strong>)\\s+(</th>)",
-           replacement = "\\1\\2\\3", x = dfs_table_html)
+           replacement = "\\1\\2\\3", 
+           x = dfs_table_html)
+    
+    # Change visual aspect of "white space" symbol
+    dfs_table_html <-
+      gsub(pattern = "((&#0183;)+)",
+           replacement = "&thinsp;<div class='st-ws-char'>\\1</div>",
+           x = dfs_table_html,
+           perl = TRUE)
+    
     
     # Prepare the main "div" for the html report
     div_list <- build_heading_html(format_info, data_info, method)
@@ -1654,9 +1581,9 @@ print_dfs <- function(x, method) {
 build_heading_pander <- function(format_info, data_info) {
   
   caller <- as.character(sys.call(-1))[1]
-  head1 = NA # Main title (e.g. "Data Frame Summary")
-  head2 = NA # The data frame, the variable, or the 2 variables for ctable
-  head3 = NA # Additional elements (includes Variable exceptionnaly when
+  head1  <- NA # Main title (e.g. "Data Frame Summary")
+  head2  <- NA # The data frame, the variable, or the 2 variables for ctable
+  head3  <- NA # Additional elements (includes Variable exceptionnaly when
              # headings = FALSE and by() or lapply() were used
   
   add_markup <- function(str, h = 0) {
@@ -1866,7 +1793,7 @@ build_heading_pander <- function(format_info, data_info) {
 # Build headings (html) --------------------------------------------------------
 #' @keywords internal
 #' @import htmltools
-build_heading_html <- function(format_info, data_info, method) {
+build_heading_html <- function(format_info, data_info, method, div_id = NA) {
 
   caller <- as.character(sys.call(-1))[1]
   head1  <- NA # uses h3()
@@ -1915,15 +1842,34 @@ build_heading_html <- function(format_info, data_info, method) {
     } else {
       if ("Variable" %in% names(data_info)) {
         if (isTRUE(st_options("subtitle.emphasis"))) {
+          if (!is.na(div_id)) {
+            head2 <- 
+              h4(HTML(paste0(
+                '<p data-toggle="collapse" aria-expanded="true" ',
+                'aria-controls="', div_id, '" href="#', div_id, '">',
+                conv_non_ascii(data_info$Variable),
+                "</p>")))
+          } else {
           head2 <- h4(HTML(conv_non_ascii(data_info$Variable)))
+          }
+        } else {
+          if (!is.na(div_id)) {
+            head2 <- 
+              strong(HTML(paste0(
+                '<p data-toggle="collapse" aria-expanded="true" ',
+                'aria-controls="', div_id, '" href="#', div_id, '">',
+                conv_non_ascii(data_info$Variable),
+                "</p>")))
         } else {
           head2 <- strong(HTML(conv_non_ascii(data_info$Variable)), br())
         }
       }
+      }
       
       head3 <- append_items(list(c(Variable.label = trs("label")),
                                  c(Data.type      = trs("type"))))
-      return(list(head2, head3))
+      tmp <- list(head2, head3)
+      return(tmp[which(!is.na(tmp))])
     }
   } else if (isTRUE(format_info$group.only)) {
     if (isTRUE(format_info$headings)) {
@@ -1952,10 +1898,28 @@ build_heading_html <- function(format_info, data_info, method) {
 
     if ("Variable" %in% names(data_info)) {
       if (isTRUE(st_options("subtitle.emphasis"))) {
+        if (!is.na(div_id)) {
+          head2 <- 
+            h4(HTML(paste0(
+              '<p data-toggle="collapse" aria-expanded="true" ',
+              'aria-controls="', div_id, '" href="#', div_id, '">',
+              conv_non_ascii(data_info$Variable),
+              "</p>")))
+        } else {
         head2 <- h4(HTML(conv_non_ascii(data_info$Variable)))
+        }
+      } else {
+        if (!is.na(div_id)) {
+            head2 <- 
+              strong(HTML(paste0(
+                '<p data-toggle="collapse" aria-expanded="true" ',
+                'aria-controls="', div_id, '" href="#', div_id, '">',
+                conv_non_ascii(data_info$Variable),
+                "</p>")))
       } else {
         head2 <- strong(HTML(conv_non_ascii(data_info$Variable)), br())
       }
+    }
     }
     
     if ("var.only" %in% names(format_info)) {
@@ -2000,15 +1964,15 @@ build_heading_html <- function(format_info, data_info, method) {
     
     if ("by_var_special" %in% names(data_info)) {
       if (isTRUE(st_options("subtitle.emphasis"))) {
-        head2 <- HTML(paste0("<h4>", conv_non_ascii(data_info$Variable),
-                             conv_non_ascii(trs("by")),
-                             conv_non_ascii(data_info$by_var_special),
-                             "</h4>"))
+        head2 <- HTML(paste("<h4>", conv_non_ascii(data_info$Variable),
+                            conv_non_ascii(trs("by")),
+                            conv_non_ascii(data_info$by_var_special),
+                            "</h4>"))
       } else {
-        head2 <- HTML(paste0("<strong>", conv_non_ascii(data_info$Variable),
-                             "</strong> ", conv_non_ascii(trs("by")), " <strong>",
-                             conv_non_ascii(data_info$by_var_special),
-                             "</strong><br/>"))
+        head2 <- HTML(paste("<strong>", conv_non_ascii(data_info$Variable),
+                            "</strong>", conv_non_ascii(trs("by")), "<strong>",
+                            conv_non_ascii(data_info$by_var_special),
+                            "</strong><br/>"))
       } 
       
       head3 <- append_items(list(c(Data.frame     = trs("data.frame")),

@@ -4,16 +4,19 @@
 \alias{descr}
 \title{Univariate Statistics for Numerical Data}
 \usage{
-descr(x, stats = st_options("descr.stats"), na.rm = TRUE,
+descr(x, var = NULL, stats = st_options("descr.stats"), na.rm = TRUE,
   round.digits = st_options("round.digits"),
   transpose = st_options("descr.transpose"),
   style = st_options("style"), plain.ascii = st_options("plain.ascii"),
-  justify = "right", headings = st_options("headings"),
+  justify = "r", headings = st_options("headings"),
   display.labels = st_options("display.labels"), split.tables = 100,
   weights = NA, rescale.weights = FALSE, ...)
 }
 \arguments{
 \item{x}{A numerical vector or a data frame.}
+
+\item{var}{Unquoted expression referring to a specific column in x. Provides
+support for piped function calls (e.g. \code{df \%>\% descr(some_var)}.}
 
 \item{stats}{Which stats to produce. Either \dQuote{all} (default),
 \dQuote{fivenum}, \dQuote{common} (see Details), or a selection of :

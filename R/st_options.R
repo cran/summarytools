@@ -45,7 +45,10 @@
 #' @param freq.totals Logical. Corresponds to the \code{totals} parameter of
 #'   \code{\link{freq}}. \code{TRUE} by default.
 #' @param freq.report.nas Logical. Corresponds to the \code{display.nas}
-#'   parameter of \code{freq()}. \code{TRUE} by default.
+#'   parameter of \code{\link{freq}}. \code{TRUE} by default.
+#' @param freq.ignore.threshold Numeric. Number of distinct values above which
+#'   numerical variables are ignored when calling \code{\link{freq}} with a
+#'   whole data frame as main argument. Defaults to \code{25}.
 #' @param ctable.prop Character. Corresponds to the \code{prop} parameter of
 #'   \code{\link{ctable}}. Defaults to \dQuote{r} (\emph{r}ow).
 #' @param ctable.totals Logical. Corresponds to the \code{totals} parameter of
@@ -85,7 +88,6 @@
 #' @param lang Character. A 2-letter code for the language to use in the
 #'   produced outputs. Currently available languages are: \sQuote{en}, 
 #'   \sQuote{fr}.
-#' @param omit.headings Logical. Deprecated. Use \code{headings} instead.
 #' 
 #' @details To learn more about summarytools options, see the 
 #' \href{https://github.com/dcomtois/summarytools}{GitHub project's page}.
@@ -132,7 +134,8 @@ st_options <- function(option                 = NULL,
                        escape.pipe            = FALSE, 
                        freq.cumul             = TRUE,
                        freq.totals            = TRUE,
-                       freq.report.nas        = TRUE, 
+                       freq.report.nas        = TRUE,
+                       freq.ignore.threshold  = 25,
                        ctable.prop            = "r",
                        ctable.totals          = TRUE, 
                        descr.stats            = "all",
@@ -148,8 +151,7 @@ st_options <- function(option                 = NULL,
                        dfSummary.silent       = FALSE, 
                        tmp.img.dir            = NA,
                        subtitle.emphasis      = TRUE, 
-                       lang                   = "en", 
-                       omit.headings          = !headings) {
+                       lang                   = "en") {
   
   allOpts <- getOption("summarytools")
   
@@ -160,12 +162,7 @@ st_options <- function(option                 = NULL,
   if (length(errmsg) > 0) {
     stop(paste(errmsg, collapse = "\n  "), "\n No options have been modified")
   }
-  
-  if (omit.headings %in% names(mc)) {
-    message("'omit.headings' will disappear in future releases; ",
-            "use 'headings' instead")
-  }
-  
+
   # Querying all
   if (is.null(names(mc))) {
     return(allOpts)
@@ -176,19 +173,13 @@ st_options <- function(option                 = NULL,
       option != "reset" && option != 0) {
     # Check that option is among the existing ones
     for (o in option) {
-      if (!o %in% c(names(allOpts), 0, "omit.headings")) {
+      if (!o %in% c(names(allOpts), 0)) {
         stop("Option ", o, " not recognized / not available")
       }
     }
     
     if (length(option) == 1) {
-      if (option == "omit.headings") {
-        message("'omit.headings' has been replaced by 'headings'. ",
-                "Returning !headings instead")
-        return(!allOpts[["headings"]])
-      } else {
-        return(allOpts[[option]])
-      }
+      return(allOpts[[option]])
     } else {
       return(allOpts[option])
     }
@@ -212,6 +203,7 @@ st_options <- function(option                 = NULL,
                    "freq.cumul"             = TRUE,
                    "freq.totals"            = TRUE,
                    "freq.report.nas"        = TRUE,
+                   "freq.ignore.threshold"  = 25,
                    "ctable.prop"            = "r",
                    "ctable.totals"          = TRUE,
                    "descr.stats"            = "all",
@@ -240,11 +232,7 @@ st_options <- function(option                 = NULL,
       stop("Cannot set more than one option at a time in the legacy way; ",
            "Use separate arguments for each option instead")
     }
-    if (option == "omit.headings") {
-      message("'omit.headings' has been replaced by 'headings'. Setting ",
-              "'headings' to ", !isTRUE(value))
-      allOpts[["headings"]] <- !isTRUE(value)
-    } else if (!option %in% names(allOpts)) {
+    if (!option %in% names(allOpts)) {
       stop("Option ", option, "not recognized / not available")
     } else {
       allOpts[[option]] <- value
@@ -255,18 +243,7 @@ st_options <- function(option                 = NULL,
   
   # Regular way of setting options    
   for (o in setdiff(names(mc), c("", "option", "value"))) {
-    if (o == "omit.headings") {
-      message("'omit.headings' has been replaced by 'headings' and will be ",
-              "deprecated in future releases.")
-      if (!"headings" %in% names(mc)) {
-        message("Setting 'headings' to ", !isTRUE(get(o)))
-        allOpts[["headings"]] <- !isTRUE(get(o))
-      } else {
-        message("Ignoring this option as 'headings' is also specified")
-      }
-    } else {
-      allOpts[[o]] <- get(o)
-    }
+    allOpts[[o]] <- get(o)
   }
   options("summarytools" = allOpts)
   

@@ -35,15 +35,68 @@ unquote <- function(x) {
 conv_non_ascii <- function(...) {
   out <- character()
   for (s in list(...)) {
+    if (is.null(s)) next
     splitted <- unlist(strsplit(s, ""))
     intvalues <- utf8ToInt(enc2utf8(s))
-    pos_to_modify_lat <- which(intvalues >=161 & intvalues <= 255)
-    pos_to_modify_cyr <- which(intvalues >= 1024 & intvalues <=1279)
+    pos_to_modify_lat <- which(intvalues >=  161 & intvalues <=  255)
+    pos_to_modify_cyr <- which(intvalues >= 1024 & intvalues <= 1279)
     pos_to_modify <- c(pos_to_modify_lat, pos_to_modify_cyr)
     splitted[pos_to_modify] <- paste0("&#0",  intvalues[pos_to_modify], ";")
     out <- c(out, paste0(splitted, collapse = ""))
   }
   out
+}
+
+# ws_to_symbol -----------------------------------------------------------------
+# Replace leading and trailing white space in character vectors and factor
+# levels by the special character intToUtf8(183)
+#' @keywords internal
+ws_to_symbol <- function(x) {
+  
+  ws_char <- intToUtf8(183)
+  
+  if (is.character(x)) {
+    # We convert everything to UTF-8
+    x_encod <- Encoding(x)
+    
+    for (enc in setdiff(Encoding(x), "unknown")) {
+      x[x_encod == enc] <- iconv(x[x_encod == enc], from = enc, to = "UTF-8")
+    }
+    
+    left_ws_count  <- nchar(x) - nchar(sub("^ +", "", x))
+    right_ws_count <- nchar(x) - nchar(sub(" +$", "", x))
+    
+    # Correction to avoid doubling the length of whitespace-only strings
+    right_ws_count[nchar(x) == right_ws_count] <- 0
+    
+    outstr <- paste0(strrep(ws_char, times = left_ws_count), trimws(x),
+                     strrep(ws_char, times = right_ws_count))
+    outstr[is.na(x)] <- NA
+    return(outstr)
+  }
+  
+  if (is.factor(x)) {
+    xx <- levels(x)
+    xx_encod <- Encoding(xx)
+    
+    for (enc in setdiff(Encoding(xx), "unknown")) {
+      xx[xx_encod == enc] <- iconv(xx[xx_encod == enc], 
+                                   from = enc, to = "UTF-8")
+    }
+    
+    left_ws_count  <- nchar(xx) - nchar(sub("^ +", "", xx))
+    right_ws_count <- nchar(xx) - nchar(sub(" +$", "", xx))
+
+    # Correction to avoid doubling the length of whitespace-only strings
+    right_ws_count[right_ws_count == nchar(xx)] <- 0
+    
+    newlev <- paste0(strrep(ws_char, times = left_ws_count), trimws(xx),
+                     strrep(ws_char, times = right_ws_count))
+
+    levels(x) <- newlev
+    
+    return(x)
+  }
 }
 
 # Shorcut function to get translation strings
@@ -94,6 +147,15 @@ includeCss <- function(path, ...) {
                                args)))
 }
 
+# Redefine htmltools's includeScript but use collapse = "\n"
+#' @importFrom htmltools tags HTML
+#' @keywords internal
+includeScript <- function(path, ...) {
+  lines <- readLines(path, warn = FALSE, encoding = "UTF-8")
+  return(tags$script(HTML(paste8(lines, collapse = "\n")), ...))
+}
+
+
 # Clone of htmltools:::paste8
 #' @keywords internal
 paste8 <- function (..., sep = " ", collapse = NULL) {
@@ -101,4 +163,16 @@ paste8 <- function (..., sep = " ", collapse = NULL) {
             list(sep = if (is.null(sep)) sep else enc2utf8(sep), 
                  collapse = if (is.null(collapse)) collapse else enc2utf8(collapse)))
   do.call(paste, args)
+}
+
+# Map columns / values of dplyr's group_by objects based on group_keys
+#' @keywords internal
+map_groups <- function(gk) {
+  grs <- c()
+  for (i in seq_len(nrow(gk))) {
+    gr <- paste(colnames(gk), as.character(unlist(gk[i,])), 
+                sep = " = ", collapse = ", ")
+    grs <- c(grs, gr)
+  }
+  grs
 }

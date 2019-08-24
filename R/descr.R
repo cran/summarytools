@@ -5,6 +5,8 @@
 #' available when using sampling weights.
 #'
 #' @param x A numerical vector or a data frame.
+#' @param var Unquoted expression referring to a specific column in x. Provides
+#'   support for piped function calls (e.g. \code{df \%>\% descr(some_var)}.    
 #' @param stats Which stats to produce. Either \dQuote{all} (default),
 #'   \dQuote{fivenum}, \dQuote{common} (see Details), or a selection of :
 #'   \dQuote{mean}, \dQuote{sd}, \dQuote{min}, \dQuote{q1}, \dQuote{med},
@@ -89,27 +91,136 @@
 #' @importFrom rapportools skewness kurtosis nvalid
 #' @importFrom stats IQR mad median sd quantile
 #' @importFrom utils head
-#' @importFrom dplyr %>% as_tibble funs select starts_with summarize_all
+#' @importFrom dplyr %>% as_tibble funs select starts_with summarize_all group_keys
 #' @importFrom tidyr separate gather spread
-descr <- function(x, stats = st_options("descr.stats"), na.rm = TRUE, 
-                  round.digits = st_options("round.digits"),
-                  transpose = st_options("descr.transpose"), 
-                  style = st_options("style"), 
-                  plain.ascii = st_options("plain.ascii"),
-                  justify = "right", headings = st_options("headings"), 
-                  display.labels = st_options("display.labels"),  
-                  split.tables = 100, weights = NA, rescale.weights = FALSE,
+descr <- function(x,
+                  var             = NULL,
+                  stats           = st_options("descr.stats"),
+                  na.rm           = TRUE,
+                  round.digits    = st_options("round.digits"),
+                  transpose       = st_options("descr.transpose"),
+                  style           = st_options("style"),
+                  plain.ascii     = st_options("plain.ascii"),
+                  justify         = "r",
+                  headings        = st_options("headings"),
+                  display.labels  = st_options("display.labels"),
+                  split.tables    = 100,
+                  weights         = NA,
+                  rescale.weights = FALSE,
                   ...) {
   
-  # Validate arguments ---------------------------------------------------------
+  # handle objects of class "grouped_df" (dplyr::group_by)
+  if (inherits(x, "grouped_df")) {
+    
+    if ("var" %in% names(match.call())) {
+      # var might contain a function call -- such as df %>% descr(na.omit(var1))
+      if (inherits(as.list(match.call()[-1])$var, "call")) {
+        var_obj <- eval(as.list(match.call()[-1])$var, envir = x)
+        varname <- intersect(colnames(x), 
+                             as.character(as.list(match.call()[-1])$var))
+      } else {
+        var_obj <- x[[as.list(match.call()[-1])$var]]
+        varname <- deparse(substitute(var))
+      }
+    } else {
+      var_obj  <- x[,setdiff(colnames(x), group_vars(x))]
+    }
+    
+    parse_info <- try(
+      parse_args(sys.calls(), sys.frames(), match.call(),
+                 var_name  = (ncol(x) == 1),
+                 var_label = (ncol(x) == 1), caller = "descr"),
+      silent = TRUE)
+
+    outlist  <- list()
+    gr_ks    <- map_groups(group_keys(x))
+    gr_inds  <- attr(x, "groups")$.rows
+    
+    for (g in seq_along(gr_ks)) {
+      outlist[[g]] <- descr(x               = as_tibble(var_obj)[gr_inds[[g]], ],
+                            stats           = stats,
+                            na.rm           = na.rm,
+                            round.digits    = round.digits,
+                            transpose       = transpose,
+                            style           = style,
+                            plain.ascii     = plain.ascii,
+                            justify         = justify,
+                            headings        = headings,
+                            display.labels  = display.labels,
+                            split.tables    = split.tables,
+                            weights         = weights,
+                            rescale.weights = rescale.weights,
+                            ...             = ...)
+      
+      if (!inherits(parse_info, "try-error")) {
+        if (!is.null(parse_info$df_name))
+          attr(outlist[[g]], "data_info")$Data.frame <- parse_info$df_name
+        if (!is.null(parse_info$df_label))
+          attr(outlist[[g]], "data_info")$Data.frame.label <- parse_info$df_label
+        if (!is.null(parse_info$var_name)) {
+          attr(outlist[[g]], "data_info")$Variable <- parse_info$var_name
+        } else if (exists("varname")) {
+          attr(outlist[[g]], "data_info")$Variable <- varname
+        }
+        if (!is.null(parse_info$var_label))
+          attr(outlist[[g]], "data_info")$Variable.label <- parse_info$var_label
+      }
+      
+      attr(outlist[[g]], "data_info")$by_var <- 
+        setdiff(colnames(attr(x, "groups")), ".rows")
+      
+      attr(outlist[[g]], "data_info")$Group    <- gr_ks[g]
+      attr(outlist[[g]], "data_info")$by_first <- g == 1
+      attr(outlist[[g]], "data_info")$by_last  <- g == length(gr_ks)
+    }
+    
+    if (length(group_vars(x)) == 1 && is.null(dim(var_obj))) {
+      names(outlist) <- 
+        sub(paste(group_vars(x), "= "), "", gr_ks)
+    } else {
+      names(outlist) <- gr_ks
+    }
+    class(outlist) <- c("stby")
+    attr(outlist, "groups") <- group_keys(x)
+    return(outlist)
+  }
+  
+  # When var is provided, we all other variables
+  # variables in the analysis
+  if (is.data.frame(x) && ncol(x) > 1 && "var" %in% names(match.call())) {
+    
+    # var might contain a function call -- such as df %>% descr(na.omit(var1))
+    if (inherits(as.list(match.call()[-1])$var, "call")) {
+      x_obj   <- eval(as.list(match.call()[-1])$var, envir = x)
+      varname <- intersect(colnames(x),
+                           as.character(as.list(match.call()[-1])$var))
+    } else {
+      x_obj   <- x[[as.list(match.call()[-1])$var]]
+      varname <- deparse(substitute(var))
+    }
+  } else {
+    x_obj    <- x
+    varname  <- colnames(x)
+  }
+  
+  # Validate arguments -------------------------------------------------------
   errmsg <- character()  # problems with arguments will be stored here
   
-  if (is.atomic(x) && !is.numeric(x)) {
+  if (is.null(x)) {
+    tmp_x_name <- deparse(substitute(x))
+    stop(tmp_x_name, " is either NULL or does not exist")
+  }
+  
+  if (is.atomic(x_obj) && !is.numeric(x_obj)) {
     errmsg %+=% "'x' must be numeric"
   }
   
-  # make x a data.frame
-  x.df <- as_tibble(x)
+  # make x_obj a tibble
+  if (!inherits(x_obj, "tbl")) {
+    x.df <- as_tibble(x_obj)
+  } else {
+    x.df <- x_obj
+  }
   
   # Get variable label
   var_label <- label(x.df[[1]])
@@ -129,7 +240,7 @@ descr <- function(x, stats = st_options("descr.stats"), na.rm = TRUE,
              "n.valid", "pct.valid")
   )
   
-  if (identical(stats,"all")) {
+  if (identical(stats, "all")) {
     stats <- valid_stats[[2 - as.numeric(identical(weights, NA))]]
   } else if (identical(stats, "fivenum")) {
     if (!identical(weights, NA)) {
@@ -159,7 +270,7 @@ descr <- function(x, stats = st_options("descr.stats"), na.rm = TRUE,
   # End of arguments validation ------------------------------------------------
   
   # When style is rmarkdown, make plain.ascii FALSE unless specified explicitly
-  if (style=="rmarkdown" && isTRUE(plain.ascii) && 
+  if (style == "rmarkdown" && isTRUE(plain.ascii) && 
       (!"plain.ascii" %in% (names(match.call())))) {
     plain.ascii <- FALSE
   }
@@ -176,7 +287,11 @@ descr <- function(x, stats = st_options("descr.stats"), na.rm = TRUE,
   }
 
   if (!"var_name" %in% names(parse_info)) {
-    parse_info$var_name <- colnames(x.df)
+    if (exists("varname")) {
+      parse_info$var_name <- varname
+    } else {
+      parse_info$var_name <- colnames(x.df)
+    }
   }
   
   # Identify and exclude non-numerical columns from x
@@ -213,7 +328,7 @@ descr <- function(x, stats = st_options("descr.stats"), na.rm = TRUE,
                         n.valid = rapportools::nvalid,
                         pct.valid = -999)
     
-    summar_funs <- summar_funs[which(names(summar_funs) %in% stats)]  
+    summar_funs <- summar_funs[which(names(summar_funs) %in% stats)]
 
     if (ncol(x.df) > 1) {
       results <- suppressWarnings(
@@ -248,6 +363,10 @@ descr <- function(x, stats = st_options("descr.stats"), na.rm = TRUE,
       output$pct.valid <- output$n.valid *100 / nrow(x.df)
     }
     
+    # Apply corrections where n.valid = 0
+    zerows <- which(output$n.valid == 0)
+    output[zerows, setdiff(stats, "n.valid")] <- NA
+    
   } else {
     
     # Weights being used -------------------------------------------------------
@@ -260,6 +379,13 @@ descr <- function(x, stats = st_options("descr.stats"), na.rm = TRUE,
       weights[is.na(weights)] <- 0
     }
 
+    # If some weights are 0 or negative, delete rows
+    zero_wgts <- which(weights <= 0)
+    if (length(zero_wgts)) {
+      x.df <- x.df[-zero_wgts, ]
+      message(length(zero_wgts), " rows with weight <= 0 were deleted")
+    }
+
     # If weights are in x.df, remove them
     if(length(parse_info$df_name) == 1 && 
        grepl(parse_info$df_name, weights_string)) {
@@ -270,7 +396,7 @@ descr <- function(x, stats = st_options("descr.stats"), na.rm = TRUE,
         parse_info$var_name <- setdiff(parse_info$var_name, wgts_vname)  
       }
     }
-        
+    
     # Build skeleton for output dataframe
     output <- data.frame(mean      = numeric(),
                          sd        = numeric(),
@@ -287,8 +413,6 @@ descr <- function(x, stats = st_options("descr.stats"), na.rm = TRUE,
       weights <- weights / sum(weights) * nrow(x.df)
     }
     
-    #n_tot <- sum(weights)
-    
     for(i in seq_along(x.df)) {
       variable <- as.numeric(x.df[[i]])
       
@@ -297,7 +421,8 @@ descr <- function(x, stats = st_options("descr.stats"), na.rm = TRUE,
         n_valid <- sum(weights[which(!is.na(variable))])
         p_valid <- n_valid / sum(weights)
       } else {
-        n_valid <- NA
+        # calculate n_valid for validation // all missing
+        n_valid <- sum(!is.na(variable))
         p_valid <- NA
       }
       
@@ -337,13 +462,27 @@ descr <- function(x, stats = st_options("descr.stats"), na.rm = TRUE,
     
     rownames(output) <- parse_info$var_name
     
+    # Apply corrections where n.valid = 0
+    zerows <- which(output$n.valid == 0)
+    output[zerows, setdiff(stats, "n.valid")] <- NA
   }
-  
   
   # Prepare output data -------------------------------------------------------
   # Keep and order required stats from output
   output <- output[ ,stats]
   
+  # Corrections for special case where nrow = 0
+  if (nrow(x.df) == 0) {
+    for (cn in colnames(output)) {
+      if (cn == "n.valid") {
+        next
+      } else if (cn == "pct.valid") {
+        output[[cn]] <- NaN
+      } else {
+        output[[cn]] <- NA
+      }
+    }
+  }  
   
   # Apply translations to colnames
   for (i in seq_along(output)) {
@@ -362,7 +501,7 @@ descr <- function(x, stats = st_options("descr.stats"), na.rm = TRUE,
   }
   
   # Set class/attributes
-  class(output) <- c("summarytools", class(output))
+  class(output)              <- c("summarytools", class(output))
   attr(output, "st_type")    <- "descr"
   attr(output, "date")       <- Sys.Date()
   attr(output, "fn_call")    <- match.call()
@@ -404,6 +543,10 @@ descr <- function(x, stats = st_options("descr.stats"), na.rm = TRUE,
                                       headings       = headings,
                                       display.labels = display.labels,
                                       split.tables   = split.tables)
+  
+  if (nrow(x.df) == 0) {
+    attr(output, "format_info") %+=% list(missing = "N/A")
+  }
   
   attr(output, "user_fmt") <- list(... = ...)
   

@@ -3,13 +3,12 @@
 #' If your language is not available or if you wish to customize the outputs'
 #' language to suit your preference, you can set up a translations file (see
 #' details) and import it with this function.
-#' @aliases use_custom_lang useTranslations
+#' @aliases use_custom_lang
 #' 
 #' @param file Character. The path to the translations file.
 #'
-#' @details To build the translations file, download
-#' \href{https://raw.githubusercontent.com/dcomtois/summarytools/master/translations/language_template.csv}{this template},
-#' or copy the \emph{language_template.csv} file located in the installed 
+#' @details To build the translations file, copy the 
+#' \emph{language_template.csv} file located in the installed 
 #' package’s \emph{includes} directory and fill out the \sQuote{custom} column
 #' using a text editor, leaving column titles unchanged. The file must also
 #' retain its \emph{UTF-8} encoding.
@@ -51,10 +50,4 @@ use_custom_lang <- function(file) {
   .st_env$custom_lang <- tr
   st_options(lang = "custom")
   message("Operation successful")
-}
-
-#' @export
-useTranslations <- function(file) {
-  message("useTranlations() is deprecated; please use use_custom_lang() ",
-          "instead")
 }

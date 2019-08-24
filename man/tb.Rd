@@ -2,12 +2,26 @@
 % Please edit documentation in R/tb.R
 \name{tb}
 \alias{tb}
-\title{Convert Summarytools Objects to Tibbles}
+\title{Convert Summarytools Objects into Tibbles}
 \usage{
-tb(x)
+tb(x, order = 1, na.rm = FALSE)
 }
 \arguments{
 \item{x}{a freq() or descr() output object}
+
+\item{order}{Integer. Useful for grouped results (produced with 
+\code{\link{stby}} only. When \code{1} (default), the levels of the 
+grouping variable are used to sort the table, followed by the values of 
+the other grouping variables (if any), and either variable names
+(for \code{\link{descr}} objects) or variable values (for \code{\link{freq}}
+objects). When \dQuote{order} = \code{2}, the same columns are used for 
+sorting, but they are fed to the \code{\link{order}} function in the reverse
+order.}
+
+\item{na.rm}{Logical. For \code{\link{freq}} objects, remove \code{<NA>} rows
+(or \code{(Missing)} rows if \code{NA} values were made explicit with 
+\code{forcats::fct_explicit_na()}. Has no effect on \code{\link{descr}} 
+objects.}
 }
 \value{
 A \code{\link[tibble]{tibble}} which is constructed following the 
