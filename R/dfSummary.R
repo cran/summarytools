@@ -118,7 +118,10 @@
 #'   \code{\link{st_options}}; for example: \code{st_options(tmp.img.dir = ".")}.
 #'
 #' @examples
+#' 
 #' data("tobacco")
+#' saved_x11_option <- st_options("use.x11")
+#' st_options(use.x11 = FALSE)
 #' dfSummary(tobacco)
 #' 
 #' # Exclude some columns
@@ -127,19 +130,29 @@
 #' # Limit number of categories to be displayed for factors / categorical data
 #' dfSummary(tobacco, max.distinct.values = 5, style = "grid")
 #' 
+#' # Using stby()
+#' stby(tobacco, tobacco$gender, dfSummary)
+#' 
+#' st_options(use.x11 = saved_x11_option)
+#' 
 #' \dontrun{
+#' 
 #' # Show in Viewer or browser (view: no capital V!)
 #' view(dfSummary(iris))
 #' 
 #' # Rmarkdown-ready
 #' dfSummary(tobacco, style = "rmarkdown", plain.ascii = TRUE,
 #'           varnumbers = FALSE, valid.col = FALSE, tmp.img.dir = "./img")
+#' 
+#' # Using group_by()
+#' tobacco %>% group_by(gender) %>% dfSummary()
 #' }
-#'
+#' 
 #' @keywords univar attribute classes category
 #' @author Dominic Comtois, \email{dominic.comtois@@gmail.com}
 #' @importFrom dplyr n_distinct group_keys
 #' @importFrom stats start end
+#' @importFrom grDevices dev.list dev.off
 #' @export
 dfSummary <- function(x,
                       round.digits     = st_options("round.digits"),
@@ -163,6 +176,13 @@ dfSummary <- function(x,
                       tmp.img.dir      = st_options('tmp.img.dir'),
                       silent           = st_options('dfSummary.silent'),
                       ...) {
+  
+  # Flag to handle unwanted graphic device
+  if (.Platform$GUI %in% c("Rgui", "RTerm", "X11") && is.null(dev.list())) {
+    clear_null_device <- TRUE
+  } else {
+    clear_null_device <- FALSE
+  }
   
   # handle objects of class "grouped_df" (dplyr::group_by)
   if (inherits(x, "grouped_df")) {
@@ -244,7 +264,7 @@ dfSummary <- function(x,
     }
   }
   
-  errmsg <- c(errmsg, check_arguments(match.call(), list(...)))
+  errmsg <- c(errmsg, check_args(match.call(), list(...)))
   
   if (length(errmsg) > 0) {
     stop(paste(errmsg, collapse = "\n  "))
@@ -280,14 +300,13 @@ dfSummary <- function(x,
     }
   }
   
-  if (isTRUE(.st_env$noX11)) {
+  if (isFALSE(st_options("use.x11"))) {
     store_imgs <- FALSE
   } else if (!isTRUE(plain.ascii) && style == "grid" && isTRUE(graph.col)) {
     if (is.na(tmp.img.dir)) {
       store_imgs <- FALSE
       if(!isTRUE(silent)) {
-        message("text graphs are displayed; set 'tmp.img.dir' parameter to ",
-                "activate png graphs")
+        png_message <- TRUE
       }
     } else {
       store_imgs <- TRUE
@@ -476,6 +495,12 @@ dfSummary <- function(x,
   
   attr(output, "lang") <- st_options("lang")
   
+  if (exists("png_message"))
+    attr(output, "png_message") <- TRUE
+  
+  if (clear_null_device) {
+    try(dev.off(), silent = TRUE)
+  }
   return(output)
 }
 
@@ -523,7 +548,7 @@ crunch_factor <- function(column_data, email_val) {
     counts_props <- align_numbers_dfs(counts, round(props, round.digits + 2))
     outlist[[2]] <- paste0("\\", counts_props, collapse = "\\\n")
     if (isTRUE(parent.frame()$graph.col) && any(!is.na(column_data))) {
-      if (!isTRUE(.st_env$noX11)) {
+      if (isTRUE(st_options("use.x11"))) {
         outlist[[3]] <- encode_graph(counts, "barplot", graph.magnif)
       }
       if (isTRUE(parent.frame()$store_imgs)) {
@@ -568,7 +593,7 @@ crunch_factor <- function(column_data, email_val) {
       tmp_data[which(as.numeric(tmp_data) > max.distinct.values)] <-
         paste("[", n_extra_levels, trs("others"), "]")
       levels(tmp_data)[(max.distinct.values + 2):n_levels] <- NA
-      if (!isTRUE(.st_env$noX11)) {
+      if (isTRUE(st_options("use.x11"))) {
         outlist[[3]] <- encode_graph(table(tmp_data), "barplot", graph.magnif)
       }
       if (isTRUE(parent.frame()$store_imgs)) {
@@ -634,7 +659,7 @@ crunch_character <- function(column_data, email_val) {
     outlist[[2]] <- paste0("\\", counts_props, collapse = "\\\n")
     
     if (isTRUE(parent.frame()$graph.col) && any(!is.na(column_data))) {
-      if (!isTRUE(.st_env$noX11)) {
+      if (isTRUE(st_options("use.x11"))) {
         outlist[[3]] <- encode_graph(c(email_val, dups), "barplot", graph.magnif, 
                                      emails = TRUE)
       }
@@ -662,7 +687,7 @@ crunch_character <- function(column_data, email_val) {
       outlist[[2]] <- paste0("\\", counts_props, collapse = "\\\n")
       if (isTRUE(parent.frame()$graph.col) &&
           any(!is.na(column_data))) {
-        if (!isTRUE(.st_env$noX11)) {
+        if (isTRUE(st_options("use.x11"))) {
           outlist[[3]] <- encode_graph(counts, "barplot", graph.magnif)
         }
         if (isTRUE(parent.frame()$store_imgs)) {
@@ -702,7 +727,7 @@ crunch_character <- function(column_data, email_val) {
         names(counts)[max.distinct.values + 1] <-
           paste("[", n_extra_values, trs("others"),"]")
         counts <- counts[1:(max.distinct.values + 1)]
-        if (!isTRUE(.st_env$noX11)) {
+        if (isTRUE(st_options("use.x11"))) {
           outlist[[3]] <- encode_graph(counts, "barplot", graph.magnif)
         }        
         if (isTRUE(parent.frame()$store_imgs)) {
@@ -746,7 +771,7 @@ crunch_logical <- function(column_data) {
     outlist[[2]] <- paste0("\\", counts_props, collapse = "\\\n")
     if (isTRUE(parent.frame()$graph.col) &&
         any(!is.na(column_data))) {
-      if (!isTRUE(.st_env$noX11)) {
+      if (isTRUE(st_options("use.x11"))) {
         outlist[[3]] <- encode_graph(counts, "barplot", graph.magnif)
       }
       if (isTRUE(parent.frame()$store_imgs)) {
@@ -889,7 +914,7 @@ crunch_numeric <- function(column_data, is_barcode) {
     
     if (isTRUE(parent.frame()$graph.col)) {
       if (length(counts) <= max.distinct.values) {
-        if (!isTRUE(.st_env$noX11)) {
+        if (isTRUE(st_options("use.x11"))) {
           outlist[[3]] <- encode_graph(counts, "barplot", graph.magnif)
         }
         if (isTRUE(parent.frame()$store_imgs)) {
@@ -900,13 +925,13 @@ crunch_numeric <- function(column_data, is_barcode) {
         }
         
         if (isTRUE(extra_space)) {
-          if (!isTRUE(.st_env$noX11)) {
+          if (isTRUE(st_options("use.x11"))) {
             outlist[[3]] <- paste0(outlist[[3]], "\n\n")
           }
           outlist[[4]] <- paste0(outlist[[4]], " \\ \n \\")
         }
       } else {
-        if (!isTRUE(.st_env$noX11)) {
+        if (isTRUE(st_options("use.x11"))) {
           outlist[[3]] <- encode_graph(column_data, "histogram", graph.magnif)
         }
         if (isTRUE(parent.frame()$store_imgs)) {
@@ -952,7 +977,7 @@ crunch_time_date <- function(column_data) {
       props <- round(prop.table(counts), round.digits + 2)
       counts_props <- align_numbers_dfs(counts, props)
       outlist[[2]] <- paste(counts_props, collapse = "\\\n")
-      if (!isTRUE(.st_env$noX11)) {
+      if (isTRUE(st_options("use.x11"))) {
         outlist[[3]] <- encode_graph(counts, "barplot", graph.magnif)
       }
       if (isTRUE(parent.frame()$store_imgs)) {
@@ -989,7 +1014,7 @@ crunch_time_date <- function(column_data) {
       
       if (isTRUE(parent.frame()$graph.col)) {
         tmp <- as.numeric(column_data)[!is.na(column_data)]
-        if (!isTRUE(.st_env$noX11)) {
+        if (isTRUE(st_options("use.x11"))) {
           outlist[[3]] <- encode_graph(tmp - mean(tmp), "histogram", graph.magnif)
         }
         if (isTRUE(parent.frame()$store_imgs)) {
@@ -1047,7 +1072,7 @@ align_numbers_dfs <- function(counts, props) {
                        "f%%)"), props*100))
 }
 
-#' @importFrom RCurl base64Encode
+#' @importFrom base64enc base64encode
 #' @importFrom graphics barplot hist par text plot.new
 #' @importFrom grDevices dev.off nclass.Sturges png
 #' @importFrom magick image_read image_trim image_border image_write 
@@ -1055,7 +1080,6 @@ align_numbers_dfs <- function(counts, props) {
 #' @keywords internal
 encode_graph <- function(data, graph_type, graph.magnif = 1, 
                          pandoc = FALSE, emails = FALSE) {
-  
   devtype <- switch(.st_env$sysname,
                     Windows = "windows",
                     Linux   = "Xlib",
@@ -1139,9 +1163,8 @@ encode_graph <- function(data, graph_type, graph.magnif = 1,
     return(png_path)
   } else {
     image_write(image_transparent(ii, 'white'), png_loc)
-    img_txt <- base64Encode(txt = readBin(con = png_loc, what = "raw",
-                                          n = file.info(png_loc)[["size"]]),
-                            mode = "character")
+    img_txt <- base64encode(readBin(con = png_loc, what = "raw",
+                                    n = file.info(png_loc)[["size"]]))
     return(paste0('<img style="border:none;background-color:transparent;',
                   'padding:0" src="data:image/png;base64, ', img_txt, '">'))
   }

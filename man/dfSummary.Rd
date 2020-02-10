@@ -4,7 +4,9 @@
 \alias{dfSummary}
 \title{Data frame Summary}
 \usage{
-dfSummary(x, round.digits = st_options("round.digits"),
+dfSummary(
+  x,
+  round.digits = st_options("round.digits"),
   varnumbers = st_options("dfSummary.varnumbers"),
   labels.col = st_options("dfSummary.labels.col"),
   valid.col = st_options("dfSummary.valid.col"),
@@ -12,13 +14,20 @@ dfSummary(x, round.digits = st_options("round.digits"),
   graph.col = st_options("dfSummary.graph.col"),
   graph.magnif = st_options("dfSummary.graph.magnif"),
   style = st_options("dfSummary.style"),
-  plain.ascii = st_options("plain.ascii"), justify = "l",
-  col.widths = NA, headings = st_options("headings"),
+  plain.ascii = st_options("plain.ascii"),
+  justify = "l",
+  col.widths = NA,
+  headings = st_options("headings"),
   display.labels = st_options("display.labels"),
-  max.distinct.values = 10, trim.strings = FALSE,
-  max.string.width = 25, split.cells = 40, split.tables = Inf,
+  max.distinct.values = 10,
+  trim.strings = FALSE,
+  max.string.width = 25,
+  split.cells = 40,
+  split.tables = Inf,
   tmp.img.dir = st_options("tmp.img.dir"),
-  silent = st_options("dfSummary.silent"), ...)
+  silent = st_options("dfSummary.silent"),
+  ...
+)
 }
 \arguments{
 \item{x}{A data frame.}
@@ -163,7 +172,10 @@ The default \code{plain.ascii = TRUE} option is there to make
   \code{\link{st_options}}; for example: \code{st_options(tmp.img.dir = ".")}.
 }
 \examples{
+
 data("tobacco")
+saved_x11_option <- st_options("use.x11")
+st_options(use.x11 = FALSE)
 dfSummary(tobacco)
 
 # Exclude some columns
@@ -172,13 +184,22 @@ dfSummary(tobacco, varnumbers = FALSE, valid.col = FALSE)
 # Limit number of categories to be displayed for factors / categorical data
 dfSummary(tobacco, max.distinct.values = 5, style = "grid")
 
+# Using stby()
+stby(tobacco, tobacco$gender, dfSummary)
+
+st_options(use.x11 = saved_x11_option)
+
 \dontrun{
+
 # Show in Viewer or browser (view: no capital V!)
 view(dfSummary(iris))
 
 # Rmarkdown-ready
 dfSummary(tobacco, style = "rmarkdown", plain.ascii = TRUE,
           varnumbers = FALSE, valid.col = FALSE, tmp.img.dir = "./img")
+
+# Using group_by()
+tobacco \%>\% group_by(gender) \%>\% dfSummary()
 }
 
 }

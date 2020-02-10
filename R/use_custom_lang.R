@@ -9,7 +9,7 @@
 #'
 #' @details To build the translations file, copy the 
 #' \emph{language_template.csv} file located in the installed 
-#' package’s \emph{includes} directory and fill out the \sQuote{custom} column
+#' package's \emph{includes} directory and fill out the \sQuote{custom} column
 #' using a text editor, leaving column titles unchanged. The file must also
 #' retain its \emph{UTF-8} encoding.
 #'
@@ -20,15 +20,19 @@
 use_custom_lang <- function(file) {
   
   if (!"file" %in% names(match.call())) {
-    if (interactive() && !isTRUE(.st_env$noX11)) {
+    if (interactive() && isTRUE(capabilities("tcltk"))) {
       file <- character()
-      file <- tclvalue(tkgetOpenFile(initialdir = "~",
-                                     filetypes = "{{csv files} {*.csv}}"))
+      file <- try(tclvalue(tkgetOpenFile(initialdir = "~",
+                                         filetypes = "{{csv files} {*.csv}}")),
+                  silent = TRUE)
+      if (class(file) == "try-error") {
+        stop("Window dialog not permitted; 'file' argument must be specified")
+      }
       if (file == "") {
         stop("operation cancelled")
       }
     } else {
-      stop("'file' argument must be specified")
+      stop("Window dialog not permitted; 'file' argument must be specified")
     }
   }
   

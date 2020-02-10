@@ -6,10 +6,7 @@
 # Determine OS : Windows | Linux | Darwin
 .st_env$sysname <- Sys.info()[["sysname"]]
 
-# Check if system has X11 capability on Linux
-.st_env$noX11 <- Sys.info()[["sysname"]] != "Windows" && 
-  !isTRUE(capabilities("X11"))
-
+# Initialize vector for tempfiles -- useful for cleartmp()
 .st_env$tmpfiles <- c()
 
 # Initialize list used by view() when printing an object of class "by"
@@ -38,6 +35,7 @@ utils::globalVariables(c("."))
                  "freq.totals"            = TRUE,
                  "freq.report.nas"        = TRUE,
                  "freq.ignore.threshold"  = 25,
+                 "freq.silent"            = FALSE,
                  "ctable.prop"            = "r",
                  "ctable.totals"          = TRUE,
                  "descr.stats"            = "all",
@@ -53,7 +51,8 @@ utils::globalVariables(c("."))
                  "dfSummary.silent"       = FALSE,
                  "tmp.img.dir"            = NA_character_,
                  "subtitle.emphasis"      = TRUE,
-                 "lang"                   = "en"))
+                 "lang"                   = "en",
+                 "use.x11"                = TRUE))
 
   return(invisible())
 }
@@ -61,15 +60,20 @@ utils::globalVariables(c("."))
 #' @importFrom utils packageDescription
 #' @importFrom pander panderOptions
 .onAttach <- function(libname, pkgname) {
-  pander_built_dt <- packageDescription("pander")$Built
-  pander_built_dt <- sub(".+?(\\d+\\-\\d+\\-\\d+).+", "\\1", pander_built_dt)
-  should_update <- try(pander_built_dt <= "2018-11-06", silent = TRUE)
-  if(isTRUE(should_update))
-    packageStartupMessage("for best results, consider updating pander to its ",
-                          "most recent version. You can do so by using \n",
-                          "devtools::install_github('rapporter/pander')")
+  
   if (Sys.info()[["sysname"]] != "Windows" && !isTRUE(capabilities("X11"))) {
-    packageStartupMessage("system has no X11 capabilities, therefore only ",
-                          "ascii graphs will be produced by dfSummary()")
+    packageStartupMessage("system might not have X11 capabilities; in case of ",
+                          "errors when using dfSummary(), set ",
+                          "st_options(use.x11 = FALSE)")
   }
+  
+  # Check if the latest (github) pander is installed;
+  # We can't use version number since the relevant fix is not in an incremented
+  # package version number (still 0.6.3); we use the *Packaged* attribute as a proxy.
+  pander_pkg_dt <- substr(packageDescription("pander")$Packaged, 1, 10)
+  should_update <- try(pander_pkg_dt <= "2018-11-06", silent = TRUE)
+  
+  if(isTRUE(should_update))
+    packageStartupMessage("For best results, restart R session and update pander using devtools:: or remotes::",
+                          "install_github('rapporter/pander')")
 }

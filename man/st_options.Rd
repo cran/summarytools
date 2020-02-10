@@ -4,19 +4,41 @@
 \alias{st_options}
 \title{Query and set summarytools global options}
 \usage{
-st_options(option = NULL, value = NULL, style = "simple",
-  plain.ascii = TRUE, round.digits = 2, headings = TRUE,
-  footnote = "default", display.labels = TRUE, bootstrap.css = TRUE,
-  custom.css = NA, escape.pipe = FALSE, freq.cumul = TRUE,
-  freq.totals = TRUE, freq.report.nas = TRUE,
-  freq.ignore.threshold = 25, ctable.prop = "r",
-  ctable.totals = TRUE, descr.stats = "all", descr.transpose = FALSE,
-  descr.silent = FALSE, dfSummary.style = "multiline",
-  dfSummary.varnumbers = TRUE, dfSummary.labels.col = TRUE,
-  dfSummary.valid.col = TRUE, dfSummary.na.col = TRUE,
-  dfSummary.graph.col = TRUE, dfSummary.graph.magnif = 1,
-  dfSummary.silent = FALSE, tmp.img.dir = NA,
-  subtitle.emphasis = TRUE, lang = "en")
+st_options(
+  option = NULL,
+  value = NULL,
+  style = "simple",
+  plain.ascii = TRUE,
+  round.digits = 2,
+  headings = TRUE,
+  footnote = "default",
+  display.labels = TRUE,
+  bootstrap.css = TRUE,
+  custom.css = NA,
+  escape.pipe = FALSE,
+  freq.cumul = TRUE,
+  freq.totals = TRUE,
+  freq.report.nas = TRUE,
+  freq.ignore.threshold = 25,
+  freq.silent = FALSE,
+  ctable.prop = "r",
+  ctable.totals = TRUE,
+  descr.stats = "all",
+  descr.transpose = FALSE,
+  descr.silent = FALSE,
+  dfSummary.style = "multiline",
+  dfSummary.varnumbers = TRUE,
+  dfSummary.labels.col = TRUE,
+  dfSummary.valid.col = TRUE,
+  dfSummary.na.col = TRUE,
+  dfSummary.graph.col = TRUE,
+  dfSummary.graph.magnif = 1,
+  dfSummary.silent = FALSE,
+  tmp.img.dir = NA,
+  subtitle.emphasis = TRUE,
+  lang = "en",
+  use.x11 = TRUE
+)
 }
 \arguments{
 \item{option}{option(s) name(s) to query (optional). Can be a single string
@@ -78,6 +100,8 @@ parameter of \code{\link{freq}}. \code{TRUE} by default.}
 numerical variables are ignored when calling \code{\link{freq}} with a
 whole data frame as main argument. Defaults to \code{25}.}
 
+\item{freq.silent}{Logical. Hide console messages. \code{FALSE} by default.}
+
 \item{ctable.prop}{Character. Corresponds to the \code{prop} parameter of
 \code{\link{ctable}}. Defaults to \dQuote{r} (\emph{r}ow).}
 
@@ -131,7 +155,12 @@ value gives it stronger emphasis.}
 
 \item{lang}{Character. A 2-letter code for the language to use in the
 produced outputs. Currently available languages are: \sQuote{en}, 
-\sQuote{fr}.}
+\sQuote{es}, \sQuote{fr}, \sQuote{pt}, \sQuote{ru}, and \sQuote{tr}.}
+
+\item{use.x11}{Logical. TRUE by default. In console-only environments,
+setting this to \code{FALSE} will prevent errors occurring when
+\code{\link{dfSummary}}  tries to generate \emph{html} 
+\dQuote{Base64-encoded} graphs.}
 }
 \description{
 To list all \code{summarytools} global options, call without arguments. To
@@ -141,7 +170,7 @@ options, use single unnamed argument \sQuote{reset} or \code{0}.
 }
 \details{
 To learn more about summarytools options, see the 
-\href{https://github.com/dcomtois/summarytools}{GitHub project's page}.
+\href{https://github.com/dcomtois/summarytools}{project's GitHub page}.
 }
 \examples{
 \dontrun{

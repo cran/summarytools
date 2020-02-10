@@ -85,7 +85,8 @@
 #' @author Dominic Comtois, \email{dominic.comtois@@gmail.com}
 #' @export
 #' @importFrom stats addmargins na.omit chisq.test
-ctable <- function(x, y,
+ctable <- function(x, 
+                   y,
                    prop            = st_options("ctable.prop"),
                    useNA           = "ifany",
                    totals          = st_options("ctable.totals"),
@@ -102,8 +103,9 @@ ctable <- function(x, y,
                    rescale.weights = FALSE,
                    ...) {
 
-  if (inherits(x, "grouped_df")) {
-    stop("ctable() doesn't accept split-tibbles; use stby() instead")
+  # Check for group_by()
+  if (any(grepl("group_by(", deparse(sys.calls()[[1]]), fixed = TRUE))) {
+    stop("ctable() doesn't support group_by(); use stby() instead")
   }
 
   # Support for by()
@@ -142,7 +144,7 @@ ctable <- function(x, y,
     }
   }
 
-  errmsg <- c(errmsg, check_arguments(match.call(), list(...)))
+  errmsg <- c(errmsg, check_args(match.call(), list(...)))
   
   if (length(errmsg) > 0) {
     stop(paste(errmsg, collapse = "\n  "))
@@ -189,6 +191,7 @@ ctable <- function(x, y,
                  var = "x", silent = "dnn" %in% names(match.call()),
                  var_label = FALSE, caller = "ctable"),
       silent = TRUE)
+    
     if (inherits(parse_info_x, "try-error")) {
       parse_info_x <- list()
     }
@@ -198,6 +201,7 @@ ctable <- function(x, y,
                  var = "y", silent = "dnn" %in% names(match.call()),
                  var_label = FALSE, caller = "ctable"),
       silent = TRUE)
+    
     if (inherits(parse_info_y, "try-error")) {
       parse_info_y <- list()
     }
@@ -231,6 +235,12 @@ ctable <- function(x, y,
     # Weights are used
     weights_string <- deparse(substitute(weights))
     
+    # Subset weights when called from by()/stby() to match current data subset
+    if (isTRUE(flag_by)) {
+      pf <- parent.frame(2)
+      weights <- weights[pf$X[[pf$i]]]
+    }
+    
     if (sum(is.na(weights)) > 0) {
       warning("missing values on weight variable have been detected and were ",
               "treated as zeroes")
@@ -255,7 +265,6 @@ ctable <- function(x, y,
                    p.value = round(tmp.chisq$p.value, 4))
   }
 
-  
   names(dimnames(freq_table)) <- c(x_name, y_name)
 
   prop_table <- switch(prop,

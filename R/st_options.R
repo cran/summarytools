@@ -49,6 +49,7 @@
 #' @param freq.ignore.threshold Numeric. Number of distinct values above which
 #'   numerical variables are ignored when calling \code{\link{freq}} with a
 #'   whole data frame as main argument. Defaults to \code{25}.
+#' @param freq.silent Logical. Hide console messages. \code{FALSE} by default.
 #' @param ctable.prop Character. Corresponds to the \code{prop} parameter of
 #'   \code{\link{ctable}}. Defaults to \dQuote{r} (\emph{r}ow).
 #' @param ctable.totals Logical. Corresponds to the \code{totals} parameter of
@@ -87,10 +88,14 @@
 #'  value gives it stronger emphasis.
 #' @param lang Character. A 2-letter code for the language to use in the
 #'   produced outputs. Currently available languages are: \sQuote{en}, 
-#'   \sQuote{fr}.
+#'   \sQuote{es}, \sQuote{fr}, \sQuote{pt}, \sQuote{ru}, and \sQuote{tr}.
+#' @param use.x11 Logical. TRUE by default. In console-only environments,
+#'   setting this to \code{FALSE} will prevent errors occurring when
+#'   \code{\link{dfSummary}}  tries to generate \emph{html} 
+#'   \dQuote{Base64-encoded} graphs.
 #' 
 #' @details To learn more about summarytools options, see the 
-#' \href{https://github.com/dcomtois/summarytools}{GitHub project's page}.
+#' \href{https://github.com/dcomtois/summarytools}{project's GitHub page}.
 #' 
 #' @keywords utilities
 #' 
@@ -121,43 +126,45 @@
 #' st_options(0)
 #' }
 #' @export
-st_options <- function(option                 = NULL, 
-                       value                  = NULL, 
-                       style                  = "simple", 
-                       plain.ascii            = TRUE, 
+st_options <- function(option                 = NULL,
+                       value                  = NULL,
+                       style                  = "simple",
+                       plain.ascii            = TRUE,
                        round.digits           = 2,
-                       headings               = TRUE, 
-                       footnote               = "default", 
-                       display.labels         = TRUE, 
-                       bootstrap.css          = TRUE, 
-                       custom.css             = NA, 
-                       escape.pipe            = FALSE, 
+                       headings               = TRUE,
+                       footnote               = "default",
+                       display.labels         = TRUE,
+                       bootstrap.css          = TRUE,
+                       custom.css             = NA,
+                       escape.pipe            = FALSE,
                        freq.cumul             = TRUE,
                        freq.totals            = TRUE,
                        freq.report.nas        = TRUE,
                        freq.ignore.threshold  = 25,
+                       freq.silent            = FALSE,
                        ctable.prop            = "r",
-                       ctable.totals          = TRUE, 
+                       ctable.totals          = TRUE,
                        descr.stats            = "all",
-                       descr.transpose        = FALSE, 
+                       descr.transpose        = FALSE,
                        descr.silent           = FALSE,
                        dfSummary.style        = "multiline",
-                       dfSummary.varnumbers   = TRUE, 
-                       dfSummary.labels.col   = TRUE, 
-                       dfSummary.valid.col    = TRUE, 
-                       dfSummary.na.col       = TRUE, 
-                       dfSummary.graph.col    = TRUE, 
+                       dfSummary.varnumbers   = TRUE,
+                       dfSummary.labels.col   = TRUE,
+                       dfSummary.valid.col    = TRUE,
+                       dfSummary.na.col       = TRUE,
+                       dfSummary.graph.col    = TRUE,
                        dfSummary.graph.magnif = 1,
-                       dfSummary.silent       = FALSE, 
+                       dfSummary.silent       = FALSE,
                        tmp.img.dir            = NA,
-                       subtitle.emphasis      = TRUE, 
-                       lang                   = "en") {
+                       subtitle.emphasis      = TRUE,
+                       lang                   = "en",
+                       use.x11                = TRUE) {
   
   allOpts <- getOption("summarytools")
   
   # Validate arguments
   mc <- match.call()
-  errmsg <- check_arguments_st_options(mc = mc)
+  errmsg <- check_args_st_options(mc = mc)
   
   if (length(errmsg) > 0) {
     stop(paste(errmsg, collapse = "\n  "), "\n No options have been modified")
@@ -204,6 +211,7 @@ st_options <- function(option                 = NULL,
                    "freq.totals"            = TRUE,
                    "freq.report.nas"        = TRUE,
                    "freq.ignore.threshold"  = 25,
+                   "freq.silent"            = FALSE,
                    "ctable.prop"            = "r",
                    "ctable.totals"          = TRUE,
                    "descr.stats"            = "all",
@@ -219,7 +227,8 @@ st_options <- function(option                 = NULL,
                    "dfSummary.silent"       = FALSE,
                    "tmp.img.dir"            = NA_character_,
                    "subtitle.emphasis"      = TRUE,
-                   "lang"                   = "en"))
+                   "lang"                   = "en",
+                   "use.x11"                = TRUE))
     
     message("summarytools options have been reset")
     return(invisible())
