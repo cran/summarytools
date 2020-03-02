@@ -19,6 +19,8 @@ ctable(
   split.tables = Inf,
   dnn = c(substitute(x), substitute(y)),
   chisq = FALSE,
+  OR = FALSE,
+  RR = FALSE,
   weights = NA,
   rescale.weights = FALSE,
   ...
@@ -72,7 +74,17 @@ table can be. \code{Inf} by default.}
 \item{dnn}{Names to be used in output table. Vector of two strings; By 
 default, the character values for arguments x and y are used.}
 
-\item{chisq}{Logical. Display chisq statistic along with p-value in a message.}
+\item{chisq}{Logical. Display chisq statistic along with p-value.}
+
+\item{OR}{Logical or numeric. Display odds ratio with the specified confidence 
+level (typically .95). Can be set to \code{TRUE}, in which case 95% confidence
+interval is given. Confidence intervals are calculated using Wald's method
+(normal approximation).}
+
+\item{RR}{Logical or numeric. Display risk ratio (also called relative risk) 
+with the specified confidence level (typically .95). Can be set to \code{TRUE}, 
+in which case 95% confidence interval is given. confidence intervals are
+calculated using Wald's method (normal approximation).}
 
 \item{weights}{Vector of weights; must be of the same length as \code{x}.}
 
@@ -105,11 +117,13 @@ with(tobacco, ctable(smoker, diseased))
 # Show column proportions, without totals
 with(tobacco, ctable(smoker, diseased, prop = "c", totals = FALSE))
 
-# Simple 2 x 2 table
-with(tobacco, ctable(gender, smoker, totals = FALSE, headings = FALSE, prop = "n"))
+# Simple 2 x 2 table with odds ratio and risk ratio
+with(tobacco, ctable(gender, smoker, totals = FALSE, headings = FALSE, prop = "n",
+                     OR = TRUE, RR = TRUE))
 
 # Grouped cross-tabulations
 with(tobacco, stby(list(x = smoker, y = diseased), gender, ctable))
+
 
 \dontrun{
 ct <- ctable(tobacco$gender, tobacco$smoker)

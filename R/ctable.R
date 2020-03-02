@@ -37,7 +37,15 @@
 #'   table can be. \code{Inf} by default.
 #' @param dnn Names to be used in output table. Vector of two strings; By 
 #'   default, the character values for arguments x and y are used.
-#' @param chisq Logical. Display chisq statistic along with p-value in a message.
+#' @param chisq Logical. Display chisq statistic along with p-value.
+#' @param OR Logical or numeric. Display odds ratio with the specified confidence 
+#'   level (typically .95). Can be set to \code{TRUE}, in which case 95% confidence
+#'   interval is given. Confidence intervals are calculated using Wald's method
+#'   (normal approximation).
+#' @param RR Logical or numeric. Display risk ratio (also called relative risk) 
+#'   with the specified confidence level (typically .95). Can be set to \code{TRUE}, 
+#'   in which case 95% confidence interval is given. confidence intervals are
+#'   calculated using Wald's method (normal approximation).
 #' @param weights Vector of weights; must be of the same length as \code{x}.
 #' @param rescale.weights Logical parameter. When set to \code{TRUE}, the total
 #'   count will be the same as the unweighted \code{x}. \code{FALSE} by default.
@@ -61,11 +69,13 @@
 #' # Show column proportions, without totals
 #' with(tobacco, ctable(smoker, diseased, prop = "c", totals = FALSE))
 #' 
-#' # Simple 2 x 2 table
-#' with(tobacco, ctable(gender, smoker, totals = FALSE, headings = FALSE, prop = "n"))
+#' # Simple 2 x 2 table with odds ratio and risk ratio
+#' with(tobacco, ctable(gender, smoker, totals = FALSE, headings = FALSE, prop = "n",
+#'                      OR = TRUE, RR = TRUE))
 #' 
 #' # Grouped cross-tabulations
 #' with(tobacco, stby(list(x = smoker, y = diseased), gender, ctable))
+#'
 #'
 #' \dontrun{
 #' ct <- ctable(tobacco$gender, tobacco$smoker)
@@ -84,7 +94,7 @@
 #' @keywords classes category
 #' @author Dominic Comtois, \email{dominic.comtois@@gmail.com}
 #' @export
-#' @importFrom stats addmargins na.omit chisq.test
+#' @importFrom stats addmargins na.omit chisq.test qnorm
 ctable <- function(x, 
                    y,
                    prop            = st_options("ctable.prop"),
@@ -99,6 +109,8 @@ ctable <- function(x,
                    split.tables    = Inf,
                    dnn             = c(substitute(x), substitute(y)),
                    chisq           = FALSE,
+                   OR              = FALSE,
+                   RR              = FALSE,
                    weights         = NA,
                    rescale.weights = FALSE,
                    ...) {
@@ -231,6 +243,8 @@ ctable <- function(x,
   # Create xfreq table ---------------------------------------------------------
   if (identical(NA, weights)) {
     freq_table <- table(x, y, useNA = useNA)
+    # Generate minimal table for calculation of chi-square, OR and RR
+    freq_table_min <- table(x, y, useNA = "no")
   } else {
     # Weights are used
     weights_string <- deparse(substitute(weights))
@@ -253,18 +267,13 @@ ctable <- function(x,
     
     if (useNA == "no") {
       freq_table <- xtabs(weights ~ x + y, addNA = FALSE)
+      freq_table_min <- freq_table
     } else {
       freq_table <- xtabs(weights ~ x + y, addNA = TRUE)
+      freq_table_min <- xtabs(weights ~ x + y, addNA = FALSE)
     }
   }
   
-  if (isTRUE(chisq)) {
-    tmp.chisq <- chisq.test(freq_table)
-    tmp.chisq <- c(Chi.squared = round(tmp.chisq$statistic[[1]], 4), 
-                   tmp.chisq$parameter, 
-                   p.value = round(tmp.chisq$p.value, 4))
-  }
-
   names(dimnames(freq_table)) <- c(x_name, y_name)
 
   prop_table <- switch(prop,
@@ -277,6 +286,7 @@ ctable <- function(x,
   freq_table <- addmargins(freq_table)
   rownames(freq_table)[nrow(freq_table)] <- trs("total")
   colnames(freq_table)[ncol(freq_table)] <- trs("total")
+  
   if (!is.null(prop_table)) {
     prop_table[is.nan(prop_table)] <- 0
     if (prop == "t") {
@@ -323,8 +333,44 @@ ctable <- function(x,
   attr(output, "date") <- Sys.Date()
 
   if (isTRUE(chisq)) {
+    tmp.chisq <- chisq.test(freq_table_min)
+    tmp.chisq <- c(Chi.squared = round(tmp.chisq$statistic[[1]], 4), 
+                   tmp.chisq$parameter, 
+                   p.value = round(tmp.chisq$p.value, 4))
     attr(output, "chisq") <- tmp.chisq
   }
+  
+  if (!isFALSE(OR) || !isFALSE(RR)) {
+    if (identical(as.numeric(dim(freq_table_min)), c(2,2))) {
+      if (!isFALSE(OR)) {
+        or <- prod(freq_table_min[c(1,4)]) / prod(freq_table_min[c(2,3)])
+        se <- sqrt(sum(1/freq_table_min))
+        attr(output, "OR") <- c(or,
+                                exp(log(or) - qnorm(p = 1-((1-OR)/2)) * se),
+                                exp(log(or) + qnorm(p = 1-((1-OR)/2)) * se))
+        names(attr(output, "OR")) <- c("Odds Ratio", paste0("Lo - ", OR * 100, "%"),
+                                       paste0("Hi - ", OR * 100, "%"))
+        attr(output, "OR-level") <- OR
+      }
+      
+      if (!is.na(RR)) {
+        rr <- (freq_table_min[1] / sum(freq_table_min[c(1,3)])) / 
+          (freq_table_min[2] / sum(freq_table_min[c(2,4)]))
+        se <- sqrt(sum(1/freq_table_min[1], 
+                       1/freq_table_min[2],
+                       -1/sum(freq_table_min[c(1,3)]), 
+                       -1/sum(freq_table_min[c(2,4)])))
+        attr(output, "RR") <- c(rr,
+                                exp(log(rr) - qnorm(p = 1-((1-RR)/2)) * se),
+                                exp(log(rr) + qnorm(p = 1-((1-RR)/2)) * se))
+        names(attr(output, "RR")) <- c("Risk Ratio", paste0("Lo - ", RR * 100, "%"), 
+                                       paste0("Hi - ", RR * 100, "%"))
+        attr(output, "RR-level") <- RR
+      }
+    } else {
+      message("OR and RR can only be used with 2 x 2 tables; parameter(s) ignored")
+    }
+  }  
 
   dfn <- ifelse(exists("df_name", inherits = FALSE), df_name, NA)
   data_info <-
