@@ -16,7 +16,7 @@ smart_split <- function(str, maxlen) {
 # %+=% -------------------------------------------------------------------------
 # infix to simplify append()ing
 #' @keywords internal
-`%+=%`<- function(x, value) {
+`%+=%` <- function(x, value) {
   eval.parent(substitute(x <- append(x, value)))
 }
 
@@ -54,51 +54,38 @@ conv_non_ascii <- function(...) {
 #' @keywords internal
 ws_to_symbol <- function(x) {
   
-  ws_char <- intToUtf8(183)
-  
-  if (is.character(x)) {
-    # We convert everything to UTF-8
-    x_encod <- Encoding(x)
-    
-    for (enc in setdiff(Encoding(x), "unknown")) {
-      x[x_encod == enc] <- iconv(x[x_encod == enc], from = enc, to = "UTF-8")
-    }
-    
-    left_ws_count  <- nchar(x) - nchar(sub("^ +", "", x))
-    right_ws_count <- nchar(x) - nchar(sub(" +$", "", x))
-    
-    # Correction to avoid doubling the length of whitespace-only strings
-    right_ws_count[nchar(x) == right_ws_count] <- 0
-    
-    outstr <- paste0(strrep(ws_char, times = left_ws_count), trimws(x),
-                     strrep(ws_char, times = right_ws_count))
-    outstr[is.na(x)] <- NA
-    return(outstr)
+  ws_symbol <- intToUtf8(183)
+  x_is_char <- is.character(x)
+  if (isTRUE(x_is_char)) {
+    x <- as.factor(x)
   }
   
-  if (is.factor(x)) {
-    xx <- levels(x)
-    xx_encod <- Encoding(xx)
-    
-    for (enc in setdiff(Encoding(xx), "unknown")) {
-      xx[xx_encod == enc] <- iconv(xx[xx_encod == enc], 
-                                   from = enc, to = "UTF-8")
-    }
-    
-    left_ws_count  <- nchar(xx) - nchar(sub("^ +", "", xx))
-    right_ws_count <- nchar(xx) - nchar(sub(" +$", "", xx))
-
-    # Correction to avoid doubling the length of whitespace-only strings
-    right_ws_count[right_ws_count == nchar(xx)] <- 0
-    
-    newlev <- paste0(strrep(ws_char, times = left_ws_count), trimws(xx),
-                     strrep(ws_char, times = right_ws_count))
-
-    levels(x) <- newlev
-    
+  xx <- levels(x)
+  xx_encod <- Encoding(xx)
+  
+  for (enc in setdiff(Encoding(xx), "unknown")) {
+    xx[xx_encod == enc] <- iconv(xx[xx_encod == enc], 
+                                 from = enc, to = "UTF-8")
+  }
+  
+  left_ws_count  <- nchar(xx) - nchar(sub("^ +", "", xx))
+  right_ws_count <- nchar(xx) - nchar(sub(" +$", "", xx))
+  
+  # Correction to avoid doubling the length of whitespace-only strings
+  right_ws_count[right_ws_count == nchar(xx)] <- 0
+  
+  xx <- gsub("((?:\\A|\\G) )|(?&rec)( )+(?'rec')$", ws_symbol, xx, perl = TRUE)
+  
+  
+  levels(x) <- xx
+  
+  if (isTRUE(x_is_char)) {
+    return(as.character(x))
+  } else {
     return(x)
   }
 }
+
 
 # Shorcut function to get translation strings
 #' @keywords internal
@@ -111,23 +98,13 @@ trs <- function(item, l = st_options("lang")) {
   }
 }
 
-# # Shortcut function to get the item name of a translated element
-# #' @keywords internal
-# inv_trs <- function(name, l = st_options("lang")) {
-#   l <- force(l)
-#   if(l != "custom") {
-#     colnames(.translations)[which(.translations["en",] == name)]
-#   } else {
-#     colnames(.st_env$custom_lang)[which(.st_env$custom_lang["custom",] == name)]
-#   }
-# }
 
 # Count "empty" elements (NA's / vectors of size 0)
 #' @keywords internal
 count_empty <- function(x, count.nas = TRUE) {
   n <- 0
   for (item in x) {
-    if(length(item) == 0) {
+    if (length(item) == 0) {
       n <- n + 1
     } else if (isTRUE(count.nas)) {
       n <- n + sum(is.na(item))
@@ -159,7 +136,7 @@ includeScript <- function(path, ...) {
 
 # Clone of htmltools:::paste8
 #' @keywords internal
-paste8 <- function (..., sep = " ", collapse = NULL) {
+paste8 <- function(..., sep = " ", collapse = NULL) {
   args <- c(lapply(list(...), enc2utf8), 
             list(sep = if (is.null(sep)) sep else enc2utf8(sep), 
                  collapse = if (is.null(collapse)) collapse else enc2utf8(collapse)))
@@ -176,4 +153,8 @@ map_groups <- function(gk) {
     grs <- c(grs, gr)
   }
   grs
+}
+
+pad <- function(string, width) {
+  paste0(strrep(" ", max(0, width - nchar(string))), string)
 }

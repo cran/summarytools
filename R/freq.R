@@ -3,14 +3,14 @@
 #' Displays weighted or unweighted frequencies, including <NA> counts and
 #' proportions.
 #'
-#' @param x Factor or vector, or data frame when \emph{y} is also provided, 
+#' @param x Factor or vector, or data frame when \emph{var} is also provided, 
 #'   usually in a piped call.
 #' @param var Unquoted expression referring to a specific column in x. Provides
 #'   support for piped function calls (e.g. \code{df \%>\% freq(some_var)}.    
 #' @param round.digits Number of significant digits to display. Defaults to
 #'   \code{2} and can be set globally; see \code{\link{st_options}}.
-#' @param order Ordering of rows in frequency table; \dQuote{names} (default for
-#'   non-factors), \dQuote{levels} (default for factors), or \dQuote{freq} (from
+#' @param order Ordering of rows in frequency table; \dQuote{name} (default for
+#'   non-factors), \dQuote{level} (default for factors), or \dQuote{freq} (from
 #'   most frequent to less frequent). To invert the order, place a minus sign
 #'   before or after the word. \dQuote{-freq} will thus display the items
 #'   starting from the lowest in frequency to the highest, and so forth.
@@ -170,8 +170,6 @@ freq <- function(x,
     outlist  <- list()
     gr_ks    <- map_groups(group_keys(x))
     gr_inds  <- attr(x, "groups")$.rows
-    #ana_var  <- ifelse("var" %in% names(match.call()), var, 
-    #                   setdiff(colnames(x), group_vars(x)))
 
     if ("weights" %in% names(match.call())) {
       weights_str <- deparse(substitute(weights))
@@ -263,20 +261,21 @@ freq <- function(x,
       
       out[[length(out) + 1]] <- 
         freq(x[[i]],
-             round.digits     = round.digits, 
+             round.digits     = round.digits,
              order            = order,
-             style            = style, 
-             plain.ascii      = plain.ascii, 
-             justify          = justify, 
-             totals           = totals, 
-             report.nas       = report.nas, 
+             style            = style,
+             plain.ascii      = plain.ascii,
+             justify          = justify,
+             cumul            = cumul,
+             totals           = totals,
+             report.nas       = report.nas,
              rows             = rows,
-             missing          = missing, 
-             display.type     = display.type, 
-             display.labels   = display.labels, 
-             headings         = headings, 
-             weights          = weights, 
-             rescale.weights  = rescale.weights, 
+             missing          = missing,
+             display.type     = display.type,
+             display.labels   = display.labels,
+             headings         = headings,
+             weights          = weights,
+             rescale.weights  = rescale.weights,
              ...)
       
       attr(out[[length(out)]], "data_info")$Data.frame <- df_name
@@ -313,7 +312,7 @@ freq <- function(x,
     }
     
     # if x is a data.frame with 1 column, extract this column as x
-    if (!is.null(ncol(x)) && ncol(x)==1) {
+    if (!is.null(ncol(x)) && ncol(x) == 1) {
       varname <- colnames(x)
       x <- x[[1]]
     }
@@ -411,15 +410,15 @@ freq <- function(x,
       freq_table <- append(freq_table, nas_freq)
     }
     
-    # order by [-]names if needed
-    if (order == "names") {
+    # order by [-]name if needed
+    if (order == "name") {
       freq_table <- freq_table[order(names(freq_table), 
                                      decreasing = (order_sign == "-"), 
                                      na.last = TRUE)]
     }
     
-    # order by [-]levels if needed
-    if (is.factor(x) && order == "levels" && order_sign == "-") {
+    # order by [-]level if needed
+    if (is.factor(x) && order == "level" && order_sign == "-") {
       freq_table <- c(freq_table[rev(levels(x))], tail(freq_table, 1))
     }
     
@@ -578,7 +577,8 @@ freq <- function(x,
                                         missing        = missing,
                                         display.type   = display.type,
                                         display.labels = display.labels,
-                                        headings       = headings)
+                                        headings       = headings,
+                                        split.tables   = Inf)
     
     attr(output, "user_fmt") <- list(... = ...)
     

@@ -21,6 +21,9 @@
 #' @param transpose Logical. Makes variables appears as columns, and stats as
 #'   rows. Defaults to \code{FALSE}. To change this default value, see
 #'   \code{\link{st_options}} (option \dQuote{descr.transpose}).
+#' @param order Character. One of \dQuote{sort} (or simply \dQuote{s}), 
+#'   \dQuote{preserve} (or \dQuote{p}), or a vector of all variable names
+#'   in the desired order. Defaults to \dQuote{sort}.
 #' @param style Style to be used by \code{\link[pander]{pander}} when rendering
 #'   output table; One of \dQuote{simple} (default), \dQuote{grid}, or
 #'   \dQuote{rmarkdown} This option can be set globally; see
@@ -91,7 +94,7 @@
 #' @importFrom rapportools skewness kurtosis nvalid
 #' @importFrom stats IQR mad median sd quantile
 #' @importFrom utils head
-#' @importFrom dplyr %>% as_tibble funs select starts_with summarize_all group_keys
+#' @importFrom dplyr %>% as_tibble select starts_with summarize_all group_keys
 #' @importFrom tidyr separate gather spread
 descr <- function(x,
                   var             = NULL,
@@ -99,6 +102,7 @@ descr <- function(x,
                   na.rm           = TRUE,
                   round.digits    = st_options("round.digits"),
                   transpose       = st_options("descr.transpose"),
+                  order           = "sort",
                   style           = st_options("style"),
                   plain.ascii     = st_options("plain.ascii"),
                   justify         = "r",
@@ -123,7 +127,7 @@ descr <- function(x,
         varname <- deparse(substitute(var))
       }
     } else {
-      var_obj  <- x[,setdiff(colnames(x), group_vars(x))]
+      var_obj  <- x[ ,setdiff(colnames(x), group_vars(x))]
     }
     
     parse_info <- try(
@@ -142,6 +146,7 @@ descr <- function(x,
                             na.rm           = na.rm,
                             round.digits    = round.digits,
                             transpose       = transpose,
+                            order           = order,
                             style           = style,
                             plain.ascii     = plain.ascii,
                             justify         = justify,
@@ -179,8 +184,7 @@ descr <- function(x,
     }
     
     if (length(group_vars(x)) == 1 && is.null(dim(var_obj))) {
-      names(outlist) <- 
-        sub(paste(group_vars(x), "= "), "", gr_ks)
+      names(outlist) <- sub(paste(group_vars(x), "= "), "", gr_ks)
     } else {
       names(outlist) <- gr_ks
     }
@@ -228,11 +232,15 @@ descr <- function(x,
   }
   
   # Get variable label
-  var_label <- label(x.df[[1]])
+  if (ncol(x.df) == 1) {
+    var_label <- label(x.df[[1]])
+  } else {
+    var_label <- NA
+  }
   
   if (!is.data.frame(x.df)) {
     errmsg %+=% paste("'x' must be a numeric vector, a data.frame, a tibble,",
-                     "a data.table; attempted conversion to tibble failed")
+                      "a data.table; attempted conversion to tibble failed")
   }
   
   errmsg <- c(errmsg, check_args(match.call(), list(...)))
@@ -263,8 +271,7 @@ descr <- function(x,
     if (length(invalid_stats) > 0) {
       errmsg %+=%
         paste("The following statistics are not recognized, or not allowed: ",
-              paste(dQuote(invalid_stats), collapse = ", ")
-              )
+              paste(dQuote(invalid_stats), collapse = ", "))
     }
   }
 
@@ -303,45 +310,70 @@ descr <- function(x,
   col_to_remove <- which(!vapply(x.df, is.numeric, logical(1)))
   
   if (length(col_to_remove) > 0) {
-    ignored <- colnames(x.df)[col_to_remove]
-    x.df <- x.df[-col_to_remove]
+    ignored             <- colnames(x.df)[col_to_remove]
+    x.df                <- x.df[-col_to_remove]
+    order               <- setdiff(order, ignored)
     parse_info$var_name <- parse_info$var_name[-col_to_remove]
   }
   
   if (ncol(x.df) == 0) {
-    stop("no numerical variable(s) given as argument")
+    stop("no numerical variables found in ", deparse(match.call()$x))
   }
 
+  # Verify that the order argument is still valid after column removal
+  if (length(order) > 1) {
+    if (length(ind <- which(!colnames(x.df) %in% order)) > 0) {
+      message("column(s) not specified in 'order' (",
+              paste(colnames(x.df)[ind], collapse = ", "), 
+              ") will appear at the end of the table")
+      order <- c(order, colnames(x.df)[ind])
+    } 
+  }
   # No weights being used ------------------------------------------------------
   if (identical(weights, NA)) {
     
     # Prepare the summarizing functions for dplyr::summarize; there are 3 stats
     # that will be calculated later on so to not slow down the function
-    summar_funs <- funs(mean, 
-                        sd, 
-                        min, 
-                        q1 = quantile(., probs = .25, type = 2, names = FALSE),
-                        med = median,
-                        q3 = quantile(., probs = .75, type = 2, names = FALSE),
-                        max,
-                        mad,
-                        iqr = IQR,
-                        cv = -999,
-                        skewness = rapportools::skewness,
-                        se.skewness = -999,
-                        kurtosis = rapportools::kurtosis,
-                        n.valid = rapportools::nvalid,
-                        pct.valid = -999)
+    dummy <- function(x) NA
     
-    summar_funs <- summar_funs[which(names(summar_funs) %in% stats)]
+    summar_funs <- list(~ mean(., na.rm = na.rm),
+                        ~ sd(., na.rm = na.rm),
+                        ~ min(., na.rm = na.rm),
+                        ~ quantile(., probs = .25, type = 2, names = FALSE, 
+                                   na.rm = na.rm),
+                        ~ median(., na.rm = na.rm),
+                        ~ quantile(., probs = .75, type = 2, names = FALSE, 
+                                   na.rm = na.rm),
+                        ~ max(., na.rm = na.rm),
+                        ~ mad(., na.rm = na.rm),
+                        ~ IQR(., na.rm = na.rm),
+                        ~ dummy(.), # placeholder for cv
+                        ~ rapportools::skewness(., na.rm = na.rm),
+                        ~ dummy(.), # placeholder for se.skewnes
+                        ~ rapportools::kurtosis(., na.rm = na.rm),
+                        ~ rapportools::nvalid(., na.rm = na.rm),
+                        ~ dummy(.))  # placeholder for pct.valid
+    
+    fun_names <- c("mean", "sd", "min", "q1", "med", "q3", "max", "mad", "iqr",
+                   "cv", "skewness", "se.skewness", "kurtosis", "n.valid",
+                   "pct.valid")
+    
+    names(summar_funs) <- fun_names
+    summar_funs <- summar_funs[which(fun_names %in% stats)]
 
     if (ncol(x.df) > 1) {
       results <- suppressWarnings(
-        x.df %>% summarize_all(.funs = summar_funs, na.rm = na.rm) %>%
-        gather("variable", "value") %>%
-        separate("variable", c("var", "stat"), sep = "_(?=[^_]*$)") %>%
-        spread("var", "value")
-      )
+        x.df %>% summarize_all(.funs = summar_funs) %>%
+          gather("variable", "value") %>%
+          separate("variable", c("var", "stat"), sep = "_(?=[^_]*$)") %>%
+          spread("var", "value")
+        )
+      
+      if (identical(order, "preserve")) {
+        results <- results[ ,c("stat", colnames(x.df))]
+      } else if (length(order) > 1) {
+        results <- results[ ,c("stat", order)]
+      }
       
       # Transform results into output object
       output <- as.data.frame(t(results[ ,-1]))

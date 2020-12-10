@@ -26,7 +26,7 @@ freq(
 )
 }
 \arguments{
-\item{x}{Factor or vector, or data frame when \emph{y} is also provided, 
+\item{x}{Factor or vector, or data frame when \emph{var} is also provided, 
 usually in a piped call.}
 
 \item{var}{Unquoted expression referring to a specific column in x. Provides
@@ -35,8 +35,8 @@ support for piped function calls (e.g. \code{df \%>\% freq(some_var)}.}
 \item{round.digits}{Number of significant digits to display. Defaults to
 \code{2} and can be set globally; see \code{\link{st_options}}.}
 
-\item{order}{Ordering of rows in frequency table; \dQuote{names} (default for
-non-factors), \dQuote{levels} (default for factors), or \dQuote{freq} (from
+\item{order}{Ordering of rows in frequency table; \dQuote{name} (default for
+non-factors), \dQuote{level} (default for factors), or \dQuote{freq} (from
 most frequent to less frequent). To invert the order, place a minus sign
 before or after the word. \dQuote{-freq} will thus display the items
 starting from the lowest in frequency to the highest, and so forth.}

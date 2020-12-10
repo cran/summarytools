@@ -14,6 +14,8 @@
 #'
 #' @inheritParams print.summarytools
 #' 
+#' @aliases view stview
+#' 
 #' @details 
 #' Creates \emph{html} outputs and opens them in the Viewer, in a browser or
 #' renders the \emph{html} code appropriate for \emph{Rmarkdown} documents. 
@@ -78,10 +80,12 @@ view <- function(x,
              attr(x[[1]], "st_type") == "descr" &&
              length(attr(x[[1]], "data_info")$by_var) == 1 &&
              ((!attr(x[[1]], "data_info")$transposed && dim(x[[1]])[2] == 1) ||
-              ( attr(x[[1]], "data_info")$transposed && dim(x[[1]])[1] == 1))) {
+              (attr(x[[1]], "data_info")$transposed && dim(x[[1]])[1] == 1))) {
 
-    # Special case: descr by() objects with 1 variable -------------------------
     
+    # Special case: descr() + [by() | stby()]  objects with 1 variable --------
+    # A column will become created for every distinct value of the ------------
+    # grouping variable -------------------------------------------------------
     if (attr(x[[1]], "data_info")$transposed) {
       xx <- do.call(rbind, x)
     } else {
@@ -125,9 +129,10 @@ view <- function(x,
                        ...)
     
   } else if (inherits(x = x, what = c("stby", "by")) &&
-             attr(x[[1]], "st_type") %in% c("freq", "ctable",
-                                            "descr", "dfSummary")) {
+             attr(x[[1]], "st_type") %in% 
+               c("freq", "ctable", "descr", "dfSummary")) {
     
+    # html file is being created -- we fix method = "browser"
     if (grepl("\\.html$", file, ignore.case = TRUE, perl = TRUE) &&
         !grepl(pattern = tempdir(), x = file, fixed = TRUE) && 
         method == "pander") {
@@ -138,16 +143,6 @@ view <- function(x,
     # Remove NULL objects from list
     null_ind <- which(vapply(x, is.null, TRUE))
     if (length(null_ind) > 0) {
-      # by_levels <- expand.grid(attr(x, "dimnames"))
-      # by_vars   <- names(attr(x, "dimnames"))
-      # msg <- "Following group(s) had 0 observations:\n"
-      # for (i in seq_along(null_ind)) {
-      #   by_values <- as.character(unlist(by_levels[null_ind[i],]))
-      #   msg <- paste0(msg, "  ", null_ind[i], ". ",
-      #                 paste(by_vars, by_values, collapse = ", ", sep = " = "),
-      #                 "\n")
-      # }
-      # message(msg)
       x <- x[-null_ind]
     }
     
@@ -302,7 +297,7 @@ view <- function(x,
              inherits(x[[1]], "summarytools") && 
              attr(x[[1]], "st_type") == "freq") {
 
-    if("ignored" %in% names(attributes(x))) {
+    if ("ignored" %in% names(attributes(x))) {
       message("Variable(s) ignored: ",
               paste(attr(x, "ignored"), collapse = ", "))
     }
@@ -451,3 +446,7 @@ view <- function(x,
     )
   }
 }
+
+#' @export
+stview <- view
+

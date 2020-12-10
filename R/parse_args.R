@@ -1,7 +1,7 @@
 #' Extract Data Information From Arguments Passed to Functions
 #'
 #' Using sys.calls(), sys.frames() and match.call(), this utility function
-#' extracts and/or deducts information about the data being processed.
+#' extracts and/or infers information about the data being processed.
 #' Data frame name, variable names and labels if any, subsetting information,
 #' grouping information (when by() is used) are returned by the function which
 #' tries various methods to get this information.
@@ -96,14 +96,14 @@ parse_args <- function(sys_calls,
     
     if ("list" %in% all.names(calls$by$INDICES)) {
       by_var <- character()
-      for(i in seq_len(length(calls$by$INDICES) - 1)) {
+      for (i in seq_len(length(calls$by$INDICES) - 1)) {
         by_var[i]  <- sub("\\(\\)", "", deparse(calls$by$INDICES[i + 1]))
       }
     } else {
       by_var <- deparse(calls$by$INDICES)
     }
 
-    for(i in seq_along(by_var)) {
+    for (i in seq_along(by_var)) {
       # Normalize variable name
       if (grepl(re4, by_var[i], perl = TRUE)) {
         df_nm   <- sub(re1, "\\1", by_var[i], perl = TRUE)
@@ -146,7 +146,7 @@ parse_args <- function(sys_calls,
     by_group <- 
       paste(colnames(.st_env$byInfo$by_levels),
             as.character(.st_env$byInfo$by_levels[.st_env$byInfo$iter, ]),
-            sep=" = ", collapse = ", ")
+            sep = " = ", collapse = ", ")
     
     # by_first and by_last are used by print.summarytools when printing objects
     # passed by the by() function
@@ -250,7 +250,7 @@ parse_args <- function(sys_calls,
         if (is.data.frame(obj)) {
           upd_output("df_name", obj_name)
           upd_output("df_label", label(obj))
-          if(isTRUE(var_name)) {
+          if (isTRUE(var_name)) {
             obj2_name <- sub(re3, "\\2", str, perl = TRUE)
             obj2      <- try(eval(parse(text = obj2_name), envir = obj), 
                              silent = TRUE)
@@ -274,7 +274,7 @@ parse_args <- function(sys_calls,
   }
   
   # When pipe is used, this recursive function gets the "deepest" lhs
-  # that constitues something other than a function call
+  # that constitutes something other than a function call
   get_lhs <- function(x) {
     if (!is.null(names(x)) && "lhs" %in% names(x) && is.call(x$lhs)) {
       x$lhs <- pryr::standardise_call(x$lhs)
@@ -283,6 +283,14 @@ parse_args <- function(sys_calls,
       return(x$lhs)
     } else {
       return(x)
+    }
+  }
+  
+  get_last_x <- function(expr) {
+    if (is.call(expr) && "x" %in% names(pryr::standardise_call(expr))) {
+      get_last_x(pryr::standardise_call(expr)$x)
+    } else {
+      return(expr)
     }
   }
   
@@ -317,13 +325,12 @@ parse_args <- function(sys_calls,
   ls_sys_frames <- lapply(sys_frames, ls)
   funs_stack    <- lapply(sys_calls, head, 1)
   names(ls_sys_frames) <- sub("summarytools::", "",
-                              as.character(unlist(funs_stack)),
-                              fixed = TRUE)
+                              as.character(unlist(funs_stack)))
   
   # Look for position of by() + tapply(), with() lapply() and %>% in sys.calls()
   pos         <- list()
   pos$by      <- which(funs_stack %in% c("by()", "stby()"))
-  pos$with    <- which(funs_stack == "with()")
+  pos$with    <- which(funs_stack %in% c("base::with()", "with()"))
   pos$pipe    <- which(funs_stack == "`%>%`()")
   pos$piper   <- which(funs_stack == "`%>>%`()")
   pos$dollar  <- which(funs_stack == "`%$%`()")
@@ -495,14 +502,6 @@ parse_args <- function(sys_calls,
     }
   }
 
-  get_last_x <- function(expr) {
-    if (is.call(expr) && "x" %in% names(pryr::standardise_call(expr))) {
-      get_last_x(pryr::standardise_call(expr)$x)
-    } else {
-      return(expr)
-    }
-  }
-  
   # in the call stack: %>>% ----------------------------------------------------
   if ("piper" %in% names(calls)) {
     # Get "last x" to have dataframe name

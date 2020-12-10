@@ -14,7 +14,7 @@ check_args <- function(mc, dotArgs) {
   if (caller == "FUN") {
     pf$flag_by <- TRUE
     # When stby() was called, deduce caller from formals
-    if ("order" %in% names(pf))
+    if ("cumul" %in% names(pf))
       caller <- "freq"
     else if ("transpose" %in% names(pf))
       caller <- "descr"
@@ -65,16 +65,16 @@ check_args <- function(mc, dotArgs) {
   if ("justify" %in% names(mc)) {
     if (caller == "freq") {
       if (!isTRUE(test_string(pf$justify, min.chars = 1)) ||
-          !isTRUE(test_choice(substr(pf$justify,1,1), 
+          !isTRUE(test_choice(tolower(substr(pf$justify,1,1)), 
                               c("l", "c", "m", "r", "d")))) {
         errmsg %+=% "'justify' must be one of 'l', 'c', 'r', or 'd' (default)"
       }
-    } else if (!isTRUE(test_choice(pf$justify, 
+    } else if (!isTRUE(test_choice(tolower(substr(pf$justify,1,1)), 
                                    c("l", "c", "m", "r")))) {
-      errmsg %+=% "'justify' must be one of 'l', 'c', 'r'"
+      errmsg %+=% "'justify' must be one of 'l', 'c', or 'r'"
     }
     
-    pf$justify <- switch(substring(pf$justify, 1, 1),
+    pf$justify <- switch(tolower(substr(pf$justify, 1, 1)),
                          l = "left",
                          c = "center",
                          m = "center",
@@ -115,19 +115,19 @@ check_args <- function(mc, dotArgs) {
     }
     
     if ("order" %in% names(mc)) {
-      order <- switch(tolower(substring(sub("[+-]", "", pf$order), 1, 1)),
+      order <- switch(tolower(substr(sub("[+-]", "", pf$order), 1, 1)),
                       d = "default",
-                      l = "levels",
+                      l = "level",
                       f = "freq",
-                      n = "names")
+                      n = "name")
       
       if (!isTRUE(test_choice(order, 
-                              c("default", "levels", "freq", "names")))) {
-        errmsg %+=% paste("'order' must be one of 'default', 'levels',",
-                          "'freq', or 'names'")
-      } else if (order == "levels" && !is.factor(pf$x)) {
-        errmsg %+=% paste("'order' can be set to 'factor' only for factors.",
-                          "Use 'names' or 'freq', or convert object to factor",
+                              c("default", "level", "freq", "name")))) {
+        errmsg %+=% paste("'order' must be one of 'default', 'level',",
+                          "'freq', or 'name'")
+      } else if (order == "level" && !is.factor(pf$x)) {
+        errmsg %+=% paste("'order' can be set to 'level' only for factors.",
+                          "Use 'name' or 'freq', or convert object to factor",
                           "prior to calling freq()")
       }
       
@@ -272,6 +272,28 @@ check_args <- function(mc, dotArgs) {
       errmsg %+=% "'transpose' must be either TRUE or FALSE"
     }
     
+    if ("order" %in% names(mc)) {
+      if (length(pf$order) == 1) {
+        if (tolower(pf$order) == "s") {
+          pf$order <- "sort"
+        } else if (tolower(pf$order) == "p") {
+          pf$order <- "preserve"
+        }
+        
+        if (!pf$order %in% c("sort", "preserve")) {
+          errmsg %+=% paste0("'order' must be one of 'sort', ",
+                             "'preserve', or a vector of variable names")
+        }
+      } else {
+        # order has length > 1 -- all elements must correspond to column names
+        if (length(ind <- which(!pf$order %in% colnames(pf$x.df))) > 0) {
+          errmsg %+=% paste("Following ordering element(s) not recognized:", 
+                            paste(pf$order[ind], sep = ", "),
+                            collapse = " ")
+        }
+      }
+    }
+    
     if (!identical(pf$weights, NA)) {
       if (is.null(pf$weights)) {
         errmsg %+=% "weights vector not found"
@@ -283,14 +305,7 @@ check_args <- function(mc, dotArgs) {
   
   # dfSummary arguments --------------------------------------------------------
   if (caller == "dfSummary") {
-    
-    pf$justify <- switch(substring(pf$justify, 1, 1),
-                         l = "left",
-                         c = "center",
-                         m = "center",
-                         d = "default",
-                         r = "right")
-    
+
     if (!isTRUE(test_choice(pf$style, c("grid", "multiline")))) {
       errmsg %+=% "'style' must be either 'grid' or 'multiline'"
     }
@@ -376,8 +391,8 @@ check_args_tb <- function(mc) {
   }
 
   if ("drop.val.col" %in% names(mc) && 
-      !isTRUE(test_logical(pf$na.rm, len = 1, any.missing = FALSE))) {
-    errmsg %+=% "'na.rm' must be either TRUE or FALSE"
+      !isTRUE(test_logical(pf$drop.val.col, len = 1, any.missing = FALSE))) {
+    errmsg %+=% "'drop.val.col' must be either TRUE or FALSE"
   }
   
   return(errmsg)
@@ -388,18 +403,6 @@ check_args_print <- function(mc) {
   pf <- parent.frame()
   errmsg <- character()
   
-  pf$method <- switch(tolower(substring(pf$method, 1, 1)),
-                      p = "pander",
-                      b = "browser",
-                      v = "viewer",
-                      r = "render")
-  
-  if (attr(pf$x, "lang") != st_options("lang")) {
-    op <- st_options("lang")
-    st_options(lang = attr(pf$x, "lang"))
-    on.exit(st_options(lang = op), add = TRUE)
-  }
-
   if (!isTRUE(test_choice(pf$method, 
                           c("pander", "browser", "viewer", "render")))) {
     errmsg %+=% paste("'method' must be one of 'pander', 'browser', 'viewer',",
@@ -409,9 +412,7 @@ check_args_print <- function(mc) {
   if (!isTRUE(test_int(pf$max.tbl.height, lower = 100, na.ok = FALSE)) &&
       !is.infinite(pf$max.tbl.height)) {
     errmsg %+=% "'max.tbl.height' must be an integer between 100 and Inf"
-  } else {
-    attr(pf$x, "format_info")$max.tbl.height <- pf$max.tbl.height
-  }
+  } 
   
   if (pf$file == "" && isTRUE(pf$append)) {
     errmsg %+=% "'append' is set to TRUE but no file name has been specified"
@@ -446,14 +447,14 @@ check_args_print <- function(mc) {
      errmsg %+=% "'file' path is not valid - check that directory exists"
   }
   
-  # Change method to browser when file name was (most likely) provided by user
-  if (grepl("\\.html$", pf$file, ignore.case = TRUE, perl = TRUE) &&
-      !grepl(pattern = tempdir(), x = pf$file, fixed = TRUE) && 
-      pf$method == "pander") {
-    pf$method <- "browser"
-    message("Switching method to 'browser'")
-  }
-  
+  # # Change method to browser when file name was (most likely) provided by user
+  # if (grepl("\\.html$", pf$file, ignore.case = TRUE, perl = TRUE) &&
+  #     !grepl(pattern = tempdir(), x = pf$file, fixed = TRUE) && 
+  #     pf$method == "pander") {
+  #   pf$method <- "browser"
+  #   message("Switching method to 'browser'")
+  # }
+  # 
   if (pf$method == "pander" && !is.na(pf$table.classes)) {
     errmsg %+=% "'table.classes' option does not apply to method 'pander'"
   }
@@ -585,7 +586,8 @@ check_args_st_options <- function(mc) {
   }
   
   if ("freq.ignore.threshold" %in% names(mc) &&
-      !isTRUE(test_int(pf$freq.ignore.threshold, lower = 0))) {
+      !isTRUE(test_int(pf$freq.ignore.threshold, lower = 0)) &&
+      !is.infinite(pf$freq.ignore.threshold)) {
     errmsg %+=% "'freq.ignore.threshold' must be an integer greater than 0"
   }
   
