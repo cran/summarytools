@@ -11,90 +11,95 @@
 #'    footnote = st_options('footnote'), max.tbl.height = Inf,
 #'    collapse = 0, escape.pipe = st_options("escape.pipe"), \dots)
 #'
-#' @param x A summarytools object that was generated with \code{\link{freq}},
-#'   \code{\link{descr}}, \code{\link{ctable}} or \code{\link{dfSummary}}.
-#' @param method One of \dQuote{pander}, \dQuote{viewer}, \dQuote{browser}, or
-#'   \dQuote{render}. For \code{print()}, default is \dQuote{pander}; for
-#'   \code{view()}, default is \dQuote{viewer}. If \dQuote{viewer} is used
-#'   outside \emph{RStudio}, \dQuote{browser} will be used instead. Use
-#'   \dQuote{render} if function is called from an Rmd document.
-#' @param file File name to write output to. Defaults to \dQuote{}.
-#' @param append Logical. When \code{file} argument is supplied, this indicates
-#'   whether to append output to existing file. \code{FALSE} by default.
-#' @param report.title For \emph{html} reports, this goes into the
-#'   \code{<title>} tag. Defaults to \code{NA}, in which case \code{<title>}
-#'   will be generic.
-#' @param table.classes Character.  Additional classes to assign to output
-#'   tables. All \emph{Bootstrap css} classes can be used. It also allows
-#'   user-defined classes (see custom.css parameter). See \emph{details}
-#'   section. \code{NA} by default.
-#' @param bootstrap.css Logical. Set to \code{FALSE} to omit
-#'   \emph{Bootstrap css}. \code{TRUE} by default. To change this default value
-#'   globally, see \code{\link{st_options}}.
-#' @param custom.css Path to a user-defined \emph{.css} file. Classes defined in
-#'   this file can be used in the \code{table.classes} parameter. \code{NA} by
-#'   default. To change this default value globally, see
+#' @param x A \emph{summarytools} object, created by one of the four core
+#'   functions (\code{\link{freq}}, \code{\link{descr}}, \code{\link{ctable}},
+#'   or \code{\link{dfSummary}}).
+#' @param method Character. One of \dQuote{pander}, \dQuote{viewer}, 
+#'   \dQuote{browser}, or \dQuote{render}. Default value for the \code{print()}
+#'   method is \dQuote{pander}; for \code{view()}/\code{stview()}, default is
+#'   \dQuote{viewer} if session is running in \emph{RStudio}, \dQuote{browser}
+#'   otherwise. The main use for \dQuote{render} is in \emph{R Markdown}
+#'   documents.
+#' @param file Character. File name to write output to. Defaults to \dQuote{}.
+#' @param append Logical. Append output to existing file (specified using the
+#'   \emph{file} argument). \code{FALSE} by default.
+#' @param report.title Character. For \emph{html} reports, this goes into the
+#'   \code{<title>} tag. When left to \code{NA} (default), the first line of the
+#'   heading section is used (\emph{e.g.}: \dQuote{Data Frame Summary}).
+#' @param table.classes Character. Additional \emph{html} classes to assign to
+#'   output tables. \emph{Bootstrap css} classes can be used. User-defined
+#'   classes (see the \emph{custom.css} argument) are also specified here. See
+#'   \emph{details} section. \code{NA} by default.
+#' @param bootstrap.css Logical. When generating an \emph{html} document, 
+#'   include the \dQuote{\emph{includes/stylesheets/bootstrap.min.css"}} file
+#'   content inside a \code{<style type="text/css">} tag in the document's
+#'   \code{<head>}. \code{TRUE} by default. Can be set globally with 
 #'   \code{\link{st_options}}.
-#' @param silent Hide console messages (such as ignored variables or \code{NaN}
-#'   to \code{NA} transformations).
-#' @param footnote footnote in \emph{html} output. When set to \dQuote{default},
-#'   this is the package name and version, R version, and current date). Has no
-#'   effect when \code{method} is \dQuote{pander}. Set to \dQuote{default},
-#'   provide your own text, or set to \code{NA} to omit. To change this default
-#'   value globally, see \code{\link{st_options}}.
-#' @param max.tbl.height Maximum table height (in pixels) allowed in rendered
-#'  \code{dfSummary()} tables. When this argument is used, results will show up
-#'  in a \code{<div>} with the specified height and a scroll bar. Intended
-#'  to be used in \emph{Rmd} documents. Has no effect when \code{method} is
-#'  \dQuote{pander}. \code{Inf} by default.
+#' @param custom.css Character. Path to a custom \emph{.css} file. Classes
+#'   defined in this must also appear in the \code{table.classes} parameter
+#'   in order to be applied to the table(s). Can be set globally with
+#'   \code{\link{st_options}}. \code{NA} by default.
+#' @param silent Logical. Set to \code{TRUE} to hide console messages 
+#'   (\emph{e.g.}: ignored variables or \code{NaN} to \code{NA}
+#'   transformations). \code{FALSE} by default.
+#' @param footnote Character. Text to display just after \emph{html} output
+#'   tables. The default value (\dQuote{\emph{default}}) produces a two-line
+#'   footnote indicating the package's name and version, the R version, and
+#'   the current date. Has no effect on \emph{ascii} or \emph{markdown}
+#'   content. Can contain standard \emph{html} tags. Set to \code{NA} to omit.
+#'   Can be set globally with \code{\link{st_options}}.
+#' @param max.tbl.height Numeric. Maximum table height \emph{in pixels} allowed
+#'  in rendered \code{dfSummary()} tables. When this argument is used, results 
+#'  will show up in a \code{<div>} with the specified height and a scroll bar.
+#'  Intended to be used in \emph{Rmd} documents with \code{method = "render"}.
+#'  \code{Inf} by default.
 #' @param collapse Numeric. \code{0} by default. Set to \code{1} to make
 #'  \code{freq()} sections collapsible (when clicking on the variable name).
 #'  Future versions might provide alternate collapsing options.
-#' @param escape.pipe Logical. Set to \code{TRUE} when using \code{style='grid'}
+#' @param escape.pipe Logical. Set to \code{TRUE} when \code{style="grid"}
 #'   and \code{file} argument is supplied if the intent is to generate a text
-#'   file that can be converted to other formats using \emph{Pandoc}. To change
-#'   this default value globally, see \code{\link{st_options}}.
-#' @param \dots Additional arguments can be used to override parameters stored
-#'   as attributes in the object being printed. See \emph{Details} section.
+#'   file that can be converted to other formats using \emph{Pandoc}. Can be
+#'   set globally with \code{\link{st_options}}.
+#' @param \dots Additional arguments used to override attributes stored in the
+#'   object, or to change formatting via \code{\link[base]{format}} or 
+#'   \code{\link[pander]{pander}}. See \emph{Details}.
 #'
-#' @return \code{NULL} when \code{method="pander"}; a file path (returned
-#'   invisibly) when \code{method="viewer"} or \code{method="browser"}. In the
-#'   latter case, the file path is also passed to \code{shell.exec} so the
-#'   document is opened in default Web Browser.
+#' @return \code{NULL} when \code{method="pander"}; A file path returned
+#'   invisibly when \code{method="viewer"} or \code{"browser"}. In the
+#'   latter case, the file path is also passed to \code{shell.exec} 
+#'   (\emph{Windows}) or \code{\link{system}} (\emph{*nix}), causing
+#'   the document to be opened in default Web browser.
 #'
 #' @details
-#'   Plain ascii and \emph{rmarkdown} tables are generated via
-#'   \code{\link[pander]{pander}}. See \emph{References} section
-#'   for a list of all available \emph{pander} options.
+#'   \code{Ascii} and \emph{markdown} tables are generated using
+#'   \code{\link[pander]{pander}}. 
 #'
-#' The following additional arguments can be used to override
-#'   formatting attributes stored in the object to be printed. Refer to the
-#'   function's documentation for details on these arguments.
+#' The following arguments can be used to override formatting attributes stored
+#' in the object:
 #'    \itemize{
 #'      \item \code{style}
-#'      \item \code{round.digits} (except for \code{\link{dfSummary}} objects)
+#'      \item \code{round.digits} (except for \emph{dfSummary} objects)
 #'      \item \code{plain.ascii}
 #'      \item \code{justify}
+#'      \item \code{split.tables}
 #'      \item \code{headings}
 #'      \item \code{display.labels}
-#'      \item \code{varnumbers}    (\code{\link{dfSummary}} objects)
-#'      \item \code{labels.col}    (\code{\link{dfSummary}} objects)
-#'      \item \code{graph.col}     (\code{\link{dfSummary}} objects)
-#'      \item \code{valid.col}     (\code{\link{dfSummary}} objects)
-#'      \item \code{na.col}        (\code{\link{dfSummary}} objects)
-#'      \item \code{col.widths}    (\code{\link{dfSummary}} objects)
-#'      \item \code{split.tables}
-#'      \item \code{report.nas}    (\code{\link{freq}} objects)
-#'      \item \code{display.type}  (\code{\link{freq}} objects)
-#'      \item \code{missing}       (\code{\link{freq}} objects)
-#'      \item \code{totals}        (\code{\link{freq}} and \code{\link{ctable}}
-#'      objects)
-#'      \item \code{caption}       (\code{\link{freq}} and \code{\link{ctable}}
-#'      objects)
+#'      \item \code{varnumbers}    (\code{\link{dfSummary}} objects only)
+#'      \item \code{labels.col}    (\code{\link{dfSummary}} objects only)
+#'      \item \code{graph.col}     (\code{\link{dfSummary}} objects only)
+#'      \item \code{valid.col}     (\code{\link{dfSummary}} objects only)
+#'      \item \code{na.col}        (\code{\link{dfSummary}} objects only)
+#'      \item \code{col.widths}    (\code{\link{dfSummary}} objects only)
+#'      \item \code{keep.grp.vars} (\code{\link{dfSummary}} objects only)
+#'      \item \code{report.nas}    (\code{\link{freq}} objects only)
+#'      \item \code{display.type}  (\code{\link{freq}} objects only)
+#'      \item \code{missing}       (\code{\link{freq}} objects only)
+#'      \item \code{totals}        (\code{\link{freq}} and \code{\link{ctable}} objects)
+#'      \item \code{caption}       (\code{\link{freq}} and \code{\link{ctable}} objects)
 #'    }
 #'
-#' The following additional arguments can be used to override
-#'   heading elements to be printed:
+#' The following arguments can be used to override heading elements:
+#' 
 #'    \itemize{
 #'      \item \code{Data.frame}
 #'      \item \code{Data.frame.label}
@@ -102,19 +107,19 @@
 #'      \item \code{Variable.label}
 #'      \item \code{Group}
 #'      \item \code{date}
-#'      \item \code{Weights} (\code{\link{freq}} & \code{\link{descr}} objects)
-#'      \item \code{Data.type} (\code{\link{freq}} objects)
-#'      \item \code{Row.variable} (\code{\link{ctable}} objects)
-#'      \item \code{Col.variable} (\code{\link{ctable}} objects)
+#'      \item \code{Weights}   (\code{\link{freq}} & \code{\link{descr}} objects)
+#'      \item \code{Data.type} (\code{\link{freq}} objects only)
+#'      \item \code{Row.variable} (\code{\link{ctable}} objects only)
+#'      \item \code{Col.variable} (\code{\link{ctable}} objects only)
 #'    }
 #'
 #' @method print summarytools
 #'
 #' @references
-#' \href{https://rstudio.com/}{RStudio}
+#' \href{https://www.rstudio.com/}{RStudio}
 #' \href{https://github.com/dcomtois/summarytools/}{Summarytools on GitHub}
-#' \href{http://rapporter.github.io/pander/#general-options}{List of pander options on GitHub}
-#' \href{https://getbootstrap.com/}{Bootstrap Cascading Stylesheets}
+#' \href{http://rapporter.github.io/pander/#general-options/}{List of pander options}
+#' \href{https://getbootstrap.com/docs/4.3/getting-started/introduction/}{Bootstrap Cascading Stylesheets}
 #'
 #' @author Dominic Comtois, \email{dominic.comtois@@gmail.com}
 #'
@@ -221,7 +226,7 @@ print.summarytools <- function(x,
       !grepl(pattern = tempdir(), x = file, fixed = TRUE) &&
       method == "pander") {
     method <- "browser"
-    message("Switching method to 'browser'")
+    # message("Switching method to 'browser'")
   }
 
   # Parameter validation -------------------------------------------------------
@@ -279,7 +284,7 @@ print.summarytools <- function(x,
                          names(dotArgs), ignore.case = TRUE)
         if (length(elem_ind) > 0) {
           elem_ind_last <- tail(elem_ind, 1) # take last if more than one match
-          # Display message if arugment not spelled exactly as supposed
+          # Display message if argument not spelled exactly as supposed
           if (names(dotArgs)[elem_ind_last] != data_info_element) {
             message("Argument ", data_info_element, " misspelled as ",
                     names(dotArgs)[elem_ind_last])
@@ -402,8 +407,8 @@ print.summarytools <- function(x,
 
   # Put modified attributes back into x
   attr(x, "format_info") <- format_info
-  format_args <- format_info[which(names(format_info) %in%
-                                     names(formals(format.default)))]
+  format_args <- 
+    format_info[which(names(format_info) %in% names(formals(format.default)))]
   format_args$justify <- sub("center", "centre", format_args$justify)
   attr(x, "format_args") <- format_args
 
@@ -413,8 +418,9 @@ print.summarytools <- function(x,
                           "style", "caption", "justify", "missing",
                           "split.tables", "split.cells", "keep.line.breaks"))],
     attr(x, "user_fmt"))
-  attr(x, "pander_args") <- pander_args[which(!duplicated(names(pander_args),
-                                                          fromLast = TRUE))]
+  
+  attr(x, "pander_args") <-
+    pander_args[which(!duplicated(names(pander_args), fromLast = TRUE))]
 
   # Build default footnote
   if (method %in% c("browser", "viewer", "render") && footnote == "default") {
@@ -527,16 +533,16 @@ print.summarytools <- function(x,
                   package = "summarytools"
                 )),
               if (isTRUE(bootstrap.css))
-                includeCss(system.file(
+                includeCSS(system.file(
                   "includes/stylesheets/bootstrap.min.css",
                   package = "summarytools"
                 )),
-              includeCss(system.file(
+              includeCSS(system.file(
                 "includes/stylesheets/summarytools.css",
                 package = "summarytools"
               )),
               if (!is.na(custom.css))
-                includeCss(path = custom.css)
+                includeCSS(path = custom.css)
             ),
             res)
 
@@ -546,10 +552,10 @@ print.summarytools <- function(x,
           tags$div(
             class = "container st-container",
             tags$head(
-              includeCss(system.file(package = "summarytools",
+              includeCSS(system.file(package = "summarytools",
                                      "includes/stylesheets/summarytools.css")),
               if (!is.na(custom.css))
-                includeCss(path = custom.css)
+                includeCSS(path = custom.css)
             ),
             res)
       }
@@ -948,7 +954,9 @@ print_ctable <- function(x, method) {
     # Replace non-numeric names by original values
     temp_rownames[temp_rownames_nas] <- rownames(x[[1]])[temp_rownames_nas]
     row.names(x[[1]]) <- temp_rownames
-    row.names(x[[2]]) <- temp_rownames
+    if (!is.null(x[[2]])) {
+      row.names(x[[2]]) <- temp_rownames
+    }
   }
   
   # Use format() on col names when y is numeric
@@ -981,7 +989,9 @@ print_ctable <- function(x, method) {
     # Replace non-numeric names with original values    
     temp_colnames[temp_colnames_nas] <- colnames(x[[1]])[temp_colnames_nas]
     colnames(x[[1]]) <- temp_colnames
-    colnames(x[[2]]) <- temp_colnames
+    if (!is.null(x[[2]])) {
+      colnames(x[[2]]) <- temp_colnames
+    }
   }
   
 
@@ -1325,12 +1335,24 @@ print_descr <- function(x, method) {
   format_args <- attr(x, "format_args")
   pander_args <- attr(x, "pander_args")
 
-  if (!isTRUE(parent.frame()$silent) &&
-     "ignored" %in% names(attributes(x)) &&
-     !isTRUE(format_info$group.only) &&
-     (!"by_first" %in% names(data_info) ||
-      isTRUE(as.logical(data_info$by_first)))) {
-        message("Non-numerical variable(s) ignored: ",
+  # determine whether to display message re: ignored variables
+  display_msg <- FALSE
+  if ("ignored" %in% names(attributes(x)) &&
+      (("by_first" %in% names(data_info) && isTRUE(data_info$by_first)) ||
+       !"by_first" %in% names(data_info))) {
+    if ("silent" %in% names(parent.frame())) {
+      if (!isTRUE(parent.frame()$silent)) {
+        display_msg <- TRUE
+      }
+    } else {
+      if (!isTRUE(st_options("descr.silent"))) {
+        display_msg <- TRUE
+      }
+    }
+  }
+  
+  if (display_msg) {
+    message("Non-numerical variable(s) ignored: ",
             paste(attr(x, "ignored"), collapse = ", "))
   }
 
@@ -1477,10 +1499,52 @@ print_dfs <- function(x, method) {
             "parameter to activate png graphs")
   }
 
-  # make_tbl_cell --------------------------------------------------------------
+  # make_vals_cell -------------------------------------------------------------
+  # Function to split lines of the values cell into table rows and return
+  # the table which will become the td (cell content). By doing this, we make
+  # sure its content is well aligned with the freqs cell since it has the same
+  # number of rows. If we don't do this, free text with line breaks will
+  # sometimes use more or less vertical space than a table with the same
+  # number of rows as it has line breaks.
+  make_vals_cell <- function(cell) {
+  
+    if (!grepl("\\n", cell)) {
+      return(HTML(paste0('<td align="left">', cell, '</td>')))
+    }
+    
+    rows <- strsplit(cell, "\\n")[[1]]
+    rows <- gsub("\\\\$", "", rows)
+    
+    # replace the "<" in "min < med < max:" line for the lte (<=) html code 
+    mmmstr <- tolower(paste0("^", trs("min"), " < ", 
+                             trs("med.short"), " < ",
+                             trs("max"), ":$"))
+    if (any(grepl(mmmstr, rows)) && grep(mmmstr, rows) == 2) {
+      rows[2] <- gsub("<", "&le;", rows[2])
+      rows[3] <- gsub("<", "&le;", rows[3]) # alternative to &le; is &#8828;
+    }
+
+    cell <- 
+      paste0(
+        paste0(
+          '<tr style="background-color:transparent">',
+          '<td style="padding:0;margin:0;border:0" align="left">'
+        ), #padding:0 5px 0 7px
+        rows,
+        '</td></tr>',
+        collapse = "")
+
+    return(HTML(
+      paste0('<td align="left" style="padding:8;vertical-align:middle">',
+             '<table style="border-collapse:collapse;border:none;margin:0">',
+             cell, '</table></td>')
+    ))
+  }
+  
+  # make_freq_cell -------------------------------------------------------------
   # Function to align the freqs / proportions in html outputs
-  # A table is built to fit in a single cell of the final table
-  make_tbl_cell <- function(cell) {
+  # A table is built to fit in a single cell in the final table
+  make_freq_cell <- function(cell) {
 
     if (identical(cell, conv_non_ascii(trs("all.nas")))) {
       return(HTML(paste0('<td align="left">', cell, '</td>')))
@@ -1563,8 +1627,8 @@ print_dfs <- function(x, method) {
     return(
       HTML(
         paste0(
-          '<td align="left" style="padding:0;vertical-align:middle"><table ',
-          'style="border-collapse:collapse;border:none;margin:0">',
+          '<td align="left" style="padding:0;vertical-align:middle">',
+          '<table style="border-collapse:collapse;border:none;margin:0">',
           cell, '</table></td>'
           )
         )
@@ -1598,6 +1662,15 @@ print_dfs <- function(x, method) {
       !isTRUE(format_info$na.col)) {
     x <- x[ ,-which(names(x) == trs("missing"))]
   }
+  
+  # Remove grouping variable rows when appropriate
+  if ("keep.grp.vars" %in% names(format_info) &&
+      !isTRUE(format_info$keep.grp.vars) &&
+      "by_var" %in% names(data_info)) {
+    x <- x[-grep(paste0("\\b", data_info$by_var, "\\b", collapse = "|"), 
+                 x[[trs("variable")]]),]
+    row.names(x) <- NULL
+  }
 
   # print_dfSummary - pander method --------------------------------------------
   if (method == "pander") {
@@ -1616,7 +1689,7 @@ print_dfs <- function(x, method) {
     }
 
     # Check that style is not "simple" or "rmarkdown"
-    if (isTRUE(pander_args$style == "simple")) {
+    if (isTRUE(pander_args$style %in% c("simple", "rmarkdown"))) {
       pander_args$style <- "multiline"
     }
 
@@ -1733,14 +1806,15 @@ print_dfs <- function(x, method) {
           table_row %+=% list(
             tags$td(HTML(conv_non_ascii(cell)), align = "left")
           )
-        } else if (colnames(x)[co] %in% c(trs("variable"),
-                                          trs("stats.values"))) {
-          cell <- gsub("(\\d+)\\\\\\.", "\\1.", cell)
+        } else if (colnames(x)[co] == trs("variable")){
           cell <- gsub("[ \t]{2,}", " ", cell)
           table_row %+=% list(
             tags$td(HTML(conv_non_ascii(cell)), align = "left")
           )
-        } else if (colnames(x)[co] == trs("freqs.pct.valid")) {
+        } else if (colnames(x)[co] == trs("stats.values")) {
+          cell <- gsub("(\\d+)\\\\\\.", "\\1.", cell)
+          table_row %+=% list(make_vals_cell(conv_non_ascii(cell)))
+        }  else if (colnames(x)[co] == trs("freqs.pct.valid")) {
           if (grepl(paste0("(",trs("distinct.value"), "|",
                            trs("distinct.values"), ")"), cell) || cell == "") {
             table_row %+=% list(
@@ -1748,14 +1822,13 @@ print_dfs <- function(x, method) {
                       style = "vertical-align:middle")
             )
           } else {
-            table_row %+=% list(make_tbl_cell(conv_non_ascii(cell)))
-            #table_row %+=% list(make_tbl_cell(cell))
+            table_row %+=% list(make_freq_cell(conv_non_ascii(cell)))
           }
         } else if (colnames(x)[co] == trs("graph")) {
           table_row %+=% list(
             tags$td(HTML(cell), align = "left",
                     style = paste0("vertical-align:middle;padding:0;",
-                                   "background-color:transparent"))
+                                   "background-color:transparent;"))
           )
         }
       }
@@ -1862,7 +1935,7 @@ build_heading_pander <- function() {
   }
 
   append_items <- function(items, h = 0) {
-    to_append <- c()
+    appended <- c()
     for (item in items) {
       if (names(item) %in% names(data_info)) {
         if ((grepl(pattern = "label", names(item)) &&
@@ -1888,24 +1961,26 @@ build_heading_pander <- function() {
             }
           }
 
-          # Create pairing of item name + item (example: "N: 500")
+          # Create pairing (example: "N: 500") when both name and value exist
+          # and add markup characters
           if (item != "") {
-            to_append <- append(
-              to_append,
+            appended <- append(
+              appended,
               paste0(add_markup(paste(item, value, sep = ": "), h),
                      "  \n")
             )
           } else {
-            to_append <- append(to_append, paste0(add_markup(value, h), "  \n"))
+            appended <- append(appended, paste0(add_markup(value, h), "  \n"))
           }
         }
       }
     }
-    return(paste(to_append, collapse = ""))
+    return(paste(appended, collapse = ""))
   }
 
   # Special cases where no primary heading (title) is needed
   if (isTRUE(format_info$var.only)) {
+    
     head2 <- append_items(
       list(c(Variable = "")),
       h = ifelse(isTRUE(st_options('subtitle.emphasis')), 4, 0)
@@ -1926,6 +2001,7 @@ build_heading_pander <- function() {
     return(tmp[which(!is.na(tmp))])
 
   } else if (isTRUE(format_info$group.only)) {
+    
     if (isTRUE(format_info$headings)) {
       head3 <- append_items(list(c(Group = trs("group")),
                                  c(N.Obs = trs("n")),
@@ -1939,6 +2015,7 @@ build_heading_pander <- function() {
     return(list(head3))
 
   } else if (!isTRUE(format_info$headings)) {
+    
     if ("var.only" %in% names(format_info)) {
       head2 <- append_items(
         list(c(Variable = "")),
@@ -1955,10 +2032,21 @@ build_heading_pander <- function() {
 
   # Regular cases - Build the 3 heading elementss
   if (caller == "print_freq") {
-    head1 <- paste(add_markup(ifelse("Weights" %in% names(data_info),
-                                     trs("title.freq.weighted"),
-                                     trs("title.freq")), h = 3), " \n")
 
+    if ("Weights" %in% names(data_info)) {
+      if (trs("title.freq.weighted") == "") {
+        head1 <- NA
+      } else {
+        head1 <- paste(add_markup(trs("title.freq.weighted"), h = 3), " \n")
+      }
+    } else {
+      if (trs("title.freq") == "") {
+        head1 <- NA
+      } else {
+        head1 <- paste(add_markup(trs("title.freq"), h = 3), " \n")
+      }
+    }
+    
     if ("Variable" %in% names(data_info)) {
       head2 <- append_items(
         list(c(Variable = "")),
@@ -1973,6 +2061,7 @@ build_heading_pander <- function() {
     }
 
   } else if (caller == "print_ctable") {
+    
     head1 <- paste(
       add_markup(
         switch(data_info$Proportions,
@@ -1985,7 +2074,10 @@ build_heading_pander <- function() {
                None   = trs("title.ctable")),
         h = 3),
       " \n")
-
+    
+    if (grepl("^#*\\s*,", head1))
+      head1 <- NA
+    
     head2 <- append_items(
       list(c(Row.x.Col = "")),
       h = ifelse(isTRUE(st_options("subtitle.emphasis")), 4, 0)
@@ -1995,10 +2087,21 @@ build_heading_pander <- function() {
                                c(Group            = trs("group"))))
 
   } else if (caller == "print_descr") {
-    head1 <- paste(add_markup(ifelse("Weights" %in% names(data_info),
-                                     trs("title.descr.weighted"),
-                                     trs("title.descr")), h = 3), " \n")
-
+    
+    if ("Weights" %in% names(data_info)) {
+      if (trs("title.descr.weighted") == "") {
+        head1 <- NA
+      } else {
+        head1 <- paste(add_markup(trs("title.descr.weighted"), h = 3), " \n")
+      }
+    } else {
+      if (trs("title.freq") == "") {
+        head1 <- NA
+      } else {
+        head1 <- paste(add_markup(trs("title.descr"), h = 3), " \n")
+      }
+    }
+    
     if ("by_var_special" %in% names(data_info)) {
       head2 <- paste(
         add_markup(
@@ -2032,7 +2135,9 @@ build_heading_pander <- function() {
                                  c(N.Obs            = trs("n"))))
 
     }
+    
   } else if (caller == "print_dfs") {
+    
     head1 <- paste(add_markup(trs("title.dfSummary"), h = 3), " \n")
     if ("Data.frame" %in% names(data_info)) {
       head2 <- append_items(
@@ -2046,12 +2151,26 @@ build_heading_pander <- function() {
                                c(Duplicates       = trs("duplicates"))))
   }
 
-  if (!is.na(head1))
+  if (!is.na(head1) &&
+      length(setdiff(unique(strsplit(head1, "")[[1]]), c(" ", "\r", "\n")))) {
     head1 <- enc2native(head1)
-  if (!is.na(head2))
+  } else {
+    head1 <- NA
+  }
+  
+  if (!is.na(head2) &&
+      length(setdiff(unique(strsplit(head2, "")[[1]]), c(" ", "\r", "\n")))) {
     head2 <- enc2native(head2)
-  if (!is.na(head3))
+  } else {
+    head2 <- NA
+  }
+  
+  if (!is.na(head3) &&
+      length(setdiff(unique(strsplit(head3, "")[[1]]), c(" ", "\r", "\n")))) {
     head3 <- enc2native(head3)
+  } else {
+    head3 <- NA
+  }
 
   tmp <- list(head1, head2, head3)
   return(tmp[which(!is.na(tmp))])
@@ -2068,7 +2187,7 @@ build_heading_html <- function(format_info, data_info, method, div_id = NA) {
   head3  <- NA # uses <strong>...</strong>
 
   append_items <- function(items) {
-    to_append_html <- character()
+    appended <- character()
     for (item in items) {
       if (names(item) %in% names(data_info)) {
         if ((grepl(pattern = "label", names(item)) &&
@@ -2095,22 +2214,22 @@ build_heading_html <- function(format_info, data_info, method, div_id = NA) {
                   ifelse(is.character(value), conv_non_ascii(value), value),
                   sep = ": ")
 
-          if (identical(to_append_html, character())) {
-            to_append_html <- div_str_item
+          if (identical(appended, character())) {
+            appended <- div_str_item
           } else {
-            to_append_html <- paste(to_append_html,
-                                    div_str_item,
-                                    sep = "\n  <br/>")
+            appended <- paste(appended,
+                              div_str_item,
+                              sep = "\n  <br/>")
           }
         }
       }
     }
 
-    if (identical(to_append_html, character())) {
+    if (identical(appended, character())) {
       return(NA)
     }
 
-    return(HTML(to_append_html))
+    return(HTML(appended))
   }
 
   # Special cases where no primary heading (title) is needed
@@ -2128,7 +2247,7 @@ build_heading_html <- function(format_info, data_info, method, div_id = NA) {
                 conv_non_ascii(data_info$Variable),
                 "</p>")))
           } else {
-          head2 <- h4(HTML(conv_non_ascii(data_info$Variable)))
+            head2 <- h4(HTML(conv_non_ascii(data_info$Variable)))
           }
         } else {
           if (!is.na(div_id)) {
@@ -2138,10 +2257,10 @@ build_heading_html <- function(format_info, data_info, method, div_id = NA) {
                 'aria-controls="', div_id, '" href="#', div_id, '">',
                 conv_non_ascii(data_info$Variable),
                 "</p>")))
-        } else {
-          head2 <- strong(HTML(conv_non_ascii(data_info$Variable)), br())
+          } else {
+            head2 <- strong(HTML(conv_non_ascii(data_info$Variable)), br())
+          }
         }
-      }
       }
 
       head3 <- append_items(list(c(Variable.label = trs("label")),
@@ -2170,9 +2289,20 @@ build_heading_html <- function(format_info, data_info, method, div_id = NA) {
 
   # Regular cases - Build the 3 heading elements
   if (caller == "print_freq") {
-    head1 <- h3(HTML(conv_non_ascii(ifelse("Weights" %in% names(data_info),
-                                           trs("title.freq.weighted"),
-                                           trs("title.freq")))))
+    
+    if ("Weights" %in% names(data_info)) {
+      if (trs("title.freq.weighted") == "") {
+        head1 <- NA
+      } else {
+        head1 <- h3(HTML(conv_non_ascii(trs("title.freq.weighted"))))
+      }
+    } else {
+      if (trs("title.freq") == "") {
+        head1 <- NA
+      } else {
+        head1 <- h3(HTML(conv_non_ascii(trs("title.freq"))))
+      }
+    }
 
     if ("Variable" %in% names(data_info)) {
       if (isTRUE(st_options("subtitle.emphasis"))) {
@@ -2209,6 +2339,7 @@ build_heading_html <- function(format_info, data_info, method, div_id = NA) {
                                  c(Weights        = trs("weights")),
                                  c(Group          = trs("group"))))
     }
+    
   } else if (caller == "print_ctable") {
 
     head1 <- switch(data_info$Proportions,
@@ -2220,8 +2351,15 @@ build_heading_html <- function(format_info, data_info, method, div_id = NA) {
                                    sep = ", "),
                     None   = trs("title.ctable"))
 
-    head1 <- h3(HTML(conv_non_ascii(head1)))
-
+    # Check that head1 is not empty (if define_keywords was used)
+    head1 <- sub("^, ", "", head1)
+    
+    if (head1 == ", ") {
+      head1 <- NA
+    } else {
+      head1 <- h3(HTML(conv_non_ascii(head1)))
+    }
+    
     if ("Row.x.Col" %in% names(data_info)) {
       if (isTRUE(st_options("subtitle.emphasis"))) {
         head2 <- h4(HTML(conv_non_ascii(data_info$Row.x.Col)))
@@ -2236,10 +2374,20 @@ build_heading_html <- function(format_info, data_info, method, div_id = NA) {
 
   } else if (caller == "print_descr") {
 
-    head1 <- h3(HTML(conv_non_ascii(ifelse("Weights" %in% names(data_info),
-                                           trs("title.descr.weighted"),
-                                           trs("title.descr")))))
-
+    if ("Weights" %in% names(data_info)) {
+      if (trs("title.descr.weighted") == "") {
+        head1 <- NA
+      } else {
+        head1 <- h3(HTML(conv_non_ascii(trs("title.descr.weighted"))))
+      }
+    } else {
+      if (trs("title.descr") == "") {
+        head1 <- NA
+      } else {
+        head1 <- h3(HTML(conv_non_ascii(trs("title.descr"))))
+      }
+    }
+    
     if ("by_var_special" %in% names(data_info)) {
       if (isTRUE(st_options("subtitle.emphasis"))) {
         head2 <- HTML(paste("<h4>", conv_non_ascii(data_info$Variable),
@@ -2288,8 +2436,12 @@ build_heading_html <- function(format_info, data_info, method, div_id = NA) {
 
   } else if (caller == "print_dfs") {
 
-    head1 <- h3(HTML(conv_non_ascii(trs("title.dfSummary"))))
-
+    if (trs("title.dfSummary") == "") { 
+      head1 <- NA
+    } else {
+      head1 <- h3(HTML(conv_non_ascii(trs("title.dfSummary"))))
+    }
+    
     if ("Data.frame" %in% names(data_info)) {
       if (isTRUE(st_options("subtitle.emphasis"))) {
         head2 <- h4(HTML(conv_non_ascii(data_info$Data.frame)))
