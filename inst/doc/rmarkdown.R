@@ -1,3 +1,6 @@
+## ----echo=FALSE, results='asis'-----------------------------------------------
+summarytools::st_css(main = TRUE, global = TRUE)
+
 ## ----setup, include=FALSE-----------------------------------------------------
 library(knitr)
 opts_chunk$set(comment = NA, 
@@ -15,41 +18,41 @@ st_options(bootstrap.css     = FALSE,       # Already part of the theme so no ne
            subtitle.emphasis = FALSE)       # For the vignette theme, this gives better results.
                                             # For other themes, using TRUE might be preferable.
 
-## ---- echo=FALSE--------------------------------------------------------------
-st_css(main = TRUE, global = TRUE)
-
-## ---- eval=FALSE--------------------------------------------------------------
+## ----eval=FALSE---------------------------------------------------------------
 #  st_options(plain.ascii = FALSE, style = "rmarkdown")
 
 ## -----------------------------------------------------------------------------
-freq(tobacco$gender, plain.ascii = FALSE, style = 'rmarkdown')
+print(freq(tobacco$gender, 
+           plain.ascii = FALSE, 
+           style = "rmarkdown"),
+      method = "pander")
 
 ## -----------------------------------------------------------------------------
-print(freq(tobacco$gender), method = 'render')
+print(freq(tobacco$gender), method = "render")
 
-## ---- message=FALSE-----------------------------------------------------------
-print(descr(tobacco), method = 'render', table.classes = 'st-small')
+## ----message=FALSE------------------------------------------------------------
+print(descr(tobacco), method = "render", table.classes = "st-small")
 
 ## -----------------------------------------------------------------------------
 ctable(tobacco$gender, 
        tobacco$smoker,
        plain.ascii = FALSE, 
-       style = 'rmarkdown')
+       style = "rmarkdown")
 
 ## ----ctable_html--------------------------------------------------------------
-print(ctable(tobacco$gender, tobacco$smoker), method = 'render')
+print(ctable(tobacco$gender, tobacco$smoker), method = "render")
 
 ## -----------------------------------------------------------------------------
-descr(tobacco, plain.ascii = FALSE, style = 'rmarkdown')
+descr(tobacco, plain.ascii = FALSE, style = "rmarkdown")
 
-## ---- message=FALSE-----------------------------------------------------------
-print(descr(tobacco), method = 'render', table.classes = 'st-small')
+## ----message=FALSE------------------------------------------------------------
+print(descr(tobacco), method = "render", table.classes = "st-small")
 
 ## ----dfs_grid, eval=FALSE-----------------------------------------------------
 #  dfSummary(tobacco,
 #            plain.ascii  = FALSE,
-#            style        = 'grid',
-#            graph.magnif = 0.85,
+#            style        = "grid",
+#            graph.magnif = 0.75,
 #            varnumbers = FALSE,
 #            valid.col    = FALSE,
 #            tmp.img.dir  = "/tmp")
@@ -58,28 +61,28 @@ print(descr(tobacco), method = 'render', table.classes = 'st-small')
 print(dfSummary(tobacco, 
                 varnumbers   = FALSE, 
                 valid.col    = FALSE, 
-                graph.magnif = 0.76),
-      method = 'render')
+                graph.magnif = 0.75),
+      method = "render")
 
 ## -----------------------------------------------------------------------------
 print(dfSummary(tobacco, 
                 varnumbers   = FALSE,
                 valid.col    = FALSE,
-                graph.magnif = 0.76), 
+                graph.magnif = 0.75), 
       max.tbl.height = 300,
       method = "render")
 
 ## -----------------------------------------------------------------------------
 library(kableExtra)
 library(magrittr)
-stby(iris, iris$Species, descr, stats = "fivenum") %>%
-  tb() %>%
-  kable(format = "html", digits = 2) %>%
+stby(iris, iris$Species, descr, stats = "fivenum") |>
+  tb() |>
+  kable(format = "html", digits = 2) |>
   collapse_rows(columns = 1, valign = "top")
 
 ## -----------------------------------------------------------------------------
-stby(iris, iris$Species, descr, stats = "fivenum") %>%
-  tb(order = 3) %>%
-  kable(format = "html", digits = 2) %>%
+stby(iris, iris$Species, descr, stats = "fivenum") |>
+  tb(order = 3) |>
+  kable(format = "html", digits = 2) |>
   collapse_rows(columns = 1, valign = "top")
 

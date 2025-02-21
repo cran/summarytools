@@ -4,7 +4,7 @@
 \alias{define_keywords}
 \title{Modify Keywords Used In Outputs}
 \usage{
-define_keywords(..., ask = FALSE, file = NA)
+define_keywords(..., ask = TRUE, file = NA)
 }
 \arguments{
 \item{\dots}{One or more pairs of keywords and their new values see 
@@ -15,7 +15,7 @@ whether to save the edited values in a csv file for later use.}
 
 \item{file}{Character. Path and name of custom language file to be saved.
 This comma delimited file can be reused by calling
-\code{\link{use_custom_lang}}.}
+\code{\link{use_custom_lang}}. Must have \emph{.csv} extension.}
 }
 \description{
 As an alternative to \code{\link{use_custom_lang}}, this function allows

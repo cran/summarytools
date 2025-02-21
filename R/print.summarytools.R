@@ -116,7 +116,6 @@
 #' @method print summarytools
 #'
 #' @references
-#' \href{https://www.rstudio.com/}{RStudio}
 #' \href{https://github.com/dcomtois/summarytools/}{Summarytools on GitHub}
 #' \href{http://rapporter.github.io/pander/#general-options/}{List of pander options}
 #' \href{https://getbootstrap.com/docs/4.3/getting-started/introduction/}{Bootstrap Cascading Stylesheets}
@@ -241,11 +240,11 @@ print.summarytools <- function(x,
   # (thus not taking advantage of print.summarytools() which makes results
   # much cleaner in the console)
   if (method == "pander" &&
-      (identical(deparse(sys.calls()[[sys.nframe() - 1]][2]), "x[[i]]()") ||
+      (identical(deparse(sys.calls()[[max(sys.nframe() - 1, 1)]][2]), "x[[i]]()") ||
        any(grepl(pattern = "fn_call = FUN(x = X[[i]]",
-                 x = deparse(sys.calls()[[sys.nframe() - 1]]), fixed = TRUE)))) {
+                 x = deparse(sys.calls()[[max(sys.nframe() - 1, 1)]]), fixed = TRUE)))) {
     message("For best results printing list objects with summarytools, ",
-            "use print(x); if by() was used, use stby() instead")
+            "use stby() instead of by() or *apply()")
   }
 
   # Apply / override parameters - first deal with "meta" information -----------
@@ -298,6 +297,15 @@ print.summarytools <- function(x,
         }
       }
     }
+  }
+  
+  # If ctable's Row.variable and/or Col.variable have been overriden, we 
+  # must redefine the "Row.x.Col" data_info attribute
+  if (length(intersect(x = c("Row.variable", "Col.variable"),
+                       y = overrided_data_info)) > 0) {
+    attr(x, "data_info")$Row.x.Col <- paste(attr(x, "data_info")$Row.variable,
+                                            attr(x, "data_info")$Col.variable,
+                                            sep = " * ")
   }
 
   # Assume all remaining arguments have to do with formatting. Put everything
@@ -402,7 +410,7 @@ print.summarytools <- function(x,
   }
 
   if (!"digits" %in% names(format_info)) {
-    format_info$digits <- format_info$round.digits
+    format_info$digits <- max(c(1, format_info$round.digits))
   }
 
   # Put modified attributes back into x
@@ -524,7 +532,7 @@ print.summarytools <- function(x,
               tags$title(HTML(conv_non_ascii(report.title))),
               if (collapse)
                 includeScript(system.file(
-                  "includes/scripts/jquery-3.4.0.slim.min.js",
+                  "includes/scripts/jquery-3.7.0.slim.min.js",
                   package = "summarytools"
                 )),
               if (collapse)
@@ -720,7 +728,7 @@ print_freq <- function(x, method) {
 
     x[is_na_x] <- format_info$missing
 
-    main_sect %+=%
+    main_sect %+=% 
       paste(
         capture.output(
           do.call(pander, append(pander_args, list(x = quote(x))))
@@ -934,13 +942,13 @@ print_ctable <- function(x, method) {
     
     if (rownames_are_int) {
       format_args_tmp <- format_args
-      format_args_tmp$digits <- 0
+      format_args_tmp$digits <- 1
       format_args_tmp$nsmall <- 0
     } else {
       # Make sure no decimals are lost b/c of format options
       format_args_tmp <- format_args
       format_args_tmp$digits <- max(
-        nchar(sub(".+\\.(.*)0*", "\\1", temp_rownames)),
+        c(1, nchar(sub(".+\\.(.*)0*", "\\1", temp_rownames))),
         na.rm = TRUE
       )
       format_args_tmp$nsmall <- format_args_tmp$digits
@@ -970,12 +978,12 @@ print_ctable <- function(x, method) {
     
     if (colnames_are_int) {
       format_args_tmp <- format_args
-      format_args_tmp$digits <- 0
+      format_args_tmp$digits <- 1
       format_args_tmp$nsmall <- 0
     } else {
       format_args_tmp <- format_args
       format_args_tmp$digits <- max(
-        nchar(sub(".+\\.(.*)0*", "\\1", temp_rownames)),
+        c(1, nchar(sub(".+\\.(.*)0*", "\\1", temp_rownames))),
         na.rm = TRUE
       )
       format_args_tmp$nsmall <- format_args_tmp$digits
@@ -1372,11 +1380,6 @@ print_descr <- function(x, method) {
     x <- round(x, format_info$digits)
     x <- do.call(format, append(format_args, list(x = quote(x))))
 
-    #if (!"Weights" %in% names(data_info)) {
-    #  row_ind <- which(trs("n.valid") == rownames(x))
-    #  x[row_ind, ] <- sub("\\.0+", "", x[row_ind, ])
-    #}
-
     main_sect %+=%
       paste(
         capture.output(
@@ -1407,27 +1410,36 @@ print_descr <- function(x, method) {
     }
 
     table_rows <- list()
+    
+    # Determine which cells are "n" or "n.valid" in order to remove digits
+    # This is much easier than editing pairlists after-the-fact
+    if ("Weights" %in% names(data_info)) {
+      hide_digits <- FALSE
+    } else {
+      if (isTRUE(data_info$transposed)) {
+        co_hide_ind <- which(colnames(x) %in% c(trs("n"), trs("n.valid")))
+        hide_digits <- quote(co %in% co_hide_ind)
+      } else {
+        ro_hide_ind <- which(rownames(x) %in% c(trs("n"), trs("n.valid")))  
+        hide_digits <- quote(ro %in% ro_hide_ind)
+      }
+    }
+    
     for (ro in seq_len(nrow(x))) {
       table_row <- list(tags$td(tags$strong(rownames(x)[ro])))
       for (co in seq_len(ncol(x))) {
-        # cell is NA
         if (is.na(x[ro,co])) {
           table_row %+=% list(tags$td(format_info$missing))
         } else {
-          # When not NA format cell content
           cell <- do.call(format, append(format_args, x = quote(x[ro,co])))
-          if ((rownames(x)[ro] == trs("n.valid") ||
-               colnames(x)[co] == trs("n.valid")) &&
-              !"Weights" %in% names(data_info)) {
+          # check for n and n.valid -- remove digits if applicable
+          if (eval(hide_digits)) {
             cell <- sub(paste0(format_info$decimal.mark, "0+$"), "", cell)
           }
           table_row %+=% list(tags$td(tags$span(cell)))
         }
-        # On last column, insert row to table_rows list
-        if (co == ncol(x)) {
-          table_rows %+=% list(tags$tr(table_row))
-        }
       }
+      table_rows %+=% list(tags$tr(table_row))
     }
 
     descr_table_html <-
@@ -2095,7 +2107,7 @@ build_heading_pander <- function() {
         head1 <- paste(add_markup(trs("title.descr.weighted"), h = 3), " \n")
       }
     } else {
-      if (trs("title.freq") == "") {
+      if (trs("title.descr") == "") {
         head1 <- NA
       } else {
         head1 <- paste(add_markup(trs("title.descr"), h = 3), " \n")
@@ -2459,4 +2471,3 @@ build_heading_html <- function(format_info, data_info, method, div_id = NA) {
   tmp <- list(head1, head2, head3)
   return(tmp[which(!is.na(tmp))])
 }
-

@@ -92,8 +92,10 @@ view <- function(x,
     } else {
       # 1 Column several times - use cbind
       xx <- do.call(cbind, x)
-      class(xx)     <- class(x[[1]])
-      colnames(xx)  <- names(x)
+      class(xx)    <- class(x[[1]])
+      colnames(xx) <- vapply(x, function(k) attr(k, "data_info")$Group,
+                             character(1), USE.NAMES = FALSE)
+      colnames(xx) <- sub("^.+?= ", "", colnames(xx))
     }
     
     attr(xx, "st_type")   <- "descr"
@@ -107,11 +109,11 @@ view <- function(x,
     attr(xx, "data_info")$Group    <- NULL
     attr(xx, "data_info")$by_first <- NULL
     attr(xx, "data_info")$by_last  <- NULL
-    attr(xx, "data_info")$N.Obs    <- attr(x[[1]], "data_info")$N.Obs
+    attr(xx, "data_info")$N.Obs    <- 
+      sum(sapply(x, function(x) attr(x, "data_info")$N.Obs))
     
     # Remove NA items if any
     attr(xx, "data_info") <- attr(xx,"data_info")[!is.na(attr(xx, "data_info"))]
-    
     
     attr(xx, "format_info") <- attr(x[[1]], "format_info")
     attr(xx, "user_fmt")    <- attr(x[[1]], "user_fmt")
@@ -131,7 +133,7 @@ view <- function(x,
                        escape.pipe   = escape.pipe,
                        ...)
     
-  } else if (inherits(x = x, what = c("stby", "by")) &&
+  } else if (inherits(x = x, what = c("stby", "by", "array")) &&
              attr(x[[1]], "st_type") %in% 
                c("freq", "ctable", "descr", "dfSummary")) {
     

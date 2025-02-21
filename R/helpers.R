@@ -1,7 +1,6 @@
 # smart_split ------------------------------------------------------------------
-# Fn to smartly split variable names that are too long
+# Smartly split variable names that are too long
 # ref: https://tinyurl.com/y7qv48z9
-#' @keywords internal
 smart_split <- function(str, maxlen) {
   re <- paste0("(?=.{1,", maxlen, "}(.*))",
                "(?=.*?[^\\W._].*?[\\W._].*?\\1)",
@@ -14,15 +13,15 @@ smart_split <- function(str, maxlen) {
 }
 
 # %+=% -------------------------------------------------------------------------
-# infix to simplify append()ing
-#' @keywords internal
-`%+=%` <- function(x, value) {
-  eval.parent(substitute(x <- append(x, value)))
+# infix to simplify append'ing
+`%+=%` <- function(.Variable_Name_, .New_Value_) {
+  eval.parent(substitute(
+    .Variable_Name_ <- append(.Variable_Name_, .New_Value_)
+    ))
 }
 
 # unquote ----------------------------------------------------------------------
 # Remove quotation marks inside a string
-#' @keywords internal
 unquote <- function(x) {
   x <- sub("^\\'(.+)\\'$", "\\1", x)
   x <- sub('^\\"(.+)\\"$', "\\1", x)
@@ -31,11 +30,10 @@ unquote <- function(x) {
 
 # conv_non_ascii ---------------------------------------------------------------
 # Replace accentuated characters by their html decimal entity
-#' @keywords internal
 conv_non_ascii <- function(...) {
   out <- character()
   for (s in list(...)) {
-    if (is.null(s)) next
+    if (is.null(s) || length(s) == 0) next
     splitted <- unlist(strsplit(s, ""))
     intvalues <- utf8ToInt(enc2utf8(s))
     pos_to_modify_lat <- which(intvalues >=  161 & intvalues <=  255)
@@ -51,7 +49,6 @@ conv_non_ascii <- function(...) {
 # ws_to_symbol -----------------------------------------------------------------
 # Replace leading and trailing white space in character vectors and factor
 # levels by the special character intToUtf8(183)
-#' @keywords internal
 ws_to_symbol <- function(x) {
   
   ws_symbol <- intToUtf8(183)
@@ -86,9 +83,8 @@ ws_to_symbol <- function(x) {
   }
 }
 
-
+# trs --------------------------------------------------------------------------
 # Shorcut function to get translation strings
-#' @keywords internal
 trs <- function(item, l = st_options("lang")) {
   l <- force(l)
   if (l != "custom") {
@@ -99,22 +95,123 @@ trs <- function(item, l = st_options("lang")) {
   ifelse(is.na(val), "", val)
 }
 
+# Checks if individual, vector, or list items are empty/NULL, NA, or ""
+empty_na <- function(x) {
+  if (is.null(x) || 
+      length(x) == 0 ||
+      identical(as.character(x), NA_character_) ||
+      identical(as.character(x), "NaN") ||
+      (length(x) == 1 && nchar(as.character(x)) == 0))
+    return(TRUE)
+  
+  # matrix / array / df
+  else if (inherits(x, c("matrix, data.frame")))
+    return(lapply(x, function(z) all(empty_na(z))))
 
-# Count "empty" elements (NA's / vectors of size 0)
-#' @keywords internal
-count_empty <- function(x, count.nas = TRUE) {
-  n <- 0
-  for (item in x) {
-    if (length(item) == 0) {
-      n <- n + 1
-    } else if (isTRUE(count.nas)) {
-      n <- n + sum(is.na(item))
+  else if (length(x) > 1) {
+    if (is.list(x)) {
+      # If there are lists within the list, we treat those separately
+      long_lists <- lengths(x) > 1
+      if (any(long_lists)) {
+        out <- logical(length(x))
+        out[which(long_lists)] <- FALSE
+        if (!all(long_lists)) {
+          out[which(!long_lists)] <- vapply(x[which(!long_lists)], empty_na,
+                                            FUN.VALUE = logical(1),
+                                            USE.NAMES = FALSE)
+        }
+        return(out)
+      } else {
+        return(vapply(x, empty_na, FUN.VALUE = logical(1), USE.NAMES = FALSE))
+      }
+    } else {
+      return(vapply(x, empty_na, FUN.VALUE = logical(1), USE.NAMES = FALSE))
     }
   }
-  n
+  
+  else {
+    return(FALSE)
+  }
 }
 
-# Clone of htmltools:::paste8
+# empty_na(list(NA, "", NaN, list("", "", " ")))
+# empty_na(list("", " ", character(), NULL))
+# empty_na("aaa")
+# empty_na("")
+# empty_na(character())
+# empty_na(c(NA, NaN))
+# empty_na(data.frame(a=c("", " ", "123"), b = c(character(3))))
+
+# Turn labelled / haven_labelled into factor
+lbl_to_factor <- function(x, num_pos = "after") {
+  label <- attr(x, "label", exact = TRUE)
+  labels <- attr(x, "labels")
+  if (num_pos == "after")
+    names(labels) <- paste0(names(labels), " [", labels, "]")
+  else if (num_pos == "before")
+    names(labels) <- paste0("[", labels, "] ", names(labels))
+  x_vec <- as.vector(x)
+  extra_vals <- sort(setdiff(x_vec, labels))
+  names(extra_vals) <- sub("^(\\d+)$", "[\\1]", as.character(extra_vals))
+  labels2 <- c(labels, extra_vals)
+  res <- factor(x, levels = unname(labels2), labels = names(labels2))
+  structure(res, label = label)
+}
+
+#' Remove Attributes to Get a Simplified Object
+#'
+#' Get rid of summarytools-specific attributes to get a simple data structure
+#' (matrix, array, ...), which can be easily manipulated.
+#'
+#' @param x An object with attributes
+#' @param except Character. A vector of attribute names to preserve. By default,
+#'   \dQuote{dim} and \dQuote{dimnames} are preserved.
+#' 
+#' @details
+#' If the object contains grouped results:
+#' \itemize{
+#'  \item The inner objects will lose their attributes
+#'  \item The \dQuote{stby} class will be replaced with \dQuote{by}
+#'  \item The \dQuote{dim} and \dQuote{dimnames} attributes will be set to
+#'    available relevant values, but expect slight differences between objects
+#'    created with \code{stby()} \emph{vs} \code{group_by()}.
+#' }
+#' 
+#' @examples
+#' data(tobacco)
+#' descr(tobacco) |> zap_attr()
+#' freq(tobacco$gender) |> zap_attr()
+#' @export
+zap_attr <- function(x, except = c("dim", "dimnames")) {
+  if (inherits(x, c("by", "stby"))) {
+    for (i in seq_along(x)) {
+      attributes(x[[i]]) <- attributes(x[[i]])[except]
+    }
+    class(x) <- "by"
+    
+    if (!"dim" %in% names(attributes(x)))
+      attr(x, "dim") <- length(x)
+    
+    if (!"dimnames" %in% names(attributes(x)))
+      dimnames(x) <- list(names(x))
+    
+  } else {
+    attributes(x) <- attributes(x)[except]
+  }
+  x
+}
+
+# Count_empty  (NA's / vectors of size 0) --------------------------------------
+#' @keywords internal
+count_empty <- function(x, count.nas = TRUE) {
+  if (count.nas)
+    sum(sapply(x, function(z) length(z) == 0 || identical(as.character(z),
+                                                          NA_character_)))
+  else
+    sum(sapply(x, function(z) length(z) == 0))
+}
+
+# Clone of htmltools:::paste8 --------------------------------------------------
 #' @keywords internal
 paste8 <- function(..., sep = " ", collapse = NULL) {
   args <- c(
@@ -127,22 +224,66 @@ paste8 <- function(..., sep = " ", collapse = NULL) {
   do.call(paste, args)
 }
 
-# Map columns / values of dplyr's group_by objects based on group_keys
+# map_groups : Map columns / values of group_by obj based on group_keys --------
 #' @keywords internal
 map_groups <- function(gk) {
   grs <- c()
   for (i in seq_len(nrow(gk))) {
-    gr <- paste(colnames(gk), as.character(unlist(gk[i,])), 
-                sep = " = ", collapse = ", ")
+    # Ensure factors are treated as characters
+    gr <- paste(
+      colnames(gk), 
+      sapply(gk[i, ], as.character),
+      sep = " = ", 
+      collapse = ", "
+    )
     grs <- c(grs, gr)
   }
   grs
 }
 
+# pad (used in print.summarytools) ---------------------------------------------
 pad <- function(string, width) {
   paste0(strrep(" ", max(0, width - nchar(string))), string)
 }
 
+# pctvalid (used in dfSummary) -------------------------------------------------
 pctvalid <- function(x, round.digits = 1) {
   round(sum(!is.na(x)) / length(x) * 100, round.digits)
+}
+
+classes <- function(x) {
+    vapply(x, class, "", USE.NAMES = FALSE)
+}
+
+# Standardize call, possibly nested (based on pryr::standardise_call)
+standardize <- function(call, env = parent.frame()) {
+  
+  if (!is.call(call)) {
+    return(call)
+  }
+  
+  # Evaluate the function/symbol in the environment
+  f <- eval(call[[1]], env)
+
+  if (is.primitive(f)) {
+    # if primitive, we can only std any subcalls
+    for (i in seq_along(call)) {
+      if (i == 1) next  # skip the function
+      call[[i]] <- standardize(call[[i]], env)
+    }
+    return(call)
+  } else {
+    # if non-primitive, use match.call()
+    call_std <- match.call(f, call)
+    # recurse through each argument
+    for (i in seq_along(call_std)) {
+      if (i == 1) next  # skip symbol
+      call_std[[i]] <- standardize(call_std[[i]], env)
+    }
+    return(call_std)
+  }
+}
+
+.p_reset <- function() {
+  rm(list = ls(envir = .p), envir = .p)
 }

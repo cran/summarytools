@@ -13,6 +13,7 @@ st_options(
   headings = TRUE,
   footnote = "default",
   display.labels = TRUE,
+  na.val = NULL,
   bootstrap.css = TRUE,
   custom.css = NA_character_,
   escape.pipe = FALSE,
@@ -25,11 +26,13 @@ st_options(
   ctable.prop = "r",
   ctable.totals = TRUE,
   ctable.round.digits = 1,
+  ctable.silent = FALSE,
   descr.stats = "all",
   descr.transpose = FALSE,
   descr.silent = FALSE,
   dfSummary.style = "multiline",
   dfSummary.varnumbers = TRUE,
+  dfSummary.class = TRUE,
   dfSummary.labels.col = TRUE,
   dfSummary.valid.col = TRUE,
   dfSummary.na.col = TRUE,
@@ -81,6 +84,10 @@ provide a custom string. Applies only to \emph{html} outputs.}
 \item{display.labels}{Logical. \code{TRUE} by default. Set to \code{FALSE} to
 omit data frame and variable labels in the headings section.}
 
+\item{na.val}{Character. For factors and character vectors, consider this
+value as \code{NA}. Ignored if there are actual NA values or if it matches
+no value / factor level in the data. \code{NULL} by default.}
+
 \item{bootstrap.css}{Logical. Specifies whether to include 
 \emph{Bootstrap css} in \emph{html} reports' \emph{head} section.
 Defaults to \code{TRUE}. Set to \code{FALSE} when using the \dQuote{render}
@@ -122,6 +129,8 @@ whole data frame as main argument. Defaults to \code{25}.}
 
 \item{ctable.round.digits}{Numeric. Defaults to \code{1}.}
 
+\item{ctable.silent}{Logical. Hide console messages. \code{FALSE} by default.}
+
 \item{descr.stats}{Character. Corresponds to the \code{stats} parameter of
 \code{\link{descr}}. Defaults to \dQuote{all}.}
 
@@ -134,6 +143,10 @@ of \code{\link{descr}}. \code{FALSE} by default.}
 \dQuote{grid} for \emph{R Markdown} documents.}
 
 \item{dfSummary.varnumbers}{Logical. In \code{\link{dfSummary}}, display
+variable numbers in the first column. Defaults to \code{TRUE}.}
+
+\item{dfSummary.class}{Logical. Show data classes in Name column.
+\code{TRUE} by default.
 variable numbers in the first column. Defaults to \code{TRUE}.}
 
 \item{dfSummary.labels.col}{Logical. In \code{\link{dfSummary}}, display
