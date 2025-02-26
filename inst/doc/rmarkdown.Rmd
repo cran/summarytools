@@ -280,8 +280,9 @@ print(dfSummary(tobacco,
 
 
 <table><tr><td>![](assets/exclamation-diamond.svg)</td>
-<td>Some users reported getting lots of X11 warnings; those can easily be
-turned off by using this chunk expression: `{r, results="asis", warning=FALSE}`.
+<td>Some users reported getting repeated X11 warnings; those can easily be
+avoided by using the following chunk expression:
+`{r, results="asis", warning=FALSE}`.
 </td></tr></table> 
 
 <a href="#top">Back to top</a>
@@ -299,18 +300,18 @@ to process. This is particularly helpful with `stby` objects:
 ```{r}
 library(kableExtra)
 library(magrittr)
-stby(iris, iris$Species, descr, stats = "fivenum") |>
-  tb() |>
-  kable(format = "html", digits = 2) |>
+stby(iris, iris$Species, descr, stats = "fivenum") %>%
+  tb() %>%
+  kable(format = "html", digits = 2) %>%
   collapse_rows(columns = 1, valign = "top")
 ```
 
 Using `tb(order = 3)` flips the order of the grouping variable(s) and the
 reported variable(s):
 ```{r}
-stby(iris, iris$Species, descr, stats = "fivenum") |>
-  tb(order = 3) |>
-  kable(format = "html", digits = 2) |>
+stby(iris, iris$Species, descr, stats = "fivenum") %>%
+  tb(order = 3) %>%
+  kable(format = "html", digits = 2) %>%
   collapse_rows(columns = 1, valign = "top")
 ```
 

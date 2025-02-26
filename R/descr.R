@@ -7,7 +7,7 @@
 #' @param x A numerical vector or a data frame.
 #' @param var Unquoted expression referring to a specific column in \code{x}.
 #'   Provides support for piped function calls (e.g.
-#'   \code{my_df |> descr(my_var)}.    
+#'   \code{my_df |> descr(my_var)}.
 #' @param stats Character. Which stats to produce. Either \dQuote{all} (default),
 #'   \dQuote{fivenum}, \dQuote{common} (see \emph{Details}), or a selection of :
 #'   \dQuote{mean}, \dQuote{sd}, \dQuote{min}, \dQuote{q1}, \dQuote{med},
@@ -90,7 +90,7 @@
 #' with(tobacco, stby(BMI, gender, descr, check.nas = FALSE))
 #'
 #' # Grouped statistics in tidy table:
-#' with(tobacco, stby(BMI, age.gr, descr, stats = "common")) |> tb()
+#' tb(with(tobacco, stby(BMI, age.gr, descr, stats = "common")))
 #'
 #' \dontrun{
 #' # Show in Viewer (or browser if not in RStudio)
@@ -181,8 +181,7 @@ descr.default <- function(x,
   errmsg <- character()  # problems with arguments will be stored here
   
   if (is.null(x)) {
-    tmp_x_name <- deparse(substitute(x))
-    stop(tmp_x_name, " is either NULL or does not exist")
+    stop("x is either NULL or does not exist")
   }
   
   if (ncol(xx) == 1 && !is.numeric(xx[[1]])) {
@@ -337,7 +336,7 @@ descr.default <- function(x,
 
     # To avoid problems, (see issue #152) use generic colnames
     xxnames <- colnames(xx)
-    colnames(xx) <- paste0("V", seq_along(xx))
+    colnames(xx) <- paste0("V", sprintf("%05d", seq_along(xx)))
     if (ncol(xx) > 1) {
       results <- suppressWarnings(
         xx %>% summarise_all(.funs = summar_funs) %>%
@@ -502,7 +501,7 @@ descr.default <- function(x,
   
   # Apply order parameter (column ordering)
   if (identical(order, "sort")) {
-    output <- output[sort(rownames(output)), ]
+    output <- output[sort(rownames(output)), , drop = FALSE]
   } else if (length(order) > 1) {
     output <- output[order, ]
   }

@@ -214,6 +214,9 @@ dfSummary <- function(x,
     clear_null_device <- FALSE
   }
 
+  # Initialize variable that can be changed in lbl_to_factor
+  flag_tagged_na <- FALSE
+  
   # Make recursive calls when function is invoked on split-group data using
   # dplyr::group_by()
   if (inherits(x, "grouped_df")) {
@@ -289,7 +292,7 @@ dfSummary <- function(x,
   # Validate arguments ---------------------------------------------------------
   if (is.null(x)) {
     tmp_x_name <- deparse(substitute(x))
-    stop(tmp_x_name, " is either NULL or does not exist")
+    stop("x is either NULL or does not exist")
   }
 
   errmsg <- character()  # problems with arguments will be stored here
@@ -473,7 +476,8 @@ dfSummary <- function(x,
       
       # For labelled vectors, if all values are labelled, convert to factor
       if (inherits(column_data, c("haven_labelled", "labelled"))) {
-        if (all(column_data %in% as.vector(attr(column_data, "labels")))) {
+        if (all(na.omit(column_data) %in% 
+            as.vector(attr(column_data, "labels")))) {
           column_data <- lbl_to_factor(column_data, num_pos = "before")
         }
       }
@@ -680,7 +684,11 @@ dfSummary <- function(x,
   if (clear_null_device) {
     try(dev.off(), silent = TRUE)
   }
-
+  if (flag_tagged_na) {
+    message("Tagged NA values were detected in ", flag_tagged_na, " variables ",
+            "and will be reported as regular NA. Use haven::as_factor() to ",
+            "treat them as valid values")
+  }    
   return(output)
 }
 

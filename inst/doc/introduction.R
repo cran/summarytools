@@ -1,6 +1,5 @@
 ## ----setup, include=FALSE-----------------------------------------------------
 library(knitr)
-#`%||%` <- backports:::`%||%`
 opts_chunk$set(comment = NA,
                prompt  = FALSE,
                cache   = FALSE,
@@ -40,9 +39,9 @@ txt <- data.frame(
             "at a glance"))
 )
 
-kable(txt, format = "html", escape = FALSE, align = c('l', 'l')) |>
-  kable_classic(full_width = FALSE, position = "left") |>
-  column_spec(1, extra_css = "vertical-align:top") |>
+kable(txt, format = "html", escape = FALSE, align = c('l', 'l')) %>%
+  kable_paper(full_width = FALSE, position = "left") %>%
+  column_spec(1, extra_css = "vertical-align:top") %>%
   column_spec(2, extra_css = "vertical-align:top")
 
 ## -----------------------------------------------------------------------------
@@ -92,7 +91,7 @@ tobacco %$%  # Acts like with(tobacco, ...)
          chisq = TRUE,
          OR    = TRUE,
          RR    = TRUE,
-         headings = FALSE) |>
+         headings = FALSE) %>%
   print(method = "render")
 
 ## -----------------------------------------------------------------------------
@@ -113,14 +112,14 @@ descr(iris,
 ## ----eval=FALSE---------------------------------------------------------------
 #  view(dfSummary(iris))
 
-## ----eval=TRUE----------------------------------------------------------------
-dfSummary(tobacco, 
-          plain.ascii  = FALSE, 
-          style        = "grid", 
-          graph.magnif = 0.82, 
-          varnumbers   = FALSE,
-          valid.col    = FALSE,
-          tmp.img.dir  = "/tmp")
+## ----eval=FALSE---------------------------------------------------------------
+#  dfSummary(tobacco,
+#            plain.ascii  = FALSE,
+#            style        = "grid",
+#            graph.magnif = 0.82,
+#            varnumbers   = FALSE,
+#            valid.col    = FALSE,
+#            tmp.img.dir  = "/tmp")
 
 ## -----------------------------------------------------------------------------
 st_options(
@@ -194,26 +193,26 @@ with(tobacco,
 ## ----eval=FALSE---------------------------------------------------------------
 #  library(dplyr)
 #  tobacco$gender %<>% forcats::fct_na_value_to_level()
-#  tobacco |>
-#    group_by(gender) |>
+#  tobacco %>%
+#    group_by(gender) %>%
 #    descr(stats = "fivenum")
 
 ## ----echo=FALSE---------------------------------------------------------------
 suppressPackageStartupMessages(library(dplyr))
 library(magrittr)
 tobacco$gender %<>% forcats::fct_na_value_to_level("(Missing)")
-tobacco |> group_by(gender) |> descr(stats = "fivenum")
+tobacco %>% group_by(gender) %>% descr(stats = "fivenum")
 
 ## ----results='markup'---------------------------------------------------------
 library(magrittr)
-iris |>
-  descr(stats = "common") |>
-  tb() |>
+iris %>%
+  descr(stats = "common") %>%
+  tb() %>%
   knitr::kable()
 
-iris$Species |> 
-  freq(cumul = FALSE, report.nas = FALSE) |> 
-  tb() |>
+iris$Species %>% 
+  freq(cumul = FALSE, report.nas = FALSE) %>% 
+  tb() %>%
   knitr::kable()
 
 ## ----results='markup'---------------------------------------------------------
@@ -222,16 +221,16 @@ grouped_descr <- stby(data    = exams,
                       FUN     = descr,
                       stats   = "common")
 
-grouped_descr |> tb()
+grouped_descr %>% tb()
 
 ## ----results='markup'---------------------------------------------------------
-grouped_descr |> tb(order = 2)
+grouped_descr %>% tb(order = 2)
 
 ## ----results='markup'---------------------------------------------------------
-grouped_descr |> tb(order = 3)
+grouped_descr %>% tb(order = 3)
 
 ## ----results='markup'---------------------------------------------------------
-tobacco |> dplyr::group_by(gender) |> freq(smoker) |> tb()
+tobacco %>% dplyr::group_by(gender) %>% freq(smoker) %>% tb()
 
 ## ----results='asis'-----------------------------------------------------------
 library(kableExtra)
@@ -239,9 +238,9 @@ library(magrittr)
 stby(data    = iris, 
      INDICES = iris$Species, 
      FUN     = descr, 
-     stats   = "fivenum") |>
-  tb(order = 3) |>
-  kable(format = "html", digits = 2) |>
+     stats   = "fivenum") %>%
+  tb(order = 3) %>%
+  kable(format = "html", digits = 2) %>%
   collapse_rows(columns = 1, valign = "top")
 
 ## ----eval=FALSE---------------------------------------------------------------

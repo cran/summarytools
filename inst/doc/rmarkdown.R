@@ -75,14 +75,14 @@ print(dfSummary(tobacco,
 ## -----------------------------------------------------------------------------
 library(kableExtra)
 library(magrittr)
-stby(iris, iris$Species, descr, stats = "fivenum") |>
-  tb() |>
-  kable(format = "html", digits = 2) |>
+stby(iris, iris$Species, descr, stats = "fivenum") %>%
+  tb() %>%
+  kable(format = "html", digits = 2) %>%
   collapse_rows(columns = 1, valign = "top")
 
 ## -----------------------------------------------------------------------------
-stby(iris, iris$Species, descr, stats = "fivenum") |>
-  tb(order = 3) |>
-  kable(format = "html", digits = 2) |>
+stby(iris, iris$Species, descr, stats = "fivenum") %>%
+  tb(order = 3) %>%
+  kable(format = "html", digits = 2) %>%
   collapse_rows(columns = 1, valign = "top")
 
