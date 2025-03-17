@@ -175,7 +175,8 @@ check_args <- function(mc, dotArgs, caller) {
       if ((nas_found <- anyNA(pf$x)) ||
           (is.factor(pf$x) && !pf$na.val %in% levels(pf$x))) {
         if (nas_found && !isTRUE(st_options("freq.silent")))
-          message("NA values detected - na.val will be ignored")
+          message("NA values different from na.val detected; ",
+                  "na.val will be ignored")
         pf$na.val <- NULL
       }
     }
@@ -262,6 +263,15 @@ check_args <- function(mc, dotArgs, caller) {
           errmsg %+=% "'RR' can only be used with 2 x 2 tables"
         }
       }
+    }
+    
+    if ("rev" %in% names(mc) &&
+        !isTRUE(
+          test_character(pf$rev, any.missing = FALSE, len = 1,
+                         pattern = "^(r|c|b|n|rows?|columns?|both|none)$"))
+    ) {
+      errmsg %+=% "'rev' must be one of 'rows', 'columns', 'both', or 'none'"
+      
     }
     
     if (!is.null(pf$na.val)) {

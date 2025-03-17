@@ -1,7 +1,7 @@
 Package: summarytools
 Type: Package
 Title: Tools to Quickly and Neatly Summarize Data
-Version: 1.1.1
+Version: 1.1.2
 Authors@R: person("Dominic", "Comtois", email = "dominic.comtois@gmail.com", 
   role = c("aut", "cre"))
 Author: Dominic Comtois [aut, cre]
@@ -27,6 +27,6 @@ BugReports: https://github.com/dcomtois/summarytools/issues
 Encoding: UTF-8
 RoxygenNote: 7.3.2
 NeedsCompilation: no
-Packaged: 2025-02-26 03:21:37 UTC; dominic
+Packaged: 2025-03-16 03:20:31 UTC; dominic
 Repository: CRAN
-Date/Publication: 2025-02-26 09:50:03 UTC
+Date/Publication: 2025-03-17 06:00:01 UTC
