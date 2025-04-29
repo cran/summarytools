@@ -19,7 +19,7 @@ st_options(bootstrap.css     = FALSE,       # Already part of the theme so no ne
                                             # For other themes, using TRUE might be preferable.
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  st_options(plain.ascii = FALSE, style = "rmarkdown")
+# st_options(plain.ascii = FALSE, style = "rmarkdown")
 
 ## -----------------------------------------------------------------------------
 print(freq(tobacco$gender, 
@@ -49,13 +49,13 @@ descr(tobacco, plain.ascii = FALSE, style = "rmarkdown")
 print(descr(tobacco), method = "render", table.classes = "st-small")
 
 ## ----dfs_grid, eval=FALSE-----------------------------------------------------
-#  dfSummary(tobacco,
-#            plain.ascii  = FALSE,
-#            style        = "grid",
-#            graph.magnif = 0.75,
-#            varnumbers = FALSE,
-#            valid.col    = FALSE,
-#            tmp.img.dir  = "/tmp")
+# dfSummary(tobacco,
+#           plain.ascii  = FALSE,
+#           style        = "grid",
+#           graph.magnif = 0.75,
+#           varnumbers = FALSE,
+#           valid.col    = FALSE,
+#           tmp.img.dir  = "/tmp")
 
 ## -----------------------------------------------------------------------------
 print(dfSummary(tobacco, 

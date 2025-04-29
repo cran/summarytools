@@ -58,7 +58,7 @@ freq(iris$Species,
      headings   = FALSE)
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  freq(tobacco)
+# freq(tobacco)
 
 ## -----------------------------------------------------------------------------
 freq(tobacco$disease, 
@@ -67,7 +67,7 @@ freq(tobacco$disease,
      headings = FALSE)
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  view(freq(tobacco), collapse = TRUE)
+# view(freq(tobacco), collapse = TRUE)
 
 ## -----------------------------------------------------------------------------
 ctable(x = tobacco$smoker, 
@@ -107,19 +107,19 @@ descr(iris,
       headings  = FALSE)
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  st_options(descr.stats = "common")
+# st_options(descr.stats = "common")
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  view(dfSummary(iris))
+# view(dfSummary(iris))
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  dfSummary(tobacco,
-#            plain.ascii  = FALSE,
-#            style        = "grid",
-#            graph.magnif = 0.82,
-#            varnumbers   = FALSE,
-#            valid.col    = FALSE,
-#            tmp.img.dir  = "/tmp")
+# dfSummary(tobacco,
+#           plain.ascii  = FALSE,
+#           style        = "grid",
+#           graph.magnif = 0.82,
+#           varnumbers   = FALSE,
+#           valid.col    = FALSE,
+#           tmp.img.dir  = "/tmp")
 
 ## -----------------------------------------------------------------------------
 st_options(
@@ -160,8 +160,8 @@ formatR::tidy_source(
 )
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  dfs <- dfSummary(iris)
-#  dfs$Variable <- NULL # This deletes the Variable column
+# dfs <- dfSummary(iris)
+# dfs$Variable <- NULL # This deletes the Variable column
 
 ## -----------------------------------------------------------------------------
 (iris_stats_by_species <- stby(data      = iris, 
@@ -180,22 +180,22 @@ with(tobacco,
 )
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  stby(data    = list(x = tobacco$smoker, y = tobacco$diseased),
-#       INDICES = tobacco$gender,
-#       FUN     = ctable)
-#  
-#  # or equivalently
-#  with(tobacco,
-#       stby(data    = list(x = smoker, y = diseased),
-#            INDICES = gender,
-#            FUN     = ctable))
+# stby(data    = list(x = tobacco$smoker, y = tobacco$diseased),
+#      INDICES = tobacco$gender,
+#      FUN     = ctable)
+# 
+# # or equivalently
+# with(tobacco,
+#      stby(data    = list(x = smoker, y = diseased),
+#           INDICES = gender,
+#           FUN     = ctable))
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  library(dplyr)
-#  tobacco$gender %<>% forcats::fct_na_value_to_level()
-#  tobacco %>%
-#    group_by(gender) %>%
-#    descr(stats = "fivenum")
+# library(dplyr)
+# tobacco$gender %<>% forcats::fct_na_value_to_level()
+# tobacco %>%
+#   group_by(gender) %>%
+#   descr(stats = "fivenum")
 
 ## ----echo=FALSE---------------------------------------------------------------
 suppressPackageStartupMessages(library(dplyr))
@@ -244,14 +244,14 @@ stby(data    = iris,
   collapse_rows(columns = 1, valign = "top")
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  view(iris_stats_by_species, file = "~/iris_stats_by_species.html")
-#  view(iris_stats_by_species, file = "~/iris_stats_by_species.md")
+# view(iris_stats_by_species, file = "~/iris_stats_by_species.html")
+# view(iris_stats_by_species, file = "~/iris_stats_by_species.md")
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  st_options()                      # Display all global options values
-#  st_options('round.digits')        # Display the value of a specific option
-#  st_options(style = 'rmarkdown',   # Set the value of one or several options
-#             footnote = NA)         # Turn off the footnote for all html output
+# st_options()                      # Display all global options values
+# st_options('round.digits')        # Display the value of a specific option
+# st_options(style = 'rmarkdown',   # Set the value of one or several options
+#            footnote = NA)         # Turn off the footnote for all html output
 
 ## -----------------------------------------------------------------------------
 (age_stats <- freq(tobacco$age.gr)) 
@@ -262,19 +262,19 @@ print(age_stats,
       Variable.label = "Age Group")
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  print(dfSummary(tobacco),
-#        custom.css    = 'path/to/custom.css',
-#        table.classes = 'tiny-text',
-#        file          = "tiny-tobacco-dfSummary.html")
+# print(dfSummary(tobacco),
+#       custom.css    = 'path/to/custom.css',
+#       table.classes = 'tiny-text',
+#       file          = "tiny-tobacco-dfSummary.html")
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  print(dfSummary(somedata,
-#                  varnumbers   = FALSE,
-#                  valid.col    = FALSE,
-#                  graph.magnif = 0.8),
-#        method   = 'render',
-#        headings = FALSE,
-#        bootstrap.css = FALSE)
+# print(dfSummary(somedata,
+#                 varnumbers   = FALSE,
+#                 valid.col    = FALSE,
+#                 graph.magnif = 0.8),
+#       method   = 'render',
+#       headings = FALSE,
+#       bootstrap.css = FALSE)
 
 ## -----------------------------------------------------------------------------
 st_options(lang = "fr")
@@ -286,12 +286,12 @@ freq(iris$Species)
 st_options(lang = "en")
 
 ## ----eval = FALSE-------------------------------------------------------------
-#  Sys.setlocale("LC_CTYPE", "russian")
-#  st_options(lang = 'ru')
+# Sys.setlocale("LC_CTYPE", "russian")
+# st_options(lang = 'ru')
 
 ## ----eval=FALSE---------------------------------------------------------------
-#  Sys.setlocale("LC_CTYPE", "")
-#  st_options(lang = "en")
+# Sys.setlocale("LC_CTYPE", "")
+# st_options(lang = "en")
 
 ## -----------------------------------------------------------------------------
 section_title <- "**Species of Iris**"
